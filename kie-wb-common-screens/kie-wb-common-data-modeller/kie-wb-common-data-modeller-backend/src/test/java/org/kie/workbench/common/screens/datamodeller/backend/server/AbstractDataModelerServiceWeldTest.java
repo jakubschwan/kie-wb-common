@@ -17,6 +17,7 @@ package org.kie.workbench.common.screens.datamodeller.backend.server;
 
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Map;
 
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
@@ -24,6 +25,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
 import org.kie.workbench.common.services.shared.project.KieProject;
+import org.kie.workbench.common.services.backend.builder.core.LRUProjectDependenciesClassLoaderCache;
+import org.kie.workbench.common.services.datamodeller.core.AnnotationDefinition;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
@@ -33,8 +36,10 @@ public abstract class AbstractDataModelerServiceWeldTest {
 
     private final SimpleFileSystemProvider fs = new SimpleFileSystemProvider();
     private WeldContainer weldContainer;
-    private KieProjectService projectService;
     protected DataModelerService dataModelService;
+    protected KieProjectService projectService;
+    protected Map<String, AnnotationDefinition> systemAnnotations = null;
+    protected LRUProjectDependenciesClassLoaderCache lruProjectDependenciesClassLoaderCache;
 
     @Before
     public void setUp() throws Exception {
@@ -50,6 +55,30 @@ public abstract class AbstractDataModelerServiceWeldTest {
 
         //Ensure URLs use the default:// scheme
         fs.forceAsDefault();
+
+        //Create DataModelerService bean
+        final Bean dataModelServiceBean = (Bean) beanManager.getBeans( DataModelerService.class ).iterator().next();
+        final CreationalContext dataModelerCContext = beanManager.createCreationalContext( dataModelServiceBean );
+        dataModelService = (DataModelerService) beanManager.getReference( dataModelServiceBean,
+                                                                          DataModelerService.class,
+                                                                          dataModelerCContext );
+
+        //Create ProjectServiceBean
+        final Bean projectServiceBean = (Bean) beanManager.getBeans( KieProjectService.class ).iterator().next();
+        final CreationalContext projectServiceCContext = beanManager.createCreationalContext( projectServiceBean );
+        projectService = (KieProjectService) beanManager.getReference( projectServiceBean,
+                                                                       KieProjectService.class,
+                                                                       projectServiceCContext );
+
+
+       //Create  LRUProjectDependenciesClassLoaderCache
+        final Bean lruProjectDependenciesClassLoaderCacheBean = (Bean) beanManager.getBeans( LRUProjectDependenciesClassLoaderCache.class ).iterator().next();
+        final CreationalContext lruProjectDependenciesClassLoaderCacheContext = beanManager.createCreationalContext( lruProjectDependenciesClassLoaderCacheBean );
+        lruProjectDependenciesClassLoaderCache = (LRUProjectDependenciesClassLoaderCache) beanManager.getReference( lruProjectDependenciesClassLoaderCacheBean,
+                LRUProjectDependenciesClassLoaderCache.class,
+                lruProjectDependenciesClassLoaderCacheContext );
+
+        systemAnnotations = dataModelService.getAnnotationDefinitions();
     }
 
     @After

@@ -30,29 +30,38 @@ public class ProjectDataModelDeclaredTypesTest extends AbstractDataModelWeldTest
 
     @Test
     public void testProjectDeclaredTypes() throws Exception {
-        final ProjectDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelBackendDeclaredTypesTest1/src/main/java/t1p1");
+        final Bean dataModelServiceBean = (Bean) beanManager.getBeans( DataModelService.class ).iterator().next();
+        final CreationalContext cc = beanManager.createCreationalContext( dataModelServiceBean );
+        final DataModelService dataModelService = (DataModelService) beanManager.getReference( dataModelServiceBean,
+                                                                                               DataModelService.class,
+                                                                                               cc );
 
-        assertNotNull(oracle);
+        final URL packageUrl = this.getClass().getResource( "/DataModelBackendDeclaredTypesTest1/src/main/java/t1p1" );
+        final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath( packageUrl.toURI() );
+        final Path packagePath = paths.convert( nioPackagePath );
 
-        assertEquals(4,
-                     oracle.getProjectModelFields().size());
-        assertContains("t1p1.Bean1",
-                       oracle.getProjectModelFields().keySet());
-        assertContains("t1p1.DRLBean",
-                       oracle.getProjectModelFields().keySet());
-        assertContains("t1p2.Bean2",
-                       oracle.getProjectModelFields().keySet());
-        assertContains("java.lang.String",
-                       oracle.getProjectModelFields().keySet());
+        final ProjectDataModelOracle oracle = dataModelService.getProjectDataModel( packagePath );
 
-        assertEquals(TypeSource.JAVA_PROJECT,
-                     oracle.getProjectTypeSources().get("t1p1.Bean1"));
-        assertEquals(TypeSource.DECLARED,
-                     oracle.getProjectTypeSources().get("t1p1.DRLBean"));
-        assertEquals(TypeSource.JAVA_PROJECT,
-                     oracle.getProjectTypeSources().get("t1p2.Bean2"));
-        assertEquals(TypeSource.JAVA_PROJECT,
-                     oracle.getProjectTypeSources().get("java.lang.String"));
+        assertNotNull( oracle );
+
+        assertEquals( 4, oracle.getProjectModelFields().size() );
+        assertContains( "t1p1.Bean1",
+                        oracle.getProjectModelFields().keySet() );
+        assertContains( "t1p1.DRLBean",
+                        oracle.getProjectModelFields().keySet() );
+        assertContains( "t1p2.Bean2",
+                        oracle.getProjectModelFields().keySet() );
+        assertContains( "java.lang.String",
+                        oracle.getProjectModelFields().keySet() );
+
+        assertEquals( TypeSource.JAVA_PROJECT,
+                      oracle.getProjectTypeSources().get( "t1p1.Bean1" ) );
+        assertEquals( TypeSource.DECLARED,
+                      oracle.getProjectTypeSources().get( "t1p1.DRLBean" ) );
+        assertEquals( TypeSource.JAVA_PROJECT,
+                      oracle.getProjectTypeSources().get( "t1p2.Bean2" ) );
+        assertEquals( TypeSource.JAVA_PROJECT,
+                      oracle.getProjectTypeSources().get( "java.lang.String" ) );
     }
+
 }

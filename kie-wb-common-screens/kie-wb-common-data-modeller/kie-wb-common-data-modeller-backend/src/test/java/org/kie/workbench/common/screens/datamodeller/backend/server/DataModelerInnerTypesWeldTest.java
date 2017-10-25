@@ -15,26 +15,40 @@
 
 package org.kie.workbench.common.screens.datamodeller.backend.server;
 
+import java.net.URL;
+
 import org.junit.Test;
 import org.kie.workbench.common.services.datamodeller.core.DataModel;
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
 import org.kie.workbench.common.services.shared.project.KieProject;
+import org.uberfire.java.nio.file.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 public class DataModelerInnerTypesWeldTest extends AbstractDataModelerServiceWeldTest {
 
     @Test
     public void dataModelerShouldIgnoreEnumFieldsOfInnerClasses() throws Exception {
-        KieProject project = loadProjectFromResources("/TestInnerTypes");
+        try {
+            final URL packageUrl = this.getClass().getResource("/TestInnerTypes" );
+            final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath( packageUrl.toURI() );
+            final Path packagePath = paths.convert(nioPackagePath );
 
-        DataModel dataModel = dataModelService.loadModel(project);
-        DataObject dataObject = dataModel.getDataObject("test.Outer");
-        assertNotNull("DataObject test.Outer should be loaded",
-                      dataObject);
-        assertEquals("Enum fields of inner classes of test.Outer DataObject should be ignored",
-                     0,
-                     dataObject.getProperties().size());
+            KieProject project = projectService.resolveProject( packagePath );
+            lruProjectDependenciesClassLoaderCache.assertDependenciesClassLoader(project, "system");
+
+            DataModel dataModel = dataModelService.loadModel( project );
+            DataObject dataObject = dataModel.getDataObject( "test.Outer" );
+            assertNotNull( "DataObject test.Outer was not loaded",
+                           dataObject );
+            assertEquals( "DataObject test.Outer should not have readed properties",
+                          0,
+                          dataObject.getProperties().size() );
+        } catch ( Exception e ) {
+            e.printStackTrace();
+            fail( "Test failed dued to the following exception: " + e.getMessage() );
+        }
     }
 }

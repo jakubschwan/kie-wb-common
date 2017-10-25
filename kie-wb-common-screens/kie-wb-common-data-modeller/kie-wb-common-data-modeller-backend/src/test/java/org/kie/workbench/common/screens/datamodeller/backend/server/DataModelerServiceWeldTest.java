@@ -44,6 +44,7 @@ public class DataModelerServiceWeldTest extends AbstractDataModelerServiceWeldTe
 
         org.kie.workbench.common.services.datamodeller.core.DataModel dataModel = dataModelService.loadModel(project);
         Map<String, DataObject> objectsMap = new HashMap<>();
+        lruProjectDependenciesClassLoaderCache.assertDependenciesClassLoader(project, "system");
 
         assertNotNull(dataModel);
 
