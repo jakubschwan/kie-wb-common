@@ -38,13 +38,18 @@ public class DataModelerServiceWeldTest extends AbstractDataModelerServiceWeldTe
     public void testDataModelerService() throws Exception {
         KieProject project = loadProjectFromResources("/DataModelerTest1");
 
-        final Map<String, AnnotationDefinition> systemAnnotations = dataModelService.getAnnotationDefinitions();
+        final URL packageUrl = this.getClass().getResource("/DataModelerTest1");
+        final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());
+        final Path packagePath = paths.convert(nioPackagePath);
+
+        KieProject project = projectService.resolveProject(packagePath);
+        lruProjectDependenciesClassLoaderCache.assertDependenciesClassLoader(project);
+
         DataModel dataModelOriginal = new DataModelTestUtil(systemAnnotations).createModel(Pojo1.class,
                                                                                            Pojo2.class);
 
         org.kie.workbench.common.services.datamodeller.core.DataModel dataModel = dataModelService.loadModel(project);
-        Map<String, DataObject> objectsMap = new HashMap<>();
-        lruProjectDependenciesClassLoaderCache.assertDependenciesClassLoader(project, "system");
+        Map<String, DataObject> objectsMap = new HashMap<String, DataObject>();
 
         assertNotNull(dataModel);
 
