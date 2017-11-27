@@ -20,7 +20,6 @@ import java.util.*;
 
 import com.google.common.collect.Sets;
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.guvnor.common.services.project.builder.model.BuildMessage;
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.builder.service.BuildService;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
@@ -29,6 +28,7 @@ import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.structure.repositories.Repository;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
@@ -137,7 +137,7 @@ public class BuildExecutorTest {
     @Test
     public void testBuildCommandFail() {
         BuildMessage message = mock(BuildMessage.class);
-        List<BuildMessage> messages = new ArrayList<BuildMessage>();
+        List<BuildMessage> messages = new ArrayList<>();
         messages.add(message);
 
         BuildResults results = mock(BuildResults.class);
