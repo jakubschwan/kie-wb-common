@@ -9,36 +9,44 @@
     </encoder>
   </appender>
 
-  <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
-    <discriminator>
+  <appender name="KieSift" class="org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppender">
+    <discriminator class="org.kie.workbench.common.services.backend.logback.appender.UUIDThreadNameDiscriminator"/>
+    <!--<discriminator>
       <key>compileid</key>
       <defaultValue>/tmp/maven/</defaultValue>
-    </discriminator>
+    </discriminator>-->
     <sift>
-      <appender name="FILE-${compileid}" class="ch.qos.logback.core.FileAppender">
-        <file>${compileid}.log</file>
+      <appender name="${compileID}" class="ch.qos.logback.core.OutputStreamAppender">
+        <encoder>
+          <pattern>%d [%thread] %level %mdc %logger{35} - %msg%n</pattern>
+          <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} - %msg%n</pattern>-->
+        </encoder>
+        <!--<file>${compileid}.log</file>
         <append>false</append>
         <layout class="ch.qos.logback.classic.PatternLayout">
           <pattern>%d [%thread] %level %mdc %logger{35} - %msg%n</pattern>
-        </layout>
+        </layout>-->
       </appender>
     </sift>
   </appender>
 
-  <!--<logger name="org.kie.workbench.common.services.backend.compiler" level="INFO" additivity="true">
-    <appender-ref ref="consoleAppender"/>
-  </logger>-->
-
-  <logger name="org.apache.maven" level="INFO" additivity="false">
+  <logger name="org.kie.workbench.common.services.backend.compiler" level="INFO" additivity="true">
     <appender-ref ref="consoleAppender"/>
   </logger>
+  <!--<logger name="org.apache.maven" level="INFO" additivity="false">
+    <appender-ref ref="KieSift"/>
+  </logger>-->
+<!--
+  <logger name="org.apache.maven" level="INFO" additivity="false">
+    <appender-ref ref="consoleAppender"/>
+  </logger>-->
 
   <logger name="org.drools" level="INFO"/>
   <logger name="org.kie" level="INFO"/>
   <logger name="org.guvnor" level="INFO"/>
 
   <root level="info">
-    <appender-ref ref="consoleAppender" />
+    <appender-ref ref="KieSift" />
   </root>
 
 </configuration>

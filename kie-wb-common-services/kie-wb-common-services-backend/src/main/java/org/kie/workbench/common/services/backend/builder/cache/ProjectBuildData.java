@@ -56,10 +56,11 @@ import org.kie.soup.project.datamodel.oracle.ProjectDataModelOracle;
 import org.kie.soup.project.datamodel.oracle.TypeSource;
 import org.kie.workbench.common.services.backend.builder.af.impl.DefaultKieAFBuilder;
 import org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils;
+import org.kie.workbench.common.services.backend.compiler.impl.classloader.MapClassLoader;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.file.EnumerationsFileFilter;
 import org.kie.workbench.common.services.backend.file.GlobalsFileFilter;
-import org.kie.workbench.common.services.backend.project.MapClassLoader;
+
 import org.kie.workbench.common.services.datamodel.backend.server.builder.packages.PackageDataModelOracleBuilder;
 import org.kie.workbench.common.services.datamodel.backend.server.builder.projects.ProjectDataModelOracleBuilder;
 import org.kie.workbench.common.services.datamodel.spi.DataModelExtension;
@@ -97,9 +98,9 @@ public class ProjectBuildData {
 
     private static final Logger log = LoggerFactory.getLogger(ProjectBuildData.class);
 
-    private static final DirectoryStream.Filter<org.uberfire.java.nio.file.Path> FILTER_ENUMERATIONS = new EnumerationsFileFilter();
+    private static final DirectoryStream.Filter<Path> FILTER_ENUMERATIONS = new EnumerationsFileFilter();
 
-    private static final DirectoryStream.Filter<org.uberfire.java.nio.file.Path> FILTER_GLOBALS = new GlobalsFileFilter();
+    private static final DirectoryStream.Filter<Path> FILTER_GLOBALS = new GlobalsFileFilter();
 
     private final IOService ioService;
     private final ProjectImportsService importsService;
@@ -322,10 +323,10 @@ public class ProjectBuildData {
 
     private void loadEnumsForPackage(final PackageDataModelOracleBuilder dmoBuilder,
                                      final Package pkg) {
-        final org.uberfire.java.nio.file.Path nioPackagePath = Paths.convert(pkg.getPackageMainResourcesPath());
-        final Collection<org.uberfire.java.nio.file.Path> enumFiles = fileDiscoveryService.discoverFiles(nioPackagePath,
+        final Path nioPackagePath = Paths.convert(pkg.getPackageMainResourcesPath());
+        final Collection<Path> enumFiles = fileDiscoveryService.discoverFiles(nioPackagePath,
                                                                                                          FILTER_ENUMERATIONS);
-        for (final org.uberfire.java.nio.file.Path path : enumFiles) {
+        for (final Path path : enumFiles) {
             final String enumDefinition = ioService.readAllString(path);
             dmoBuilder.addEnum(enumDefinition, classLoader);
         }
@@ -333,12 +334,12 @@ public class ProjectBuildData {
 
     private void loadExtensionsForPackage(final PackageDataModelOracleBuilder dmoBuilder,
                                           final Package pkg) {
-        final org.uberfire.java.nio.file.Path nioPackagePath = Paths.convert(pkg.getPackageMainResourcesPath());
+        final Path nioPackagePath = Paths.convert(pkg.getPackageMainResourcesPath());
         final List<DataModelExtension> extensions = stream(dataModelExtensionsProvider.spliterator(), false).collect(toList());
 
         for (final DataModelExtension extension : extensions) {
             DirectoryStream.Filter<Path> filter = extension.getFilter();
-            final Collection<org.uberfire.java.nio.file.Path> extensionFiles = fileDiscoveryService.discoverFiles(nioPackagePath,
+            final Collection<Path> extensionFiles = fileDiscoveryService.discoverFiles(nioPackagePath,
                                                                                                                   filter);
             extensionFiles
                     .stream()
@@ -351,10 +352,10 @@ public class ProjectBuildData {
 
     private void loadGlobalsForPackage(final PackageDataModelOracleBuilder dmoBuilder,
                                        final Package pkg) {
-        final org.uberfire.java.nio.file.Path nioPackagePath = Paths.convert(pkg.getPackageMainResourcesPath());
-        final Collection<org.uberfire.java.nio.file.Path> globalFiles = fileDiscoveryService.discoverFiles(nioPackagePath,
+        final Path nioPackagePath = Paths.convert(pkg.getPackageMainResourcesPath());
+        final Collection<Path> globalFiles = fileDiscoveryService.discoverFiles(nioPackagePath,
                                                                                                            FILTER_GLOBALS);
-        for (final org.uberfire.java.nio.file.Path path : globalFiles) {
+        for (final Path path : globalFiles) {
             final String definition = ioService.readAllString(path);
             dmoBuilder.addGlobals(definition);
         }
@@ -475,8 +476,8 @@ public class ProjectBuildData {
             if (!eventTypes.isEmpty()) {
                 return eventTypes.contains(className);
             } else {
-                if (clazz.isAnnotationPresent(org.kie.api.definition.type.Role.class)) {
-                    Role.Type value = clazz.getAnnotation(org.kie.api.definition.type.Role.class).value();
+                if (clazz.isAnnotationPresent(Role.class)) {
+                    Role.Type value = clazz.getAnnotation(Role.class).value();
                     return value.equals(Role.Type.EVENT);
                 } else {
                     return false;
