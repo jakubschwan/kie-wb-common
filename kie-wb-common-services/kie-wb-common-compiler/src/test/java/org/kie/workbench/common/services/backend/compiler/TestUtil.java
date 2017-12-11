@@ -47,6 +47,11 @@ public class TestUtil {
 
     public static void writeMavenOutputIntoTargetFolder(List<String> mavenOutput,
                                                         String testName) throws Exception {
+        File target = new File("target");
+        if(!target.exists()){
+            System.out.println("Creating target folder");
+            target.mkdir();
+        }
         if (mavenOutput.size() > 0) {
             StringBuffer sb = new StringBuffer("target/").append(testName).append(".test.log");
 

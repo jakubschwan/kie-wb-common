@@ -56,8 +56,7 @@ public class DefaultCompilationRequest implements CompilationRequest {
 
         this.originalArgs = args;
         this.logRequested = logRequested;
-        String[] internalArgs = getInternalArgs(args,
-                                                logRequested);
+        String[] internalArgs = getInternalArgs(args);
         this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
                                     internalArgs,
                                     new HashMap<>(),
@@ -84,8 +83,7 @@ public class DefaultCompilationRequest implements CompilationRequest {
 
         this.originalArgs = args;
         this.logRequested = logRequested;
-        String[] internalArgs = getInternalArgs(args,
-                                                logRequested);
+        String[] internalArgs = getInternalArgs(args);
         this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
                                     internalArgs,
                                     new HashMap<>(),
@@ -93,21 +91,10 @@ public class DefaultCompilationRequest implements CompilationRequest {
                                     logRequested);
     }
 
-    private String[] getInternalArgs(String[] args,
-                                     Boolean logRequested) {
+    private String[] getInternalArgs(String[] args) {
         String[] internalArgs;
         StringBuilder sbCompilationID = new StringBuilder().append("-Dcompilation.ID=").append(requestUUID);
-
-        if (logRequested) {
-            StringBuilder sbLogID = new StringBuilder().append("-l ").append("log").append(".").append(requestUUID).append(".log");
-            internalArgs = Arrays.copyOf(args,
-                                         args.length + 2);
-            internalArgs[args.length + 1] = sbLogID.toString();
-        } else {
-            internalArgs = Arrays.copyOf(args,
-                                         args.length + 1);
-        }
-
+        internalArgs = Arrays.copyOf(args,args.length + 1);
         internalArgs[args.length] = sbCompilationID.toString();
         return internalArgs;
     }

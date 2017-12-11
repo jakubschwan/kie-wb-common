@@ -78,7 +78,7 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
 
     private SiftingAppender setSiftingAppender(LoggerContext loggerContext, Discriminator discriminator) {
         KieSiftingAppender appender = new KieSiftingAppender();
-        appender.setName("compileID");
+        appender.setName("compilation.ID");
         appender.setDiscriminator(discriminator);
         appender.setAppenderFactory(new AppenderFactory<ILoggingEvent>() {
 

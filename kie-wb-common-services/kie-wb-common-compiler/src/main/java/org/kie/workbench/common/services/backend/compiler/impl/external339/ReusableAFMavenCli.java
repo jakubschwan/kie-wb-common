@@ -415,7 +415,7 @@ public class ReusableAFMavenCli {
         plexusLoggerManager = new Slf4jLoggerManager();
         reusableSlf4jLogger = slf4jLoggerFactory.getLogger(this.getClass().getName());
         Thread.currentThread().setName(cliRequest.getRequestUUID());
-        MDC.put("compileID", cliRequest.getRequestUUID());
+        MDC.put("compilation.ID", cliRequest.getRequestUUID());
     }
 
     protected void version(AFCliRequest cliRequest) {

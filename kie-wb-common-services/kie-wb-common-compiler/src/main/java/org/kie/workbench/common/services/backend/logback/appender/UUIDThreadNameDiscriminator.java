@@ -23,7 +23,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
  */
 public class UUIDThreadNameDiscriminator extends MDCBasedDiscriminator {
 
-    private static final String KEY = "compileID";
+    private static final String KEY = "compilation.ID";
 
     private boolean started;
 
