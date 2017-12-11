@@ -1271,4 +1271,43 @@ public class ReusableAFMavenCli {
             this.exitCode = exitCode;
         }
     }
+
+    public void cleanInternals(){
+        if(reusableDispatcher != null){
+            reusableDispatcher = null;
+        }
+        if(reusableConfigurationProcessors != null){
+            reusableConfigurationProcessors = null;
+        }
+        if(reusableEventSpyDispatcher != null){
+            reusableEventSpyDispatcher = null;
+        }
+        if(reusableExtensions != null){
+            reusableExtensions = null;
+        }
+        if(reusableExecutionRequestPopulator != null){
+            reusableExecutionRequestPopulator = null;
+        }
+        if(reusableEventSpyContext != null){
+            reusableEventSpyContext = null;
+        }
+        if(reusableContainerCoreExtensions != null){
+            reusableContainerCoreExtensions = null;
+        }
+        if(reusableContainer != null){
+            reusableContainer = null;
+        }
+        if(reusableMaven != null){
+            reusableMaven = null;
+        }
+        if(reusableModelProcessor != null){
+            reusableModelProcessor = null;
+        }
+        if(reusableSlf4jLogger != null) {
+            reusableSlf4jLogger = null;
+        }
+        if(reusableToolchainsBuilder != null) {
+            reusableToolchainsBuilder = null;
+        }
+    }
 }

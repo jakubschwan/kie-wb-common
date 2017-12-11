@@ -47,7 +47,9 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
     }
 
     @Override
-    public void cleanInternalCache() {}
+    public void cleanInternalCache() {
+        compiler.cleanInternalCache();
+    }
 
     @Override
     public T compileSync(CompilationRequest req) {

@@ -71,10 +71,12 @@ public abstract class BaseMavenCompiler<T extends CompilationResponse> implement
 
     public void cleanInternalCache() {
         enabler.cleanHistory();
+        cli.cleanInternals();
     }
 
     public void invalidatePomHistory() {
         enabler.cleanHistory();
+        cli.cleanInternals();
     }
 
     @Override

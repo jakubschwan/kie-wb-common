@@ -302,7 +302,6 @@ public class DefaultMavenCompilerTest {
     //
     @Test
     public void buildWithAllDecoratorsTest() throws Exception {
-        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.JGIT_BEFORE_AND_LOG_AFTER);
 
         String MASTER_BRANCH = "master";
@@ -339,7 +338,7 @@ public class DefaultMavenCompilerTest {
         Path tmpRootCloned = Files.createTempDirectory("cloned");
         Path tmpCloned = Files.createDirectories(Paths.get(tmpRootCloned.toString(),
                                                            ".clone.git"));
-        //@TODO find a way to retrieve the address git://... of the repo
+
         final Git cloned = Git.cloneRepository().setURI("git://localhost:9418/repo").setBare(false).setDirectory(tmpCloned.toFile()).call();
 
         assertNotNull(cloned);
@@ -425,5 +424,77 @@ public class DefaultMavenCompilerTest {
         assertTrue(pomAsAstring.contains("<target>1.8</target>"));
 
         TestUtil.rm(tmpRoot.toFile());
+    }
+
+
+
+    @Test
+    public void cleanInternalTest() throws Exception {
+        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.JGIT_BEFORE);
+
+        String MASTER_BRANCH = "master";
+
+        //Setup origin in memory
+        final URI originRepo = URI.create("git://repo");
+        final JGitFileSystem origin = (JGitFileSystem) ioService.newFileSystem(originRepo,
+                                                                               new HashMap<String, Object>() {{
+                                                                                   put("init",
+                                                                                       Boolean.TRUE);
+                                                                                   put("internal",
+                                                                                       Boolean.TRUE);
+                                                                                   put("listMode",
+                                                                                       "ALL");
+                                                                               }});
+        assertNotNull(origin);
+
+        ioService.startBatch(origin);
+
+        ioService.write(origin.getPath("/dummy/pom.xml"),
+                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/pom.xml").toPath())));
+        ioService.write(origin.getPath("/dummy/dummyA/src/main/java/dummy/DummyA.java"),
+                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyA/src/main/java/dummy/DummyA.java").toPath())));
+        ioService.write(origin.getPath("/dummy/dummyB/src/main/java/dummy/DummyB.java"),
+                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyB/src/main/java/dummy/DummyB.java").toPath())));
+        ioService.write(origin.getPath("/dummy/dummyA/pom.xml"),
+                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyA/pom.xml").toPath())));
+        ioService.write(origin.getPath("/dummy/dummyB/pom.xml"),
+                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyB/pom.xml").toPath())));
+        ioService.endBatch();
+
+        RevCommit lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
+
+        assertNotNull(lastCommit);
+
+        //@TODO refactor and use only one between the URI or Git
+        //@TODO find a way to resolve the problem of the prjname inside .git folder
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("/dummy/"));
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                               Boolean.FALSE);
+        CompilationResponse res = compiler.compileSync(req);
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+                                                      "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
+        }
+        assertTrue(res.isSuccessful());
+
+        lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
+        ;
+        assertNotNull(lastCommit);
+
+        ioService.write(origin.getPath("/dummy/dummyA/src/main/java/dummy/DummyA.java"),
+                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/DummyA.java").toPath())));
+
+        RevCommit commitBefore = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
+        assertNotNull(commitBefore);
+        assertFalse(lastCommit.getId().toString().equals(commitBefore.getId().toString()));
+
+        compiler.cleanInternalCache();
+
+        //recompile
+        res = compiler.compileSync(req);
+//        assert commits
+        assertTrue(res.isSuccessful());
     }
 }

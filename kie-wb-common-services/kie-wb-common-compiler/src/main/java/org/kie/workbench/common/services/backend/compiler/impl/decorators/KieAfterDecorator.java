@@ -73,6 +73,7 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
 
     @Override
     public void cleanInternalCache() {
+        compiler.cleanInternalCache();
     }
 
     private KieCompilationResponse handleKieMavenPlugin(CompilationRequest req,

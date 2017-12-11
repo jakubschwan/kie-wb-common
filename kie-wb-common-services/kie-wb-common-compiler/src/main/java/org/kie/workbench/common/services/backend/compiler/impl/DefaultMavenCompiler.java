@@ -54,6 +54,6 @@ public class DefaultMavenCompiler extends BaseMavenCompiler<CompilationResponse>
 
     @Override
     public void cleanInternalCache() {
-        cleanInternalCache();
+       super.cleanInternalCache();
     }
 }
