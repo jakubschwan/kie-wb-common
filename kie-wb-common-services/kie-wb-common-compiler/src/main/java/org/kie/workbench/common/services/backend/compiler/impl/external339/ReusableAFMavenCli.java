@@ -39,7 +39,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.UUID;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
@@ -257,7 +256,6 @@ public class ReusableAFMavenCli {
     public int doMain(AFCliRequest cliRequest,
                       ClassWorld classWorld) {
 
-        //PlexusContainer localContainer = null;
         PrintStream originalOut = System.out;
         PrintStream originalErr = System.err;
         try {
@@ -266,7 +264,6 @@ public class ReusableAFMavenCli {
             logging(cliRequest);
             version(cliRequest);
             properties(cliRequest);
-            //localContainer = container(cliRequest, classWorld);
             reusableContainer = container(cliRequest,
                                           classWorld);
             commands(cliRequest);//ok
@@ -299,10 +296,6 @@ public class ReusableAFMavenCli {
         } finally {
             System.setOut(originalOut);
             System.setErr(originalErr);
-            /*if (localContainer != null) {
-                localContainer.dispose();
-                localContainer = null;
-            }*/
         }
     }
 
@@ -542,30 +535,12 @@ public class ReusableAFMavenCli {
 
         customizeContainer(container);
 
-        /*
-        Moved externally
-        container.getLoggerManager().setThresholds(cliRequest.getRequest().getLoggingLevel());
-        Thread.currentThread().setContextClassLoader(container.getContainerRealm());*/
         reusableEventSpyDispatcher = container.lookup(EventSpyDispatcher.class);
-        //DefaultEventSpyContext eventSpyContext = new DefaultEventSpyContext();
         reusableEventSpyContext = new DefaultEventSpyContext();
-        //Map<String, Object> data = eventSpyContext.getData();
         setEventSpyContextData(reusableEventSpyContext,
                                container,
                                cliRequest);
-       /* Map<String, Object> data = reusableEventSpyContext.getData();
-        data.put("plexus",
-                 container);
-        data.put("workingDirectory",
-                 cliRequest.getWorkingDirectory());
-        data.put("systemProperties",
-                 cliRequest.getSystemProperties());
-        data.put("userProperties",
-                 cliRequest.getUserProperties());
-        data.put("versionProperties",
-                 AFCLIReportingUtils.getBuildProperties());*/
 
-        //reusableEventSpyDispatcher.init(eventSpyContext);
         reusableEventSpyDispatcher.init(reusableEventSpyContext);
 
         reusableSlf4jLogger = slf4jLoggerFactory.getLogger(this.getClass().getName());
@@ -667,7 +642,6 @@ public class ReusableAFMavenCli {
                 return reusableExtensions;
             } finally {
                 reusableExecutionRequestPopulator = null;
-                //reusableContainerCoreExtensions.dispose();
             }
         } catch (RuntimeException e) {
             // runtime exceptions are most likely bugs in maven, let them bubble up to the user
