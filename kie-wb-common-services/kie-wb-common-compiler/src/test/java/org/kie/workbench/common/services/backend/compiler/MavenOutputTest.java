@@ -47,7 +47,7 @@ public class MavenOutputTest {
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmpNio, res.getMavenOutput(),
                                                       "MavenOutputTest.testOutputWithTakari");
         }
         Assert.assertTrue(res.isSuccessful());

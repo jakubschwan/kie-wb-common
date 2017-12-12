@@ -71,7 +71,7 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                Boolean.FALSE, Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testIsValidMavenHome");
         }
         Assert.assertTrue(res.isSuccessful());
@@ -98,7 +98,7 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                Boolean.FALSE, Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabled");
         }
         Assert.assertTrue(res.isSuccessful());
@@ -129,7 +129,7 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                Boolean.FALSE, Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabledThreeTime");
         }
         Assert.assertTrue(res.isSuccessful());
@@ -166,7 +166,7 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                Boolean.TRUE, Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testCheckIncrementalWithChanges");
         }
 
@@ -245,7 +245,7 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                Boolean.TRUE, Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testError");
         }
 

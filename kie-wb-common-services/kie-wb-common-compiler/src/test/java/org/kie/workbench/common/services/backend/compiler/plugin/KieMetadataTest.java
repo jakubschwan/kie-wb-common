@@ -97,7 +97,7 @@ public class KieMetadataTest {
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
 
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "KieMetadataTest.compileAndLoadKieJarMetadataAllResourcesPackagedJar");
         }
 
@@ -160,7 +160,7 @@ public class KieMetadataTest {
             KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
 
             if (!res.isSuccessful()) {
-                TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+                TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                           "KieMetadataTest.compileAndloadKieJarSingleMetadata");
             }
 
@@ -215,7 +215,7 @@ public class KieMetadataTest {
                                                                Boolean.FALSE, Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");
         }
         if (!res.isSuccessful()) {

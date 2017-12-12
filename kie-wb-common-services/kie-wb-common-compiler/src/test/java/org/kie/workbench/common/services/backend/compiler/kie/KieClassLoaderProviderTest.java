@@ -79,7 +79,7 @@ public class KieClassLoaderProviderTest {
                                                                Boolean.FALSE, Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieClassLoaderProviderTest.loadProjectClassloaderTest");
         }
         assertTrue(res.isSuccessful());
@@ -130,7 +130,7 @@ public class KieClassLoaderProviderTest {
                                                                Boolean.FALSE, Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
         }
         assertTrue(res.isSuccessful());
@@ -179,7 +179,7 @@ public class KieClassLoaderProviderTest {
                                                                Boolean.FALSE, Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieClassLoaderProviderTest.loadTargetFolderClassloaderTest");
         }
         assertTrue(res.isSuccessful());

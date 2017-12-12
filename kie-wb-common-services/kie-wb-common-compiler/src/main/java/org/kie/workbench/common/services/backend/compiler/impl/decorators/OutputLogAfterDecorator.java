@@ -43,9 +43,7 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
         if (req.getLogRequested()) {
             t =compiler.buildDefaultCompilationResponse(res.isSuccessful(),
                                                         OutputSharedMap.getLog(req.getKieCliRequest().getRequestUUID()),
-                                                            /*LogUtils.getOutput(req.getInfo().getPrjPath().toAbsolutePath().toString(),
-                                                            req.getKieCliRequest().getRequestUUID()),*/
-                                                            req.getInfo().getPrjPath());
+                                                        req.getInfo().getPrjPath());
             OutputSharedMap.removeLog(req.getKieCliRequest().getRequestUUID());
             MDC.clear();
             return t;

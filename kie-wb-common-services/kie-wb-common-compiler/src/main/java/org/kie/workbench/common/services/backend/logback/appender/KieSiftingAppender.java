@@ -27,7 +27,7 @@ public class KieSiftingAppender extends SiftingAppender {
     @Override
     protected void append(ILoggingEvent eventObject) {
         if(!eventObject.getMDCPropertyMap().isEmpty()){
-            String msg = eventObject.getMessage();
+            String msg = eventObject.getFormattedMessage();
             OutputSharedMap.addMsgToLog(eventObject.getMDCPropertyMap().get("compilation.ID"), msg);
         }
     }

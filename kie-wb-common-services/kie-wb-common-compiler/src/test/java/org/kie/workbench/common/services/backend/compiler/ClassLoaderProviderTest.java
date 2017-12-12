@@ -90,7 +90,7 @@ public class ClassLoaderProviderTest {
                                                                Boolean.FALSE, Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadProjectClassloaderTest");
         }
         assertTrue(res.isSuccessful());
@@ -140,7 +140,7 @@ public class ClassLoaderProviderTest {
                                                                Boolean.FALSE, Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
         }
         assertTrue(res.isSuccessful());
@@ -189,7 +189,7 @@ public class ClassLoaderProviderTest {
                                                                Boolean.FALSE, Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadTargetFolderClassloaderTest");
         }
         assertTrue(res.isSuccessful());
@@ -266,7 +266,7 @@ public class ClassLoaderProviderTest {
                                                                Boolean.FALSE, Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");
         }
         if (!res.isSuccessful()) {
@@ -325,7 +325,7 @@ public class ClassLoaderProviderTest {
 
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
                                                       "KieMetadataTest.getResourcesFromADroolsPRJWithError");
         }
         if (!res.isSuccessful()) {
@@ -348,7 +348,7 @@ public class ClassLoaderProviderTest {
 
         Optional<KieModule> kieModuleOptional = res.getKieModule();
         Assert.assertTrue(kieModuleOptional.isPresent());
-        KieModule kModule = kieModuleOptional.get();
+        //KieModule kModule = kieModuleOptional.get();
 
 //        Assert.assertTrue(res.getProjectDependenciesAsURI().isPresent());
 //        Assert.assertTrue(res.getProjectDependenciesAsURI().get().size() == 5);

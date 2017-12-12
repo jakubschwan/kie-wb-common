@@ -101,23 +101,21 @@ public class ConcurrentBuildTest {
                                                                },
                                                                Boolean.TRUE, Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
-
+        System.out.println("\nFinished " + res.isSuccessful() + " Single metadata tmp:" + tmpInternal + " UUID:" + req.getRequestUUID() + "res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
         if (!res.isSuccessful()) {
             try {
                 System.out.println(" Fail, writing output on target folder:"+tmpInternal);
-                TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+                TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
                                                           "ConcurrentBuildTest.compileAndloadKieJarSingleMetadataWithPackagedJar");
+                List<String> msgs = res.getMavenOutput();
+                for (String msg : msgs) {
+                    logger.info(msg);
+                }
             } catch (Exception e) {
                 logger.error(e.getMessage());
             }
         }
-        if (!res.isSuccessful()) {
-            List<String> msgs = res.getMavenOutput();
-            for (String msg : msgs) {
-                logger.info(msg);
-            }
-        }
-        System.out.println("\nFinished " + res.isSuccessful() + " Single metadata tmp:" + tmpInternal + " UUID:" + req.getRequestUUID() + "res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
+
         return res;
     }
 
@@ -132,29 +130,25 @@ public class ConcurrentBuildTest {
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPathTwo},
                                                                Boolean.TRUE, Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
-
+        System.out.println("\nFinished " + res.isSuccessful() + " all Metadata tmp:" + tmpInternal + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
         if (!res.isSuccessful()) {
             try {
-                System.out.println("writing output on target folder");
-                TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+                System.out.println("writing output on target folder:"+tmpInternal);
+                TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
                                                           "ConcurrentBuildTest.compileAndLoadKieJarMetadataAllResourcesPackagedJar");
+                List<String> msgs = res.getMavenOutput();
+                for (String msg : msgs) {
+                    logger.info(msg);
+                }
             } catch (Exception e) {
                 logger.error(e.getMessage());
             }
         }
-
-        if (!res.isSuccessful()) {
-            List<String> msgs = res.getMavenOutput();
-            for (String msg : msgs) {
-                logger.info(msg);
-            }
-        }
-        System.out.println("\nFinished " + res.isSuccessful() + " all Metadata tmp:" + tmpInternal + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
         return res;
     }
 
     @Test
-    public void buildFourProjectsInEachThread() throws Exception {
+    public void buildFourProjectsInFourThread() throws Exception {
         prepareCompileAndloadKieJarSingleMetadataWithPackagedJar();
         prepareCompileAndloadKieJarSingleMetadataWithPackagedJarTwo();
         prepareCompileAndLoadKieJarMetadataAllResourcesPackagedJar();
@@ -171,7 +165,7 @@ public class ConcurrentBuildTest {
         try {
 
             List<Future<KieCompilationResponse>> results = executor.invokeAll(tasks);
-            executor.awaitTermination(4, TimeUnit.MINUTES);
+            Boolean execution = executor.awaitTermination(3, TimeUnit.MINUTES);
             System.out.println("\nFinished all threads ");
             Assert.assertTrue(results.size() == 4);
             for (Future<KieCompilationResponse> result : results) {
@@ -209,8 +203,8 @@ public class ConcurrentBuildTest {
             };
 
             Future<Map<Integer, KieCompilationResponse>> future = executor.submit(task1);
-            executor.awaitTermination(2, TimeUnit.MINUTES);
-
+           // executor.awaitTermination(4, TimeUnit.MINUTES);
+            while(!future.isDone()){}
             Map<Integer, KieCompilationResponse> result = future.get();
             KieCompilationResponse one = result.get(1);
             KieCompilationResponse two = result.get(2);

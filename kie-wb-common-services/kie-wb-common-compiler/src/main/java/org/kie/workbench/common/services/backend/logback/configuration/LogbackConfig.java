@@ -32,6 +32,8 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.sift.AppenderFactory;
 import ch.qos.logback.core.sift.Discriminator;
 import ch.qos.logback.core.spi.ContextAwareBase;
+import ch.qos.logback.core.status.Status;
+import ch.qos.logback.core.util.StatusPrinter;
 import org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppender;
 import org.kie.workbench.common.services.backend.logback.appender.UUIDThreadNameDiscriminator;
 
@@ -53,11 +55,14 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
         Logger log = loggerContext.getLogger("root");
         log.setLevel(Level.INFO);
         log.addAppender(appender);
-        log.addAppender(consoleAppender);
+        //log.addAppender(consoleAppender);
 
-        /*Logger mavenLog = loggerContext.getLogger("org.apache.maven");
+        Logger mavenLog = loggerContext.getLogger("org.apache.maven");
         mavenLog.setLevel(Level.INFO);
-        mavenLog.addAppender(consoleAppender);*/
+        //mavenLog.addAppender(appender);
+        mavenLog.addAppender(consoleAppender);
+
+        StatusPrinter.print(loggerContext);
     }
 
 

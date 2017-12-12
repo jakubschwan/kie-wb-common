@@ -52,7 +52,7 @@ public class KieMavenOutputTest {
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
                                                       "KieMavenOutputTest.testOutputWithTakari");
         }
         assertTrue(res.isSuccessful());

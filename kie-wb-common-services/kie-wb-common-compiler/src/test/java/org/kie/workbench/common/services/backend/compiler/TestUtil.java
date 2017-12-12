@@ -45,9 +45,11 @@ public class TestUtil {
         }
     }
 
-    public static void writeMavenOutputIntoTargetFolder(List<String> mavenOutput,
+    public static void writeMavenOutputIntoTargetFolder(Path tmp,List<String> mavenOutput,
                                                         String testName) throws Exception {
-        File target = new File("target");
+        File dir = tmp.toAbsolutePath().toFile();
+        File target = new File(dir.toString()+"/target");
+        System.out.println("target.exists():"+target.exists());
         if(!target.exists()){
             System.out.println("Creating target folder");
             target.mkdir();
