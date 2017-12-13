@@ -26,5 +26,5 @@ public interface IncrementalCompilerEnabler {
 
     ProcessedPoms process(CompilationRequest req);
 
-    void cleanHistory();
+    Boolean cleanHistory();
 }

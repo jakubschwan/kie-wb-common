@@ -55,8 +55,8 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
     }
 
     @Override
-    public void cleanInternalCache() {
-        compiler.cleanInternalCache();
+    public Boolean cleanInternalCache() {
+        return compiler.cleanInternalCache();
     }
 
     @Override

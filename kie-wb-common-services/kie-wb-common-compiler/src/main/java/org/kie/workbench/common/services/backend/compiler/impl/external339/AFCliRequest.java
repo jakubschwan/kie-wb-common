@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.services.backend.compiler.impl.external339;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
@@ -146,5 +147,26 @@ public class AFCliRequest {
 
     public MavenExecutionRequest getRequest() {
         return request;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("AFCliRequest{");
+        sb.append("args=").append(Arrays.toString(args));
+        sb.append(", commandLine=").append(commandLine);
+        sb.append(", classWorld=").append(classWorld);
+        sb.append(", workingDirectory='").append(workingDirectory).append('\'');
+        sb.append(", multiModuleProjectDirectory='").append(multiModuleProjectDirectory).append('\'');
+        sb.append(", debug=").append(debug);
+        sb.append(", quiet=").append(quiet);
+        sb.append(", showErrors=").append(showErrors);
+        sb.append(", userProperties=").append(userProperties);
+        sb.append(", systemProperties=").append(systemProperties);
+        sb.append(", request=").append(request);
+        sb.append(", map=").append(map);
+        sb.append(", requestUUID='").append(requestUUID).append('\'');
+        sb.append(", logRequested=").append(logRequested);
+        sb.append('}');
+        return sb.toString();
     }
 }

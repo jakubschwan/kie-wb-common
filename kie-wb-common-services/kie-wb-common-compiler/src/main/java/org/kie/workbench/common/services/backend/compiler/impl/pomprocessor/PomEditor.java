@@ -31,5 +31,5 @@ public interface PomEditor {
     /**
      * @return result of the clean history
      */
-    void cleanHistory();
+    Boolean cleanHistory();
 }

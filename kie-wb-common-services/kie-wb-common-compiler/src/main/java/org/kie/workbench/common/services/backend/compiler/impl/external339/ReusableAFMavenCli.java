@@ -1272,7 +1272,7 @@ public class ReusableAFMavenCli {
         }
     }
 
-    public void cleanInternals(){
+    public Boolean cleanInternals(){
         if(reusableDispatcher != null){
             reusableDispatcher = null;
         }
@@ -1309,5 +1309,6 @@ public class ReusableAFMavenCli {
         if(reusableToolchainsBuilder != null) {
             reusableToolchainsBuilder = null;
         }
+        return Boolean.TRUE;
     }
 }

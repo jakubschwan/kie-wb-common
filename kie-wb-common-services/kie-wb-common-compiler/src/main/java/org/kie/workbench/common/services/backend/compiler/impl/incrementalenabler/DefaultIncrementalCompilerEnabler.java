@@ -100,7 +100,7 @@ public class DefaultIncrementalCompilerEnabler implements IncrementalCompilerEna
         return Collections.unmodifiableSet(editor.getHistory());
     }
 
-    public void cleanHistory() {
-        editor.cleanHistory();
+    public Boolean cleanHistory() {
+        return editor.cleanHistory();
     }
 }

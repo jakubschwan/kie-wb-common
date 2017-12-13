@@ -93,7 +93,7 @@ public class DefaultCompilationRequest implements CompilationRequest {
 
     private String[] getInternalArgs(String[] args) {
         String[] internalArgs;
-        StringBuilder sbCompilationID = new StringBuilder().append("-Dcompilation.ID=").append(requestUUID);
+        StringBuilder sbCompilationID = new StringBuilder().append("-Dcompilation.ID=").append("\"").append(requestUUID).append("\"");
         internalArgs = Arrays.copyOf(args,args.length + 1);
         internalArgs[args.length] = sbCompilationID.toString();
         return internalArgs;

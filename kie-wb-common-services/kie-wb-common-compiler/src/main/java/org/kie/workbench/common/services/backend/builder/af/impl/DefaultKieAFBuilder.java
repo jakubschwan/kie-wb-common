@@ -99,9 +99,9 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     }
 
     @Override
-    public void cleanInternalCache() {
-        compiler.cleanInternalCache();
+    public Boolean cleanInternalCache() {
         lastResponse = null;
+        return compiler.cleanInternalCache();
     }
 
     @Override

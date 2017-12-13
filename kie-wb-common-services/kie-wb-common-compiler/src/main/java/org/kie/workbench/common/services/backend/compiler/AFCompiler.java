@@ -35,5 +35,5 @@ public interface AFCompiler<T extends CompilationResponse> {
                                       final List<String> output,
                                       final Path workingDir);
 
-    void cleanInternalCache();
+    Boolean cleanInternalCache();
 }

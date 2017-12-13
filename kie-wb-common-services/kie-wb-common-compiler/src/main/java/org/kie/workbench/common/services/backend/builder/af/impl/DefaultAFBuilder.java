@@ -28,15 +28,10 @@ import org.uberfire.java.nio.file.Paths;
 
 public class DefaultAFBuilder implements AFBuilder {
 
-    private AFCompiler compiler;
-    private WorkspaceCompilationInfo info;
+    private final AFCompiler compiler;
+    private final WorkspaceCompilationInfo info;
+    private final String mavenRepo;
     private CompilationRequest req;
-    private String mavenRepo;
-
-    @Override
-    public void cleanInternalCache() {
-        compiler.cleanInternalCache();
-    }
 
     public DefaultAFBuilder(String projectRepo,
                             String mavenRepo,
@@ -137,6 +132,12 @@ public class DefaultAFBuilder implements AFBuilder {
     }
 
     /*******************************************************************************************************************************/
+
+    @Override
+    public Boolean cleanInternalCache() {
+        compiler.cleanInternalCache();
+        return Boolean.TRUE;
+    }
 
     @Override
     public CompilationResponse build() {

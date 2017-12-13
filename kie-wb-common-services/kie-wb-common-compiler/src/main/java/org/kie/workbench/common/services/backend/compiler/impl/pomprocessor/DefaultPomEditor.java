@@ -75,8 +75,9 @@ public class DefaultPomEditor implements PomEditor {
     }
 
     @Override
-    public void cleanHistory() {
+    public Boolean cleanHistory() {
         history.clear();
+        return Boolean.TRUE;
     }
 
     protected PluginPresents updatePom(Model model) {

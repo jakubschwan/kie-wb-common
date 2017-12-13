@@ -55,12 +55,27 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
         Logger log = loggerContext.getLogger("root");
         log.setLevel(Level.INFO);
         log.addAppender(appender);
-        //log.addAppender(consoleAppender);
+        log.addAppender(consoleAppender);
 
         Logger mavenLog = loggerContext.getLogger("org.apache.maven");
         mavenLog.setLevel(Level.INFO);
-        //mavenLog.addAppender(appender);
-        mavenLog.addAppender(consoleAppender);
+        mavenLog.addAppender(appender);
+        //mavenLog.addAppender(consoleAppender);
+
+        Logger droolsLog = loggerContext.getLogger("org.drools");
+        droolsLog.setLevel(Level.INFO);
+        //droolsLog.addAppender(appender);
+        //droolsLog.addAppender(consoleAppender);
+
+        Logger kieLog = loggerContext.getLogger("org.kie");
+        kieLog.setLevel(Level.INFO);
+        //kieLog.addAppender(appender);
+        //kieLog.addAppender(consoleAppender);
+
+        Logger compilerLog = loggerContext.getLogger("org.kie.workbench.common.services.backend.compiler");
+        compilerLog.setLevel(Level.DEBUG);
+        compilerLog.addAppender(appender);
+        //compilerLog.addAppender(consoleAppender);
 
         StatusPrinter.print(loggerContext);
     }

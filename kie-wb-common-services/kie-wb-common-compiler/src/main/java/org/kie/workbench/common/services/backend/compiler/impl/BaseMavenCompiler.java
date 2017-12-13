@@ -69,9 +69,8 @@ public abstract class BaseMavenCompiler<T extends CompilationResponse> implement
         return Files.exists(mavenRepo) && Files.isDirectory(mavenRepo) && Files.isWritable(mavenRepo) && Files.isReadable(mavenRepo);
     }
 
-    public void cleanInternalCache() {
-        enabler.cleanHistory();
-        cli.cleanInternals();
+    public Boolean cleanInternalCache() {
+        return enabler.cleanHistory() && cli.cleanInternals();
     }
 
     public void invalidatePomHistory() {

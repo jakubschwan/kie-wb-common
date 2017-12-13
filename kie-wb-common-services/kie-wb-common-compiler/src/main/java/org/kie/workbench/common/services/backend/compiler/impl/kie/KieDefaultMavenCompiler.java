@@ -44,7 +44,7 @@ public class KieDefaultMavenCompiler extends BaseMavenCompiler<KieCompilationRes
     }
 
     @Override
-    public void cleanInternalCache() {
-       super.cleanInternalCache();
+    public Boolean cleanInternalCache() {
+       return super.cleanInternalCache();
     }
 }

@@ -29,7 +29,7 @@ public interface KieAFBuilder {
     /**
      * Clean internal poms cached
      */
-    void cleanInternalCache();
+    Boolean cleanInternalCache();
 
     /**
      * Run a mvn compile and create the output and the prj dependencies in the response

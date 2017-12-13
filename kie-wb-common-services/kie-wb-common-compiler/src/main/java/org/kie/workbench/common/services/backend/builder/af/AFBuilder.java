@@ -26,7 +26,7 @@ public interface AFBuilder {
     /**
      * Clean internal poms cached
      */
-    void cleanInternalCache();
+    Boolean cleanInternalCache();
 
     /**
      * Run a mvn compile if is used the contructor with no []args or run the maven tasks declared in the []args passed with
