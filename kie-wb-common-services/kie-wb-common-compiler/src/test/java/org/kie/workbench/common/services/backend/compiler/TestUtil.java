@@ -24,9 +24,13 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Path;
 
 public class TestUtil {
+
+    private static Logger logger = LoggerFactory.getLogger(TestUtil.class);
 
     public static void copyTree(Path source,
                                 Path target) throws IOException {
@@ -41,7 +45,7 @@ public class TestUtil {
             }
         }
         if (!f.delete()) {
-            System.err.println("Couldn't delete file " + f);
+            logger.error("Couldn't delete file {}", f);
         }
     }
 
@@ -49,17 +53,16 @@ public class TestUtil {
                                                         String testName) throws Exception {
         File dir = tmp.toAbsolutePath().toFile();
         File target = new File(dir.toString()+"/target/");
-        System.out.println("target.exists():"+target.exists());
         if(!target.exists()){
-            System.out.println("Creating target folder");
+            logger.info("Creating target folder");
             target.mkdir();
         }
         if (mavenOutput.size() > 0) {
             StringBuffer sb = new StringBuffer(target.toString()).append(testName).append(".test.log");
 
-            File fout = new File(sb.toString());
-            System.out.println("Writing error output on "+fout.toString());
-            FileOutputStream fos = new FileOutputStream(fout);
+            File fileOut = new File(sb.toString());
+            logger.info("Writing error output on {}",fileOut.toString());
+            FileOutputStream fos = new FileOutputStream(fileOut);
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
             for (String item : mavenOutput) {
                 bw.write(item);
