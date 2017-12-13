@@ -159,7 +159,8 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
     }
 
     private KieTuple read(CompilationRequest req, String keyName, String errorMsg) {
-        final StringBuilder sb = new StringBuilder(req.getKieCliRequest().getRequestUUID()).append(".").append(keyName);
+        //@TODO remove this extra "compilation.ID" from the kie-maven plugin
+        final StringBuilder sb = new StringBuilder("\"").append(req.getKieCliRequest().getRequestUUID()).append("\"").append(".").append(keyName);
         Object o = req.getKieCliRequest().getMap().get(sb.toString());
         if (o != null) {
             KieTuple tuple = readObjectFromADifferentClassloader(o);
