@@ -20,7 +20,9 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -62,9 +64,9 @@ public class ConcurrentBuildTest {
         alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
     }
 
-    private KieCompilationResponse compileAndloadKieJarSingleMetadataWithPackagedJar(String alternateSettingsAbsPath) throws Exception {
+    private KieCompilationResponse compileAndloadKieJarSingleMetadataWithPackagedJar() throws Exception {
 
-        Path tmpRoot = Files.createTempDirectory("repo");
+        Path tmpRoot = Files.createTempDirectory("repo_" + UUID.randomUUID().toString());
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
         TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"), tmp);
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
@@ -73,21 +75,17 @@ public class ConcurrentBuildTest {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{
-                                                                        MavenCLIArgs.COMPILE,
-                                                                        MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
+                                                                       MavenCLIArgs.COMPILE,
+                                                                       MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                },
                                                                Boolean.TRUE, Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
         System.out.println("\nFinished " + res.isSuccessful() + " Single metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
         if (!res.isSuccessful()) {
             try {
-                System.out.println(" Fail, writing output on target folder:"+tmp +" UUID:"+req.getRequestUUID());
-                TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
-                                                          "ConcurrentBuildTest.compileAndloadKieJarSingleMetadataWithPackagedJar_"+req.getRequestUUID());
-                List<String> msgs = res.getMavenOutput();
-                for (String msg : msgs) {
-                    System.out.println(msg);
-                }
+                System.out.println(" Fail, writing output on target folder:" + tmp + " UUID:" + req.getRequestUUID());
+                TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
+                                                          "ConcurrentBuildTest.compileAndloadKieJarSingleMetadataWithPackagedJar_" + req.getRequestUUID());
             } catch (Exception e) {
                 logger.error(e.getMessage());
             }
@@ -96,8 +94,8 @@ public class ConcurrentBuildTest {
         return res;
     }
 
-    private KieCompilationResponse compileAndLoadKieJarMetadataAllResourcesPackagedJar(String alternateSettingsAbsPathTwo) throws  Exception{
-        Path tmpRoot = Files.createTempDirectory("repo");
+    private KieCompilationResponse compileAndLoadKieJarMetadataAllResourcesPackagedJar() throws Exception {
+        Path tmpRoot = Files.createTempDirectory("repo_" + UUID.randomUUID().toString());
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
         TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-all-resources"), tmp);
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(
@@ -108,20 +106,16 @@ public class ConcurrentBuildTest {
                                                                info,
                                                                new String[]{
                                                                        MavenCLIArgs.COMPILE,
-                                                                       MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPathTwo
+                                                                       MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                },
                                                                Boolean.TRUE, Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
-        System.out.println("\nFinished " + res.isSuccessful() + " all Metadata tmp:" + tmp+ " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
+        System.out.println("\nFinished " + res.isSuccessful() + " all Metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
         if (!res.isSuccessful()) {
             try {
-                System.out.println("writing output on target folder:"+tmp);
-                TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
-                                                          "ConcurrentBuildTest.compileAndLoadKieJarMetadataAllResourcesPackagedJar_"+req.getRequestUUID());
-                List<String> msgs = res.getMavenOutput();
-                for (String msg : msgs) {
-                    logger.info(msg);
-                }
+                System.out.println("writing output on target folder:" + tmp);
+                TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
+                                                          "ConcurrentBuildTest.compileAndLoadKieJarMetadataAllResourcesPackagedJar_" + req.getRequestUUID());
             } catch (Exception e) {
                 logger.error(e.getMessage());
             }
@@ -130,22 +124,40 @@ public class ConcurrentBuildTest {
     }
 
     @Test
+    public void buildFourProjectsInFourThreadAsync() throws Exception {
+        ExecutorService executor = Executors.newCachedThreadPool();
+        executor.execute(() -> {
+            compileAndloadKieJarSingleMetadataWithPackagedJarAsync();
+        });
+        executor.execute(() -> {
+            compileAndLoadKieJarMetadataAllResourcesPackagedJarAsync();
+        });
+        executor.execute(() -> {
+            compileAndloadKieJarSingleMetadataWithPackagedJarAsync();
+        });
+        executor.execute(() -> {
+            compileAndLoadKieJarMetadataAllResourcesPackagedJarAsync();
+        });
+
+        executor.awaitTermination(4, TimeUnit.MINUTES);
+        System.out.println("\nFinished all threads ");
+        //WIP
+    }
+
+    @Test
     public void buildFourProjectsInFourThread() throws Exception {
 
         List<Callable<KieCompilationResponse>> tasks = Arrays.asList(
-                //
-                () -> compileAndloadKieJarSingleMetadataWithPackagedJar(alternateSettingsAbsPath),
-                () -> compileAndloadKieJarSingleMetadataWithPackagedJar(alternateSettingsAbsPath),
-                () -> compileAndLoadKieJarMetadataAllResourcesPackagedJar(alternateSettingsAbsPath),
-                () -> compileAndLoadKieJarMetadataAllResourcesPackagedJar(alternateSettingsAbsPath)
-                //
-                );
+                () -> compileAndloadKieJarSingleMetadataWithPackagedJar(),
+                () -> compileAndloadKieJarSingleMetadataWithPackagedJar(),
+                () -> compileAndLoadKieJarMetadataAllResourcesPackagedJar(),
+                () -> compileAndLoadKieJarMetadataAllResourcesPackagedJar()
+        );
 
         ExecutorService executor = Executors.newFixedThreadPool(4);
         try {
-
             List<Future<KieCompilationResponse>> results = executor.invokeAll(tasks);
-            executor.awaitTermination(3, TimeUnit.MINUTES);
+            executor.awaitTermination(4, TimeUnit.MINUTES);
             System.out.println("\nFinished all threads ");
             Assert.assertTrue(results.size() == 4);
             for (Future<KieCompilationResponse> result : results) {
@@ -172,16 +184,15 @@ public class ConcurrentBuildTest {
 
             Callable<Map<Integer, KieCompilationResponse>> task1 = () -> {
                 Map<Integer, KieCompilationResponse> map = new ConcurrentHashMap<>(2);
-                KieCompilationResponse r1 = compileAndloadKieJarSingleMetadataWithPackagedJar(alternateSettingsAbsPath);
-                KieCompilationResponse r2 = compileAndLoadKieJarMetadataAllResourcesPackagedJar(alternateSettingsAbsPath);
+                KieCompilationResponse r1 = compileAndloadKieJarSingleMetadataWithPackagedJar();
+                KieCompilationResponse r2 = compileAndLoadKieJarMetadataAllResourcesPackagedJar();
                 map.put(1, r1);
                 map.put(2, r2);
                 return map;
             };
 
             Future<Map<Integer, KieCompilationResponse>> future = executor.submit(task1);
-            //while(!future.isDone()){}
-            Map<Integer, KieCompilationResponse> result = future.get();
+            Map<Integer, KieCompilationResponse> result = future.get();// blocking call
             KieCompilationResponse one = result.get(1);
             KieCompilationResponse two = result.get(2);
             Assert.assertTrue(one.isSuccessful());
@@ -195,6 +206,76 @@ public class ConcurrentBuildTest {
             }
             executor.shutdownNow();
             System.out.println("shutdown finished");
+        }
+    }
+
+    private CompletableFuture<KieCompilationResponse> compileAndloadKieJarSingleMetadataWithPackagedJarAsync() {
+        try {
+            Path tmpRoot = Files.createTempDirectory("repo_" + UUID.randomUUID().toString());
+            Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
+            TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"), tmp);
+            AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
+
+            WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
+            CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                   info,
+                                                                   new String[]{
+                                                                           MavenCLIArgs.COMPILE,
+                                                                           MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
+                                                                   },
+                                                                   Boolean.TRUE, Boolean.FALSE);
+            KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
+            System.out.println("\nFinished " + res.isSuccessful() + " Single metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
+            if (!res.isSuccessful()) {
+                try {
+                    System.out.println(" Fail, writing output on target folder:" + tmp + " UUID:" + req.getRequestUUID());
+                    TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
+                                                              "ConcurrentBuildTest.compileAndloadKieJarSingleMetadataWithPackagedJar_" + req.getRequestUUID());
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                }
+            }
+
+            return CompletableFuture.completedFuture(res);
+        } catch (Exception e) {
+            CompletableFuture<KieCompilationResponse> future = new CompletableFuture<>();
+            future.completeExceptionally(e);
+            return future;
+        }
+    }
+
+    private CompletableFuture<KieCompilationResponse> compileAndLoadKieJarMetadataAllResourcesPackagedJarAsync() {
+        try {
+            Path tmpRoot = Files.createTempDirectory("repo_" + UUID.randomUUID().toString());
+            Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
+            TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-all-resources"), tmp);
+            AFCompiler compiler = KieMavenCompilerFactory.getCompiler(
+                    KieDecorator.KIE_AND_LOG_AFTER);
+
+            WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
+            CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                   info,
+                                                                   new String[]{
+                                                                           MavenCLIArgs.COMPILE,
+                                                                           MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
+                                                                   },
+                                                                   Boolean.TRUE, Boolean.FALSE);
+            KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
+            System.out.println("\nFinished " + res.isSuccessful() + " all Metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
+            if (!res.isSuccessful()) {
+                try {
+                    System.out.println("writing output on target folder:" + tmp);
+                    TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
+                                                              "ConcurrentBuildTest.compileAndLoadKieJarMetadataAllResourcesPackagedJar_" + req.getRequestUUID());
+                } catch (Exception e) {
+                    logger.error(e.getMessage());
+                }
+            }
+            return CompletableFuture.completedFuture(res);
+        } catch (Exception e) {
+            CompletableFuture<KieCompilationResponse> future = new CompletableFuture<>();
+            future.completeExceptionally(e);
+            return future;
         }
     }
 }
