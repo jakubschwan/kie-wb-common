@@ -34,6 +34,8 @@ import ch.qos.logback.core.sift.Discriminator;
 import ch.qos.logback.core.spi.ContextAwareBase;
 import ch.qos.logback.core.status.Status;
 import ch.qos.logback.core.util.StatusPrinter;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppender;
 import org.kie.workbench.common.services.backend.logback.appender.UUIDThreadNameDiscriminator;
 
@@ -98,7 +100,7 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
 
     private SiftingAppender setSiftingAppender(LoggerContext loggerContext, Discriminator discriminator) {
         KieSiftingAppender appender = new KieSiftingAppender();
-        appender.setName("compilation.ID");
+        appender.setName(MavenConfig.COMPILATION_ID);
         appender.setDiscriminator(discriminator);
         appender.setAppenderFactory(new AppenderFactory<ILoggingEvent>() {
 

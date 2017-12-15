@@ -29,4 +29,6 @@ public class MavenConfig {
     public static String MAVEN_DEFAULT_COMPILE = "default-compile";
 
     public static String MAVEN_PHASE_NONE = "none";
+
+    public static String COMPILATION_ID = "compilation.ID";
 }

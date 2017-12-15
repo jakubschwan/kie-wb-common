@@ -90,8 +90,7 @@ public class CompilerClassloaderUtils {
         final StringBuilder sb = new StringBuilder(MavenConfig.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenConfig.DEPS_FILENAME).append(MavenConfig.CLASSPATH_EXT);
         CompilationRequest req = new DefaultCompilationRequest(localRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.DEBUG,
-                                                                       MavenConfig.DEPS_BUILD_CLASSPATH, sb.toString()},
+                                                               new String[]{MavenConfig.DEPS_BUILD_CLASSPATH, sb.toString()},
                                                                Boolean.TRUE,
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);

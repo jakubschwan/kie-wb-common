@@ -17,6 +17,7 @@ package org.kie.workbench.common.services.backend.logback.appender;
 
 import ch.qos.logback.classic.sift.SiftingAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.logback.OutputSharedMap;
 
 /**
@@ -28,7 +29,7 @@ public class KieSiftingAppender extends SiftingAppender {
     protected void append(ILoggingEvent eventObject) {
         if(!eventObject.getMDCPropertyMap().isEmpty()){
             String msg = eventObject.getFormattedMessage();
-            OutputSharedMap.addMsgToLog(eventObject.getMDCPropertyMap().get("compilation.ID"), msg);
+            OutputSharedMap.addMsgToLog(eventObject.getMDCPropertyMap().get(MavenConfig.COMPILATION_ID), msg);
         }
     }
 }

@@ -99,6 +99,7 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.aether.transfer.TransferListener;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -415,7 +416,7 @@ public class ReusableAFMavenCli {
         plexusLoggerManager = new Slf4jLoggerManager();
         reusableSlf4jLogger = slf4jLoggerFactory.getLogger(this.getClass().getName());
         Thread.currentThread().setName(cliRequest.getRequestUUID());
-        MDC.put("compilation.ID", cliRequest.getRequestUUID());
+        MDC.put(MavenConfig.COMPILATION_ID, cliRequest.getRequestUUID());
     }
 
     protected void version(AFCliRequest cliRequest) {

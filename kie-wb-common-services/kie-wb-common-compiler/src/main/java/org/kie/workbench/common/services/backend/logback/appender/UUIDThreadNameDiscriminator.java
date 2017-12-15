@@ -17,13 +17,12 @@ package org.kie.workbench.common.services.backend.logback.appender;
 
 import ch.qos.logback.classic.sift.MDCBasedDiscriminator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 
 /***
  * Thias discriminator use the name of the Thread to choose the store of the messages
  */
 public class UUIDThreadNameDiscriminator extends MDCBasedDiscriminator {
-
-    private static final String KEY = "compilation.ID";
 
     private boolean started;
 
@@ -38,7 +37,7 @@ public class UUIDThreadNameDiscriminator extends MDCBasedDiscriminator {
 
     @Override
     public String getKey() {
-        return KEY;
+        return MavenConfig.COMPILATION_ID;
     }
 
     public void start() {

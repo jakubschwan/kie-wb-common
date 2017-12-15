@@ -104,7 +104,6 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
         } else {
             List<String> msgs = new ArrayList<>();
             if (kieModuleMetaInfoTuple.getErrorMsg().isPresent()) {
-
                 msgs.add("[ERROR] Error in the kieModuleMetaInfo from the kieMap :" + kieModuleMetaInfoTuple.getErrorMsg().get());
             }
             if (kieModuleTuple.getErrorMsg().isPresent()) {
@@ -159,7 +158,6 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
     }
 
     private KieTuple read(CompilationRequest req, String keyName, String errorMsg) {
-        //@TODO remove this extra "compilation.ID" from the kie-maven plugin
         final StringBuilder sb = new StringBuilder(req.getKieCliRequest().getRequestUUID()).append(".").append(keyName);
         Object o = req.getKieCliRequest().getMap().get(sb.toString());
         if (o != null) {
