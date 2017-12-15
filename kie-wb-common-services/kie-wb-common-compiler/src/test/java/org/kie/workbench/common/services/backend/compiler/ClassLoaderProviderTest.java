@@ -185,7 +185,7 @@ public class ClassLoaderProviderTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.CLEAN, },
                                                                Boolean.FALSE, Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {

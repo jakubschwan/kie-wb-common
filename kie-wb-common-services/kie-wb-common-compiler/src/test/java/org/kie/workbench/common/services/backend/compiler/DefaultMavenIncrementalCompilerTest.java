@@ -94,7 +94,7 @@ public class DefaultMavenIncrementalCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.CLEAN},
                                                                Boolean.FALSE, Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
@@ -125,7 +125,7 @@ public class DefaultMavenIncrementalCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.CLEAN},
                                                                Boolean.FALSE, Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
         if (!res.isSuccessful()) {
