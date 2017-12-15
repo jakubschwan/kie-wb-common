@@ -1,43 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<configuration debug="true">
 
   <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <!-- %l lowers performance -->
       <!--<pattern>%d [%t] %-5p %l%n  %m%n</pattern>-->
-      <pattern>%d [%t] %-5p %m%n</pattern>
+      <!--<pattern>%d [%t] %-5p %m%n</pattern>-->
+      <pattern>%d [%thread] %level %logger{35} - %msg%n</pattern>
     </encoder>
   </appender>
 
   <appender name="KieSift" class="org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppender">
     <discriminator class="org.kie.workbench.common.services.backend.logback.appender.UUIDThreadNameDiscriminator"/>
-    <!--<discriminator>
-      <key>compileid</key>
-      <defaultValue>/tmp/maven/</defaultValue>
-    </discriminator>-->
     <sift>
-      <appender name="${compileID}" class="ch.qos.logback.core.OutputStreamAppender">
+      <appender name="${compilation.ID}" class="org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppender">
         <encoder>
-          <pattern>%d [%thread] %level %mdc %logger{35} - %msg%n</pattern>
-          <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} - %msg%n</pattern>-->
+          <pattern>%d [%thread] %level %logger{35} - %msg%n</pattern>
         </encoder>
-        <!--<file>${compileid}.log</file>
-        <append>false</append>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-          <pattern>%d [%thread] %level %mdc %logger{35} - %msg%n</pattern>
-        </layout>-->
       </appender>
     </sift>
   </appender>
 
-  <logger name="org.kie.workbench.common.services.backend.compiler" level="INFO" additivity="true">
+  <!--<logger name="org.kie.workbench.common.services.backend.compiler" level="INFO" additivity="false">
     <appender-ref ref="consoleAppender"/>
-  </logger>
+  </logger>-->
+
   <!--<logger name="org.apache.maven" level="INFO" additivity="false">
     <appender-ref ref="KieSift"/>
   </logger>-->
-<!--
-  <logger name="org.apache.maven" level="INFO" additivity="false">
+
+  <!--<logger name="org.apache.maven" level="INFO" additivity="false">
     <appender-ref ref="consoleAppender"/>
   </logger>-->
 
@@ -45,8 +37,9 @@
   <logger name="org.kie" level="INFO"/>
   <logger name="org.guvnor" level="INFO"/>
 
-  <root level="info">
+  <root level="INFO">
     <appender-ref ref="KieSift" />
+    <appender-ref ref="consoleAppender"/>
   </root>
 
 </configuration>
