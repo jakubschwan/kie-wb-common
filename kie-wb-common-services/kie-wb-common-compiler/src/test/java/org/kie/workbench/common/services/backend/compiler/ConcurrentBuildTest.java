@@ -49,8 +49,6 @@ public class ConcurrentBuildTest {
     private Path mavenRepo;
     private Logger logger = LoggerFactory.getLogger(ConcurrentBuildTest.class);
 
-    private String alternateSettingsAbsPath;
-
     private volatile Integer counter;
 
     @Before
@@ -63,7 +61,6 @@ public class ConcurrentBuildTest {
                 throw new Exception("Folder not writable in the project");
             }
         }
-        alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
     }
 
     @Test
@@ -174,7 +171,7 @@ public class ConcurrentBuildTest {
     }
 
     private KieCompilationResponse compileAndloadKieJarSingleMetadataWithPackagedJar() {
-
+        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         Path tmpRoot = Files.createTempDirectory("repo_" + UUID.randomUUID().toString());
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
         try {
@@ -208,6 +205,7 @@ public class ConcurrentBuildTest {
     }
 
     private KieCompilationResponse compileAndLoadKieJarMetadataAllResourcesPackagedJar() {
+        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         Path tmpRoot = Files.createTempDirectory("repo_" + UUID.randomUUID().toString());
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
         try {

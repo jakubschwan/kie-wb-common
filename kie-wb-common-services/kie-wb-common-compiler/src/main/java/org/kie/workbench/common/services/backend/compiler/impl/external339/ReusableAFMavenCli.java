@@ -274,12 +274,15 @@ public class ReusableAFMavenCli {
             repository(cliRequest);
             return execute(cliRequest);
         } catch (ExitException e) {
+            //e.printStackTrace();
             e.getStackTrace();
             return e.exitCode;
         } catch (UnrecognizedOptionException e) {
+            //e.printStackTrace();
             e.getStackTrace();
             return 1;
         } catch (BuildAbort e) {
+            //e.printStackTrace();
             e.getStackTrace();
             AFCLIReportingUtils.showError(reusableSlf4jLogger,
                                           "ABORTED",
@@ -287,6 +290,7 @@ public class ReusableAFMavenCli {
                                           cliRequest.isShowErrors());
             return 2;
         } catch (Exception e) {
+            //e.printStackTrace();
             e.getStackTrace();
             AFCLIReportingUtils.showError(reusableSlf4jLogger,
                                           "Error executing Maven.",

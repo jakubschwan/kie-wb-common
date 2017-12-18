@@ -95,13 +95,20 @@ public class AFSettingsXmlConfigurationProcessor implements AFConfigurationProce
         Path userSettingsFile;
 
         if (commandLine.hasOption(CLIManager.ALTERNATE_USER_SETTINGS)) {
-            userSettingsFile = Paths.get(commandLine.getOptionValue(CLIManager.ALTERNATE_USER_SETTINGS));
-            userSettingsFile = resolvePath(userSettingsFile,
-                                           workingDirectory);
+            String settingsFromCLi = commandLine.getOptionValue(CLIManager.ALTERNATE_USER_SETTINGS);
+            logger.info("userSettings:"+settingsFromCLi);
+            if(settingsFromCLi != null) {
+                userSettingsFile = Paths.get(commandLine.getOptionValue(CLIManager.ALTERNATE_USER_SETTINGS).trim());
+                /*userSettingsFile = resolvePath(userSettingsFile,
+                                           workingDirectory); why this override of the value ? */
 
-            if (!Files.isRegularFile(userSettingsFile)) {
-                throw new FileNotFoundException("The specified user settings file does not exist: "
+                if (!Files.isRegularFile(userSettingsFile)) {
+                    throw new FileNotFoundException("The specified user settings file does not exist: "
                                                         + userSettingsFile);
+                }
+            }else{
+                userSettingsFile = DEFAULT_USER_SETTINGS_FILE;
+                logger.info("Using default userSettings:"+userSettingsFile);
             }
         } else {
             userSettingsFile = DEFAULT_USER_SETTINGS_FILE;
