@@ -209,7 +209,7 @@ public class DefaultMavenCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.CLEAN},
+                                                               new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE, Boolean.TRUE);
 
         CompilationResponse res = compiler.compileSync(req);

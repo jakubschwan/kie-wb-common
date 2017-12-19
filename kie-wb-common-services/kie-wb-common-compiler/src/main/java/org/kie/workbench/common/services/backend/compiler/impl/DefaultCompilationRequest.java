@@ -96,10 +96,7 @@ public class DefaultCompilationRequest implements CompilationRequest {
         String[] internalArgs;
         StringBuilder sbCompilationID = new StringBuilder().append("-D").append(MavenConfig.COMPILATION_ID).append("=").append(requestUUID);
         internalArgs = Arrays.copyOf(args,args.length + 1);
-        //String firstArg = internalArgs[0];//usually the phase
         internalArgs[args.length] = sbCompilationID.toString();
-        //internalArgs[0] = sbCompilationID.toString();
-        //internalArgs[args.length] = firstArg;
         return internalArgs;
     }
 

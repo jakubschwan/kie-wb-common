@@ -28,11 +28,11 @@ public class MavenParameterTest {
 
     @Test
     public void cliParameters() throws ParseException {
-        final CLIManager manager = new CLIManager();
         for (int i = 0; i < 600; i++) {
-            final int x = i;
             new Thread(() -> {
-                final String[] values = new String[]{"compile" + x,
+                final CLIManager manager = new CLIManager();
+
+                final String[] values = new String[]{"compile",
                         "-s/Users/porcelli/Sources/kiegroup/kie-wb-common/kie-wb-common-services/kie-wb-common-compiler/src/test/settings.xml",
                         "-Dcompilation.ID=eb678741-0b34-409f-903e-addc083ab2aa",
                         "dependency:build-classpath",
