@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.kie.workbench.common.services.datamodeller.core.DataModel;
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
 import org.kie.workbench.common.services.shared.project.KieProject;
-import org.uberfire.java.nio.file.Path;
+import org.uberfire.backend.vfs.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -29,8 +29,12 @@ import static org.junit.Assert.fail;
 
 public class DataModelerInnerTypesWeldTest extends AbstractDataModelerServiceWeldTest {
 
+    /**
+     * This test checks that class fields that of enum types or inner class types should be skipped.
+     */
     @Test
-    public void dataModelerShouldIgnoreEnumFieldsOfInnerClasses() throws Exception {
+    public void testDataModelerService() throws Exception {
+
         try {
             final URL packageUrl = this.getClass().getResource("/TestInnerTypes");
             final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());

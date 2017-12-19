@@ -49,19 +49,20 @@ public class TestUtil {
         }
     }
 
-    public static synchronized void writeMavenOutputIntoTargetFolder(Path tmp,List<String> mavenOutput,
-                                                        String testName) throws Exception {
+    public static void writeMavenOutputIntoTargetFolder(final Path tmp,
+                                                        final List<String> mavenOutput,
+                                                        final String testName) throws Exception {
         File dir = tmp.toAbsolutePath().toFile();
-        File target = new File(dir.toString()+"/target/");
-        if(!target.exists()){
+        File target = new File(dir.toString() + "/target/");
+        if (!target.exists()) {
             logger.info("Creating target folder");
             target.mkdir();
         }
         if (mavenOutput.size() > 0) {
-            StringBuffer sb = new StringBuffer(target.toString()).append(testName).append(".test.log");
+            StringBuilder sb = new StringBuilder(target.toString()).append(testName).append(".test.log");
 
             File fileOut = new File(sb.toString());
-            logger.info("Writing error output on {}",fileOut.toString());
+            logger.info("Writing error output on {}", fileOut.toString());
             FileOutputStream fos = new FileOutputStream(fileOut);
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
             for (String item : mavenOutput) {

@@ -15,16 +15,18 @@
 
 package org.kie.workbench.common.services.datamodel.backend.server;
 
-import java.net.URISyntaxException;
+import java.net.URL;
+
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
 
 import org.junit.Test;
 import org.kie.soup.project.datamodel.oracle.ProjectDataModelOracle;
+import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
+import org.uberfire.backend.vfs.Path;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.kie.workbench.common.services.datamodel.backend.server.ProjectDataModelOracleTestUtils.assertContains;
+import static org.junit.Assert.*;
+import static org.kie.workbench.common.services.datamodel.backend.server.ProjectDataModelOracleTestUtils.*;
 
 /**
  * Tests for DataModelService
@@ -32,9 +34,18 @@ import static org.kie.workbench.common.services.datamodel.backend.server.Project
 public class ProjectDataModelServiceTest extends AbstractDataModelWeldTest {
 
     @Test
-    public void testProjectDataModelOracle() throws URISyntaxException {
-        final ProjectDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelBackendTest1/src/main/java/t3p1");
+    public void testProjectDataModelOracle() throws Exception {
+        final Bean dataModelServiceBean = (Bean) beanManager.getBeans(DataModelService.class).iterator().next();
+        final CreationalContext cc = beanManager.createCreationalContext(dataModelServiceBean);
+        final DataModelService dataModelService = (DataModelService) beanManager.getReference(dataModelServiceBean,
+                                                                                              DataModelService.class,
+                                                                                              cc);
+
+        final URL packageUrl = this.getClass().getResource("/DataModelBackendTest1/src/main/java/t3p1");
+        final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());
+        final Path packagePath = paths.convert(nioPackagePath);
+
+        final ProjectDataModelOracle oracle = dataModelService.getProjectDataModel(packagePath);
 
         assertNotNull(oracle);
 
@@ -68,9 +79,18 @@ public class ProjectDataModelServiceTest extends AbstractDataModelWeldTest {
     }
 
     @Test
-    public void testProjectDataModelOracleJavaDefaultPackage() throws URISyntaxException {
-        final ProjectDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelBackendTest2/src/main/java");
+    public void testProjectDataModelOracleJavaDefaultPackage() throws Exception {
+        final Bean dataModelServiceBean = (Bean) beanManager.getBeans(DataModelService.class).iterator().next();
+        final CreationalContext cc = beanManager.createCreationalContext(dataModelServiceBean);
+        final DataModelService dataModelService = (DataModelService) beanManager.getReference(dataModelServiceBean,
+                                                                                              DataModelService.class,
+                                                                                              cc);
+
+        final URL packageUrl = this.getClass().getResource("/DataModelBackendTest2/src/main/java");
+        final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());
+        final Path packagePath = paths.convert(nioPackagePath);
+
+        final ProjectDataModelOracle oracle = dataModelService.getProjectDataModel(packagePath);
 
         assertNotNull(oracle);
 

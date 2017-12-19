@@ -15,14 +15,15 @@
 
 package org.kie.workbench.common.screens.datamodeller.backend.server;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.kie.workbench.common.services.datamodeller.core.AnnotationDefinition;
 import org.kie.workbench.common.services.datamodeller.core.DataModel;
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
 import org.kie.workbench.common.services.shared.project.KieProject;
+import org.uberfire.backend.vfs.Path;
 import t1p1.Pojo1;
 import t1p2.Pojo2;
 
@@ -36,7 +37,6 @@ public class DataModelerServiceWeldTest extends AbstractDataModelerServiceWeldTe
 
     @Test
     public void testDataModelerService() throws Exception {
-        KieProject project = loadProjectFromResources("/DataModelerTest1");
 
         final URL packageUrl = this.getClass().getResource("/DataModelerTest1");
         final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());

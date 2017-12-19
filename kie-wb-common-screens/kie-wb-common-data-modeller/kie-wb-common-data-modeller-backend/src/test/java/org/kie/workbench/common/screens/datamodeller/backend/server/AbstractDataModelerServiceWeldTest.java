@@ -15,12 +15,12 @@
 
 package org.kie.workbench.common.screens.datamodeller.backend.server;
 
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Map;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.weld.environment.se.Weld;
-import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.After;
 import org.junit.Before;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
@@ -28,13 +28,14 @@ import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.datamodeller.core.AnnotationDefinition;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.uberfire.backend.server.util.Paths;
-import org.uberfire.backend.vfs.Path;
 import org.uberfire.java.nio.fs.file.SimpleFileSystemProvider;
 
 public abstract class AbstractDataModelerServiceWeldTest {
 
-    private final SimpleFileSystemProvider fs = new SimpleFileSystemProvider();
-    private WeldContainer weldContainer;
+    protected final SimpleFileSystemProvider fs = new SimpleFileSystemProvider();
+    protected Weld weld;
+    protected BeanManager beanManager;
+    protected Paths paths;
     protected DataModelerService dataModelService;
     protected KieProjectService projectService;
     protected Map<String, AnnotationDefinition> systemAnnotations = null;
@@ -43,14 +44,22 @@ public abstract class AbstractDataModelerServiceWeldTest {
     @Before
     public void setUp() throws Exception {
         // disable git and ssh daemons as they are not needed for the tests
-        System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
-        System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
-        System.setProperty("org.uberfire.sys.repo.monitor.disabled", "true");
-
+        System.setProperty( "org.uberfire.nio.git.daemon.enabled",
+                            "false" );
+        System.setProperty( "org.uberfire.nio.git.ssh.enabled",
+                            "false" );
+        System.setProperty( "org.uberfire.sys.repo.monitor.disabled",
+                            "true" );
         //Bootstrap WELD container
-        weldContainer = new Weld().initialize();
-        dataModelService = weldContainer.select(DataModelerService.class).get();
-        projectService = weldContainer.select(KieProjectService.class).get();
+        weld = new Weld();
+        beanManager = weld.initialize().getBeanManager();
+
+        //Instantiate Paths used in tests for Path conversion
+        final Bean pathsBean = (Bean) beanManager.getBeans( Paths.class ).iterator().next();
+        final CreationalContext pathsCContext = beanManager.createCreationalContext( pathsBean );
+        paths = (Paths) beanManager.getReference( pathsBean,
+                                                  Paths.class,
+                                                  pathsCContext );
 
         //Ensure URLs use the default:// scheme
         fs.forceAsDefault();
@@ -70,7 +79,7 @@ public abstract class AbstractDataModelerServiceWeldTest {
                                                                        projectServiceCContext );
 
 
-       //Create  LRUProjectDependenciesClassLoaderCache
+        //Create  LRUProjectDependenciesClassLoaderCache
         final Bean projectCacheBean = beanManager.getBeans( ProjectCache.class ).iterator().next();
         final CreationalContext projectCacheBeanContext = beanManager.createCreationalContext( projectCacheBean );
         projectCache = (ProjectCache) beanManager.getReference(projectCacheBean,
@@ -82,16 +91,8 @@ public abstract class AbstractDataModelerServiceWeldTest {
 
     @After
     public void tearDown() {
-        if (weldContainer != null) {
-            weldContainer.shutdown();
+        if ( weld != null && beanManager != null ) {
+            weld.shutdown();
         }
-    }
-
-    protected KieProject loadProjectFromResources(String resourcesDir) throws URISyntaxException {
-        final URL packageUrl = getClass().getResource(resourcesDir);
-        final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());
-        final Path packagePath = Paths.convert(nioPackagePath);
-
-        return projectService.resolveProject(packagePath);
     }
 }

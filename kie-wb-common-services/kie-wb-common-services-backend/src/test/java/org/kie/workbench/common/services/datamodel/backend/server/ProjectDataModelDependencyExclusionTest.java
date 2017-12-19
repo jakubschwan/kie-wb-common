@@ -15,8 +15,15 @@
 
 package org.kie.workbench.common.services.datamodel.backend.server;
 
+import java.net.URL;
+
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+
 import org.junit.Test;
 import org.kie.soup.project.datamodel.oracle.ProjectDataModelOracle;
+import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
+import org.uberfire.backend.vfs.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -29,7 +36,7 @@ public class ProjectDataModelDependencyExclusionTest extends AbstractDataModelWe
 
     @Test
     public void testBuilderExcludeTestProvidedScopeDependencies() throws Exception {
-        final Bean dataModelServiceBean = (Bean) beanManager.getBeans(DataModelService.class).iterator().next();
+        final Bean dataModelServiceBean = beanManager.getBeans(DataModelService.class).iterator().next();
         final CreationalContext cc = beanManager.createCreationalContext(dataModelServiceBean);
         final DataModelService dataModelService = (DataModelService) beanManager.getReference(dataModelServiceBean,
                                                                                               DataModelService.class,

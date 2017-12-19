@@ -114,6 +114,8 @@ import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
  */
 public class AFMavenCli {
 
+    public static final CLIManager cliManager = new CLIManager();
+
     public static final String MULTIMODULE_PROJECT_DIRECTORY = "maven.multiModuleProjectDirectory";
     public static final String userHome = System.getProperty("user.home");
     public static final Path userMavenConfigurationHome = Paths.get(userHome,
@@ -324,8 +326,6 @@ public class AFMavenCli {
         // the logger is null and construct this so we can use an SLF4J logger everywhere.
         //
         slf4jLogger = new Slf4jStdoutLogger();
-
-        CLIManager cliManager = new CLIManager();
 
         List<String> args = new ArrayList<String>();
 
@@ -706,6 +706,7 @@ public class AFMavenCli {
     }
 
     protected int execute(AFCliRequest cliRequest) throws MavenExecutionRequestPopulationException {
+
         MavenExecutionRequest request = executionRequestPopulator.populateDefaults(cliRequest.getRequest());
 
         eventSpyDispatcher.onEvent(request);

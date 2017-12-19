@@ -36,7 +36,7 @@ import java.util.*;
  * KIE_MAVEN_PLUGIN=kie-maven-plugin
  * KIE_TAKARI_PLUGIN=kie-takari-plugin
  *
- * KIE_VERSION=7.5.0-SNAPSHOT
+ * KIE_VERSION=7.6.0-SNAPSHOT
  */
 public class ConfigurationContextProvider implements ConfigurationProvider {
 

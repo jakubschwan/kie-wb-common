@@ -30,8 +30,6 @@ import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 @ApplicationScoped
 public class BuildServiceImpl implements BuildService {
 
-//    private GuvnorM2Repository guvnorM2Repository;
-
     private ProjectCache projectCache;
 
     private String ERROR_LEVEL = "ERROR";

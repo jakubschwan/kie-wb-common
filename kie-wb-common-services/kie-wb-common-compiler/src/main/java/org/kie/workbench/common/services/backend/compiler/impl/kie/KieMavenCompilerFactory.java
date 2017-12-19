@@ -32,7 +32,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.decorators.Output
  */
 public class KieMavenCompilerFactory {
 
-    private static Map<String, AFCompiler> compilers = new ConcurrentHashMap<>();
+//    private static Map<String, AFCompiler> compilers = new ConcurrentHashMap<>();
 
     private KieMavenCompilerFactory() {
     }
@@ -41,11 +41,11 @@ public class KieMavenCompilerFactory {
      * Provides a Maven compiler decorated with a Decorator Behaviour
      */
     public static <T extends CompilationResponse> AFCompiler<T> getCompiler(KieDecorator decorator) {
-        AFCompiler compiler = compilers.get(decorator.name());
-        if (compiler == null) {
-            compiler = createAndAddNewCompiler(decorator);
-        }
-        return compiler;
+//        AFCompiler compiler = compilers.get(decorator.name());
+//        if (compiler == null) {
+            return createAndAddNewCompiler(decorator);
+//        }
+//        return compiler;
     }
 
     private static <T extends CompilationResponse> AFCompiler<T> createAndAddNewCompiler(KieDecorator decorator) {
@@ -87,8 +87,8 @@ public class KieMavenCompilerFactory {
             default:
                 compiler = new KieDefaultMavenCompiler();
         }
-        compilers.put(Decorator.NONE.name(),
-                      compiler);
+//        compilers.put(Decorator.NONE.name(),
+//                      compiler);
         return compiler;
     }
 
@@ -96,13 +96,13 @@ public class KieMavenCompilerFactory {
      * Delete the compilers creating a new data structure
      */
     public static void deleteCompilers() {
-        compilers = new ConcurrentHashMap<>();
+//        compilers = new ConcurrentHashMap<>();
     }
 
     /**
      * Clear the internal data structure
      */
     public static void clearCompilers() {
-        compilers.clear();
+//        compilers.clear();
     }
 }

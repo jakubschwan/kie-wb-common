@@ -185,4 +185,25 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
     public Set<String> getEventTypeClasses() {
         return eventsTypeClasses;
     }
+
+    @Override
+    public String toString() {
+        return "DefaultKieCompilationResponse{" +
+                "kieModuleMetaInfo=" + kieModuleMetaInfo +
+                ", kieModule=" + kieModule +
+                ", projectClassLoaderStore=" + projectClassLoaderStore +
+                ", eventsTypeClasses=" + eventsTypeClasses +
+                ", defaultResponse=" + defaultResponse +
+                ", successful=" + isSuccessful() +
+                ", mavenOutput=" + getMavenOutput() +
+                ", workingDir=" + getWorkingDir() +
+                ", dependencies=" + getDependencies() +
+                ", dependenciesAsURI=" + getDependenciesAsURI() +
+                ", dependenciesAsURL=" + getDependenciesAsURL() +
+                ", targetContent=" + getTargetContent() +
+                ", targetContentAsURI=" + getTargetContentAsURI() +
+                ", targetContentAsURL=" + getTargetContentAsURL() +
+                ", eventTypeClasses=" + getEventTypeClasses() +
+                '}';
+    }
 }

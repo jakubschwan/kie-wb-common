@@ -22,7 +22,7 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.external339.ReusableAFMavenCli;
+import org.kie.workbench.common.services.backend.compiler.impl.external339.AFMavenCli;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.IncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.pomprocessor.ProcessedPoms;
@@ -47,13 +47,12 @@ public abstract class BaseMavenCompiler<T extends CompilationResponse> implement
 
     private static final Logger logger = LoggerFactory.getLogger(BaseMavenCompiler.class);
 
-
-    private ReusableAFMavenCli cli;
+    private AFMavenCli cli;
 
     private IncrementalCompilerEnabler enabler;
 
     public BaseMavenCompiler() {
-        cli = new ReusableAFMavenCli();
+        cli = new AFMavenCli();
         enabler = new DefaultIncrementalCompilerEnabler();
     }
 
@@ -70,19 +69,17 @@ public abstract class BaseMavenCompiler<T extends CompilationResponse> implement
     }
 
     public Boolean cleanInternalCache() {
-        return enabler.cleanHistory() && cli.cleanInternals();
+        return enabler.cleanHistory();
     }
 
     public void invalidatePomHistory() {
         enabler.cleanHistory();
-        cli.cleanInternals();
     }
 
     @Override
     public T compileSync(CompilationRequest req) {
         if (logger.isDebugEnabled()) {
-            logger.debug("KieCompilationRequest:{}",
-                         req);
+            logger.debug("KieCompilationRequest:{}", req);
         }
 
         if (!req.getInfo().getEnhancedMainPomFile().isPresent()) {

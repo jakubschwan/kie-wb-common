@@ -15,12 +15,18 @@
 
 package org.kie.workbench.common.services.datamodel.backend.server;
 
+import java.net.URL;
+
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+
 import org.junit.Test;
 import org.kie.soup.project.datamodel.oracle.ProjectDataModelOracle;
+import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
+import org.uberfire.backend.vfs.Path;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.kie.workbench.common.services.datamodel.backend.server.ProjectDataModelOracleTestUtils.assertContains;
+import static org.junit.Assert.*;
+import static org.kie.workbench.common.services.datamodel.backend.server.ProjectDataModelOracleTestUtils.*;
 
 /**
  * Tests for DataModelService
@@ -29,8 +35,13 @@ public class ProjectDataModelPackageWhiteListTest extends AbstractDataModelWeldT
 
     @Test
     public void testPackageNameWhiteList_EmptyWhiteList() throws Exception {
-        final ProjectDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelPackageWhiteListTest1");
+        final DataModelService dataModelService = getDataModelService();
+
+        final URL packageUrl = this.getClass().getResource("/DataModelPackageWhiteListTest1");
+        final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());
+        final Path packagePath = paths.convert(nioPackagePath);
+
+        final ProjectDataModelOracle oracle = dataModelService.getProjectDataModel(packagePath);
 
         assertNotNull(oracle);
 
@@ -54,8 +65,13 @@ public class ProjectDataModelPackageWhiteListTest extends AbstractDataModelWeldT
 
     @Test
     public void testPackageNameWhiteList_IncludeOnePackage() throws Exception {
-        final ProjectDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelPackageWhiteListTest2");
+        final DataModelService dataModelService = getDataModelService();
+
+        final URL packageUrl = this.getClass().getResource("/DataModelPackageWhiteListTest2");
+        final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());
+        final Path packagePath = paths.convert(nioPackagePath);
+
+        final ProjectDataModelOracle oracle = dataModelService.getProjectDataModel(packagePath);
 
         assertNotNull(oracle);
 
@@ -79,8 +95,13 @@ public class ProjectDataModelPackageWhiteListTest extends AbstractDataModelWeldT
 
     @Test
     public void testPackageNameWhiteList_IncludeAllPackages() throws Exception {
-        final ProjectDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelPackageWhiteListTest3");
+        final DataModelService dataModelService = getDataModelService();
+
+        final URL packageUrl = this.getClass().getResource("/DataModelPackageWhiteListTest3");
+        final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());
+        final Path packagePath = paths.convert(nioPackagePath);
+
+        final ProjectDataModelOracle oracle = dataModelService.getProjectDataModel(packagePath);
 
         assertNotNull(oracle);
 
@@ -104,8 +125,13 @@ public class ProjectDataModelPackageWhiteListTest extends AbstractDataModelWeldT
 
     @Test
     public void testPackageNameWhiteList_NoWhiteList() throws Exception {
-        final ProjectDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelPackageWhiteListTest4");
+        final DataModelService dataModelService = getDataModelService();
+
+        final URL packageUrl = this.getClass().getResource("/DataModelPackageWhiteListTest4");
+        final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());
+        final Path packagePath = paths.convert(nioPackagePath);
+
+        final ProjectDataModelOracle oracle = dataModelService.getProjectDataModel(packagePath);
 
         assertNotNull(oracle);
 
@@ -129,8 +155,13 @@ public class ProjectDataModelPackageWhiteListTest extends AbstractDataModelWeldT
 
     @Test
     public void testPackageNameWhiteList_Wildcards() throws Exception {
-        final ProjectDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelPackageWhiteListTest5");
+        final DataModelService dataModelService = getDataModelService();
+
+        final URL packageUrl = this.getClass().getResource("/DataModelPackageWhiteListTest5");
+        final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());
+        final Path packagePath = paths.convert(nioPackagePath);
+
+        final ProjectDataModelOracle oracle = dataModelService.getProjectDataModel(packagePath);
 
         assertNotNull(oracle);
 
@@ -150,5 +181,13 @@ public class ProjectDataModelPackageWhiteListTest extends AbstractDataModelWeldT
                      oracle.getProjectModelFields().get("t11.p2.Bean2").length);
         assertContains("this",
                        oracle.getProjectModelFields().get("t11.p2.Bean2"));
+    }
+
+    private DataModelService getDataModelService() {
+        final Bean dataModelServiceBean = (Bean) beanManager.getBeans(DataModelService.class).iterator().next();
+        final CreationalContext cc = beanManager.createCreationalContext(dataModelServiceBean);
+        return (DataModelService) beanManager.getReference(dataModelServiceBean,
+                                                           DataModelService.class,
+                                                           cc);
     }
 }

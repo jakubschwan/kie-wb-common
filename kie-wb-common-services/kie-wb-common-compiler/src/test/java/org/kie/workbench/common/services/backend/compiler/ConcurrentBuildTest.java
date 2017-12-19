@@ -24,6 +24,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,12 +45,15 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
+import static java.util.concurrent.CompletableFuture.supplyAsync;
+import static junit.framework.TestCase.assertTrue;
+
 public class ConcurrentBuildTest {
 
     private Path mavenRepo;
     private Logger logger = LoggerFactory.getLogger(ConcurrentBuildTest.class);
 
-    private volatile Integer counter;
+    private CountDownLatch latch = new CountDownLatch(4);
 
     @Before
     public void setUp() throws Exception {
@@ -65,50 +69,40 @@ public class ConcurrentBuildTest {
 
     @Test
     public void buildFourProjectsInFourThreadCompletableFuture() throws Exception {
+        latch = new CountDownLatch(4);
         ExecutorService executor = Executors.newFixedThreadPool(4);
-        try {
-            counter = 0;
+        final CompletableFuture<KieCompilationResponse> resOne = supplyAsync(this::compileAndloadKieJarSingleMetadataWithPackagedJar, executor);
+        final CompletableFuture<KieCompilationResponse> resTwo = supplyAsync(this::compileAndLoadKieJarMetadataAllResourcesPackagedJar, executor);
+        final CompletableFuture<KieCompilationResponse> resThree = supplyAsync(this::compileAndloadKieJarSingleMetadataWithPackagedJar, executor);
+        final CompletableFuture<KieCompilationResponse> resFour = supplyAsync(this::compileAndLoadKieJarMetadataAllResourcesPackagedJar, executor);
 
-            CompletableFuture<KieCompilationResponse> resOne = CompletableFuture.supplyAsync(() -> compileAndloadKieJarSingleMetadataWithPackagedJar(), executor);
-            CompletableFuture<KieCompilationResponse> resTwo = CompletableFuture.supplyAsync(() -> compileAndLoadKieJarMetadataAllResourcesPackagedJar(), executor);
-            CompletableFuture<KieCompilationResponse> resThree = CompletableFuture.supplyAsync(() -> compileAndloadKieJarSingleMetadataWithPackagedJar(), executor);
-            CompletableFuture<KieCompilationResponse> resFour = CompletableFuture.supplyAsync(() -> compileAndLoadKieJarMetadataAllResourcesPackagedJar(), executor);
+        latch.await();
 
-            while (counter < 4) {
-            }
-            logger.info("ThreadExecuted:" + counter + ", executor shutdown");
-            executor.shutdownNow();
-            Assert.assertTrue(resOne.get().isSuccessful());
-            Assert.assertTrue(resTwo.get().isSuccessful());
-            Assert.assertTrue(resThree.get().isSuccessful());
-            Assert.assertTrue(resFour.get().isSuccessful());
-        } catch (Exception e) {
-            logger.error("tasks interrupted");
-        } finally {
-            if (!executor.isTerminated()) {
-                logger.error("cancel non-finished tasks");
-            }
-            executor.shutdownNow();
-            logger.info("shutdown finished");
-        }
+        System.err.println(resOne.get());
+        System.err.println(resTwo.get());
+        System.err.println(resThree.get());
+        System.err.println(resFour.get());
+
+        assertTrue(resOne.get().isSuccessful());
+        assertTrue(resTwo.get().isSuccessful());
+        assertTrue(resThree.get().isSuccessful());
+        assertTrue(resFour.get().isSuccessful());
     }
 
     @Test
     public void buildFourProjectsInFourThread() {
-        counter = 0;
+        latch = new CountDownLatch(4);
+
         ExecutorService executor = Executors.newFixedThreadPool(4);
         try {
             List<Callable<KieCompilationResponse>> tasks = Arrays.asList(
-                    () -> compileAndloadKieJarSingleMetadataWithPackagedJar(),
-                    () -> compileAndloadKieJarSingleMetadataWithPackagedJar(),
-                    () -> compileAndLoadKieJarMetadataAllResourcesPackagedJar(),
-                    () -> compileAndLoadKieJarMetadataAllResourcesPackagedJar()
-            );
-            List<Future<KieCompilationResponse>> results = executor.invokeAll(tasks);
-            while (counter < 4) {
-            }
-            logger.info("ThreadExecuted:" + counter + ", executor shutdown");
-            executor.shutdownNow();
+                    this::compileAndloadKieJarSingleMetadataWithPackagedJar,
+                    this::compileAndloadKieJarSingleMetadataWithPackagedJar,
+                    this::compileAndLoadKieJarMetadataAllResourcesPackagedJar,
+                    this::compileAndLoadKieJarMetadataAllResourcesPackagedJar);
+            final List<Future<KieCompilationResponse>> results = executor.invokeAll(tasks);
+
+            latch.await();
 
             logger.info("\nFinished all threads ");
             Assert.assertTrue(results.size() == 4);
@@ -133,7 +127,7 @@ public class ConcurrentBuildTest {
 
     @Test
     public void buildFourProjectsInTheSameThread() throws Exception {
-        counter = 0;
+        latch = new CountDownLatch(4);
         ExecutorService executor = Executors.newSingleThreadExecutor();
         try {
 
@@ -151,8 +145,7 @@ public class ConcurrentBuildTest {
             };
 
             Future<Map<Integer, KieCompilationResponse>> future = executor.submit(task1);
-            while (counter < 4) {
-            }
+            latch.await();
             Map<Integer, KieCompilationResponse> result = future.get();// blocking call
             Assert.assertTrue(result.get(1).isSuccessful());
             Assert.assertTrue(result.get(2).isSuccessful());
@@ -179,17 +172,17 @@ public class ConcurrentBuildTest {
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
 
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                               info,
-                                                               new String[]{
-                                                                       MavenCLIArgs.COMPILE,
-                                                                       MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
-                                                               },
-                                                               Boolean.TRUE, Boolean.FALSE);
-        KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
+        final WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
+        final CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
+                                                                     new String[]{
+                                                                             MavenCLIArgs.COMPILE,
+                                                                             MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
+                                                                     },
+                                                                     Boolean.TRUE, Boolean.FALSE);
+        final KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
         logger.info("\nFinished " + res.isSuccessful() + " Single metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
         if (!res.isSuccessful()) {
             try {
@@ -200,7 +193,7 @@ public class ConcurrentBuildTest {
                 logger.error(e.getMessage());
             }
         }
-        counter++;
+        latch.countDown();
         return res;
     }
 
@@ -213,18 +206,17 @@ public class ConcurrentBuildTest {
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(
-                KieDecorator.KIE_AND_LOG_AFTER);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
 
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                               info,
-                                                               new String[]{
-                                                                       MavenCLIArgs.COMPILE,
-                                                                       MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
-                                                               },
-                                                               Boolean.TRUE, Boolean.FALSE);
-        KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
+        final WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
+        final CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
+                                                                     new String[]{
+                                                                             MavenCLIArgs.COMPILE,
+                                                                             MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
+                                                                     },
+                                                                     Boolean.TRUE, Boolean.FALSE);
+        final KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
         logger.info("\nFinished " + res.isSuccessful() + " all Metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
         if (!res.isSuccessful()) {
             try {
@@ -235,7 +227,7 @@ public class ConcurrentBuildTest {
                 logger.error(e.getMessage());
             }
         }
-        counter++;
+        latch.countDown();
         return res;
     }
 }

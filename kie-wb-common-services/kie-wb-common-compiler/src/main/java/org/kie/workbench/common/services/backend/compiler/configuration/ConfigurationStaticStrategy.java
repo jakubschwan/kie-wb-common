@@ -62,7 +62,7 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy, Order
                  "kie-takari-plugin");
 
         conf.put(ConfigurationKey.KIE_VERSION,
-                "7.5.0-SNAPSHOT");
+                "7.6.0-SNAPSHOT");
 
         valid = Boolean.TRUE;
     }
