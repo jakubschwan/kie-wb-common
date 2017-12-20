@@ -137,8 +137,7 @@ public class DefaultAFBuilder implements AFBuilder {
 
     @Override
     public CompletableFuture<Boolean> cleanInternalCache() {
-        compiler.cleanInternalCache();
-        return CompletableFuture.completedFuture(Boolean.TRUE);
+        return CompletableFuture.completedFuture(compiler.cleanInternalCache());
     }
 
     @Override
