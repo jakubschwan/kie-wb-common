@@ -327,6 +327,10 @@ public class AFMavenCli {
         //
         slf4jLogger = new Slf4jStdoutLogger();
 
+        /** promoted as a class variable and single instance because with multiple instances
+         * on moderate/heavy load the parse of the argumentsub produce mistakes */
+        //CLIManager cliManager = new CLIManager();
+
         List<String> args = new ArrayList<String>();
 
         try {

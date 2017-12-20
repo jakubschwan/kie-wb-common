@@ -17,6 +17,7 @@
 package org.kie.workbench.common.services.backend.compiler.impl.external339;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -56,7 +57,7 @@ public class AFCliRequest {
         this.workingDirectory = multiModuleProjectDirectory.toString();
         this.request = new DefaultMavenExecutionRequest();
         this.args = args;
-        this.map = map;
+        this.map = new HashMap<>(map);
         this.requestUUID = requestUUID;
         this.logRequested = logRequested;
     }

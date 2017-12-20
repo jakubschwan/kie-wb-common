@@ -98,7 +98,7 @@ public class AFSettingsXmlConfigurationProcessor implements AFConfigurationProce
             String settingsFromCLi = commandLine.getOptionValue(CLIManager.ALTERNATE_USER_SETTINGS);
             logger.info("userSettings:"+settingsFromCLi);
             if(settingsFromCLi != null) {
-                userSettingsFile = Paths.get(commandLine.getOptionValue(CLIManager.ALTERNATE_USER_SETTINGS).trim());
+                userSettingsFile = Paths.get(settingsFromCLi.trim());
                 /*userSettingsFile = resolvePath(userSettingsFile,
                                            workingDirectory); why this override of the value ? */
 

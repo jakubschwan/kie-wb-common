@@ -16,9 +16,6 @@
 
 package org.kie.workbench.common.services.backend.compiler.impl;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.JGITCompilerBeforeDecorator;
@@ -29,8 +26,6 @@ import org.kie.workbench.common.services.backend.compiler.impl.decorators.Output
  */
 public class MavenCompilerFactory {
 
-    private static Map<String, AFCompiler> compilers = new ConcurrentHashMap<>();
-
     private MavenCompilerFactory() {
     }
 
@@ -38,11 +33,7 @@ public class MavenCompilerFactory {
      * Provides a Maven compiler decorated with a Decorator Behaviour
      */
     public static AFCompiler getCompiler(Decorator decorator) {
-        AFCompiler compiler = compilers.get(decorator.name());
-        if (compiler == null) {
-            compiler = createAndAddNewCompiler(decorator);
-        }
-        return compiler;
+        return createAndAddNewCompiler(decorator);
     }
 
     private static AFCompiler createAndAddNewCompiler(Decorator decorator) {
@@ -67,22 +58,7 @@ public class MavenCompilerFactory {
             default:
                 compiler = new DefaultMavenCompiler();
         }
-        compilers.put(Decorator.NONE.name(),
-                      compiler);
         return compiler;
     }
 
-    /**
-     * Delete the compilers creating a new data structure
-     */
-    public static void deleteCompilers() {
-        compilers = new ConcurrentHashMap<>();
-    }
-
-    /**
-     * Clear the internal data structure
-     */
-    public static void clearCompilers() {
-        compilers.clear();
-    }
 }

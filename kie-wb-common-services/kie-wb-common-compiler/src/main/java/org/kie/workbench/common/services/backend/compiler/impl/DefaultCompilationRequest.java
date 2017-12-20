@@ -24,7 +24,6 @@ import java.util.UUID;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.impl.external339.AFCliRequest;
-import org.slf4j.MDC;
 import org.uberfire.java.nio.file.Path;
 
 /***
@@ -57,10 +56,12 @@ public class DefaultCompilationRequest implements CompilationRequest {
 
         this.originalArgs = args;
         this.logRequested = logRequested;
-        String[] internalArgs = getInternalArgs(args);
+        //String[] internalArgs = getInternalArgs(args);
+        Map internalMap = new HashMap();
+        internalMap.put(MavenConfig.COMPILATION_ID, this.requestUUID);
         this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
-                                    internalArgs,
-                                    new HashMap<>(),
+                                    args,
+                                    internalMap,
                                     this.requestUUID,
                                     logRequested);
     }
@@ -84,20 +85,13 @@ public class DefaultCompilationRequest implements CompilationRequest {
 
         this.originalArgs = args;
         this.logRequested = logRequested;
-        String[] internalArgs = getInternalArgs(args);
+        Map internalMap = new HashMap();
+        internalMap.put(MavenConfig.COMPILATION_ID, this.requestUUID);
         this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
-                                    internalArgs,
-                                    new HashMap<>(),
+                                    args,
+                                    internalMap,
                                     this.requestUUID,
                                     logRequested);
-    }
-
-    private String[] getInternalArgs(String[] args) {
-        String[] internalArgs;
-        StringBuilder sbCompilationID = new StringBuilder().append("-D").append(MavenConfig.COMPILATION_ID).append("=").append(requestUUID);
-        internalArgs = Arrays.copyOf(args,args.length + 1);
-        internalArgs[args.length] = sbCompilationID.toString();
-        return internalArgs;
     }
 
     @Override
