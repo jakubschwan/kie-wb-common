@@ -22,7 +22,7 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.external339.AFMavenCli;
+import org.kie.workbench.common.services.backend.compiler.impl.external339.ReusableAFMavenCli;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.IncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.pomprocessor.ProcessedPoms;
@@ -47,12 +47,14 @@ public abstract class BaseMavenCompiler<T extends CompilationResponse> implement
 
     private static final Logger logger = LoggerFactory.getLogger(BaseMavenCompiler.class);
 
-    private AFMavenCli cli;
+    //private AFMavenCli cli;
+    private ReusableAFMavenCli cli;
 
     private IncrementalCompilerEnabler enabler;
 
     public BaseMavenCompiler() {
-        cli = new AFMavenCli();
+        cli = new ReusableAFMavenCli();
+        //cli = new AFMavenCli();
         enabler = new DefaultIncrementalCompilerEnabler();
     }
 
@@ -69,11 +71,12 @@ public abstract class BaseMavenCompiler<T extends CompilationResponse> implement
     }
 
     public Boolean cleanInternalCache() {
-        return enabler.cleanHistory();
+        return enabler.cleanHistory() && cli.cleanInternals();
     }
 
     public void invalidatePomHistory() {
         enabler.cleanHistory();
+        cli.cleanInternals();
     }
 
     @Override

@@ -114,6 +114,8 @@ import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
  */
 public class ReusableAFMavenCli {
 
+    public static final CLIManager cliManager = new CLIManager();
+
     public static final String MULTIMODULE_PROJECT_DIRECTORY = "maven.multiModuleProjectDirectory";
     public static final String userHome = System.getProperty("user.home");
     public static final Path userMavenConfigurationHome = Paths.get(userHome,
@@ -332,7 +334,9 @@ public class ReusableAFMavenCli {
         //
         reusableSlf4jLogger = new Slf4jStdoutLogger();
 
-        CLIManager cliManager = new CLIManager();
+        /** promoted as a class variable and single instance because with multiple instances
+         * on moderate/heavy load the parse of the argumentsub produce mistakes */
+        //CLIManager cliManager = new CLIManager();
 
         List<String> args = new ArrayList<String>();
 

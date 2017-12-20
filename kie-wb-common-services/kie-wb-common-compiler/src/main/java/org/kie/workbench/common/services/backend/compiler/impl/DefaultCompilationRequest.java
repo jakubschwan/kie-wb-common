@@ -56,7 +56,6 @@ public class DefaultCompilationRequest implements CompilationRequest {
 
         this.originalArgs = args;
         this.logRequested = logRequested;
-        //String[] internalArgs = getInternalArgs(args);
         Map internalMap = new HashMap();
         internalMap.put(MavenConfig.COMPILATION_ID, this.requestUUID);
         this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
