@@ -21,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
@@ -179,7 +178,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     public CompletableFuture<KieCompilationResponse> build() {
         gitPullAndRebase();
         req.getKieCliRequest().getMap().clear();
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -197,7 +196,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                             new String[]{MavenCLIArgs.COMPILE},
                                             logRequested,
                                             skipPrjDependenciesCreationList);
-        return compiler.compileSync(req);
+        return compiler.compile(req);
     }
 
     @Override
@@ -207,7 +206,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                             info,
                                             new String[]{MavenCLIArgs.PACKAGE},
                                             Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -217,7 +216,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                             info,
                                             new String[]{MavenCLIArgs.PACKAGE},
                                             Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -227,7 +226,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                             info,
                                             new String[]{MavenCLIArgs.INSTALL},
                                             Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -237,7 +236,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                             info,
                                             new String[]{MavenCLIArgs.INSTALL},
                                             Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -247,7 +246,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -257,7 +256,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -269,7 +268,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -281,7 +280,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -293,7 +292,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                                info,
                                                                new String[]{MavenCLIArgs.PACKAGE},
                                                                Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -305,7 +304,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                                info,
                                                                new String[]{MavenCLIArgs.PACKAGE},
                                                                Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -317,7 +316,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL},
                                                                Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -329,7 +328,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL},
                                                                Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -342,7 +341,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                                info,
                                                                args,
                                                                Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -355,7 +354,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                                info,
                                                                args,
                                                                Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -370,7 +369,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                                info,
                                                                args,
                                                                Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
@@ -385,6 +384,6 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                                info,
                                                                args,
                                                                Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 }

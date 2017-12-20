@@ -33,137 +33,137 @@ public interface AFBuilder {
      * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder and
      * maven repo remain the same between compilaton requests
      */
-    CompletableFuture<CompilationResponse> buildAsync();
+    CompletableFuture<CompilationResponse> build();
 
     /**
      * Run a mvn package on the prj and maven repo configured in the constructor, maven output provided in the
      * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder and maven repo
      * remain the same between compilaton requests
      */
-    CompletableFuture<CompilationResponse> buildAndPackageAsync();
+    CompletableFuture<CompilationResponse> buildAndPackage();
 
     /**
      * Run a mvn package on the prj and maven repo configured in the constructor, maven output provided in the
      * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder and maven repo
      * remain the same between compilaton requests
      */
-    CompletableFuture<CompilationResponse> buildAndPackageAsync(Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<CompilationResponse> buildAndPackage(Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn install on the prj and maven repo configured in the constructor, maven output provided in the
      * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder
      * and maven repo remain the same between compilaton requests
      */
-    CompletableFuture<CompilationResponse> buildAndInstallAsync();
+    CompletableFuture<CompilationResponse> buildAndInstall();
 
     /**
      * Run a mvn install on the prj and maven repo configured in the constructor, maven output provided in the
      * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder
      * and maven repo remain the same between compilaton requests
      */
-    CompletableFuture<CompilationResponse> buildAndInstallAsync(Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<CompilationResponse> buildAndInstall(Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn compile on the prj configured in the constructor, maven output provided in the CompilationResponse,
      * useful if the project folder remain the same but
      * different maven repo are required between compilation requests
      */
-    CompletableFuture<CompilationResponse> buildAsync(String mavenRepo);
+    CompletableFuture<CompilationResponse> build(String mavenRepo);
 
     /**
      * Run a mvn compile on the prj configured in the constructor, maven output provided in the CompilationResponse,
      * useful if the project folder remain the same but
      * different maven repo are required between compilation requests
      */
-    CompletableFuture<CompilationResponse> buildAsync(String mavenRepo,
-                              Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<CompilationResponse> build(String mavenRepo,
+                                                 Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse,
      * useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<CompilationResponse> buildAsync(String projectPath,
-                              String mavenRepo,
-                              Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<CompilationResponse> build(String projectPath,
+                                                 String mavenRepo,
+                                                 Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse,
      * useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<CompilationResponse> buildAsync(String projectPath,
-                              String mavenRepo);
+    CompletableFuture<CompilationResponse> build(String projectPath,
+                                                 String mavenRepo);
 
     /**
      * Run a mvn compile package on the projectPath, maven output provided in the CompilationResponse,
      * useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<CompilationResponse> buildAndPackageAsync(String projectPath,
-                                        String mavenRepo);
+    CompletableFuture<CompilationResponse> buildAndPackage(String projectPath,
+                                                           String mavenRepo);
 
     /**
      * Run a mvn compile package on the projectPath, maven output provided in the CompilationResponse,
      * useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<CompilationResponse> buildAndPackageAsync(String projectPath,
-                                        String mavenRepo,
-                                        Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<CompilationResponse> buildAndPackage(String projectPath,
+                                                           String mavenRepo,
+                                                           Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn install on the projectPath, maven output provided in the CompilationResponse,
      * useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<CompilationResponse> buildAndInstallAsync(String kieProjectPath,
-                                        String mavenRepo,
-                                        Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<CompilationResponse> buildAndInstall(String kieProjectPath,
+                                                           String mavenRepo,
+                                                           Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn install on the projectPath, maven output provided in the CompilationResponse,
      * useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<CompilationResponse> buildAndInstallAsync(String kieProjectPath,
-                                        String mavenRepo);
+    CompletableFuture<CompilationResponse> buildAndInstall(String kieProjectPath,
+                                                           String mavenRepo);
 
     /**
      * Run a mvn {args}, maven output provided in the CompilationResponse,
      * useful if the project folder, maven repo and
      * maven args changes between compilation Requests
      */
-    CompletableFuture<CompilationResponse> buildSpecializedAsync(String kieProjectPath,
-                                         String mavenRepo,
-                                         String[] args);
+    CompletableFuture<CompilationResponse> buildSpecialized(String kieProjectPath,
+                                                            String mavenRepo,
+                                                            String[] args);
 
     /**
      * Run a mvn {args}, maven output provided in the CompilationResponse,
      * useful if the project folder, maven repo and
      * maven args changes between compilation Requests
      */
-    CompletableFuture<CompilationResponse> buildSpecializedAsync(String kieProjectPath,
-                                         String mavenRepo,
-                                         String[] args,
-                                         Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<CompilationResponse> buildSpecialized(String kieProjectPath,
+                                                            String mavenRepo,
+                                                            String[] args,
+                                                            Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn {args}, maven output provided in the CompilationResponse, behaviour before and after compilation based
      * on the decoator
      */
-    CompletableFuture<CompilationResponse> buildSpecializedAsync(String kieProjectPath,
-                                         String mavenRepo,
-                                         String[] args,
-                                         Decorator decorator);
+    CompletableFuture<CompilationResponse> buildSpecialized(String kieProjectPath,
+                                                            String mavenRepo,
+                                                            String[] args,
+                                                            Decorator decorator);
 
     /**
      * Run a mvn {args}, maven output provided in the CompilationResponse, behaviour before and after compilation based
      * on the decoator
      */
-    CompletableFuture<CompilationResponse> buildSpecializedAsync(String kieProjectPath,
-                                         String mavenRepo,
-                                         String[] args,
-                                         Decorator decorator, Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<CompilationResponse> buildSpecialized(String kieProjectPath,
+                                                            String mavenRepo,
+                                                            String[] args,
+                                                            Decorator decorator, Boolean skipPrjDependenciesCreationList);
 
 }

@@ -45,7 +45,6 @@ import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.MavenCompilerFactory;
@@ -93,7 +92,7 @@ public class CompilerClassloaderUtils {
                                                                new String[]{MavenConfig.DEPS_BUILD_CLASSPATH, sb.toString()},
                                                                Boolean.TRUE,
                                                                Boolean.FALSE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (res.isSuccessful()) {
             /** Maven dependency plugin is not able to append the modules classpath using an absolute path in -Dmdep.outputFile,
              it override each time and at the end only the last writted is present in  the file,

@@ -69,7 +69,7 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.VERSION},
                                                                Boolean.FALSE, Boolean.TRUE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testIsValidMavenHome");
@@ -96,7 +96,7 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE, Boolean.TRUE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabled");
@@ -127,17 +127,17 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE, Boolean.TRUE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabledThreeTime");
         }
         Assert.assertTrue(res.isSuccessful());
 
-        res = compiler.compileSync(req);
+        res = compiler.compile(req);
         Assert.assertTrue(res.isSuccessful());
 
-        res = compiler.compileSync(req);
+        res = compiler.compile(req);
         Assert.assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
@@ -164,7 +164,7 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE, Boolean.TRUE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testCheckIncrementalWithChanges");
@@ -200,7 +200,7 @@ public class DefaultMavenIncrementalCompilerTest {
                     Files.readAllBytes(Paths.get("src/test/projects/Dummy.java")));
 
         //second compilation
-        res = compiler.compileSync(req);
+        res = compiler.compile(req);
 
         //checks
         Assert.assertTrue(res.isSuccessful());
@@ -243,7 +243,7 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.FAIL_NEVER, MavenCLIArgs.DEBUG},
                                                                Boolean.TRUE, Boolean.TRUE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testError");

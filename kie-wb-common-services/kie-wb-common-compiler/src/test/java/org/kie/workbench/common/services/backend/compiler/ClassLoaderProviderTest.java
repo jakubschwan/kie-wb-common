@@ -88,7 +88,7 @@ public class ClassLoaderProviderTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
                                                                Boolean.FALSE, Boolean.FALSE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadProjectClassloaderTest");
@@ -138,7 +138,7 @@ public class ClassLoaderProviderTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
                                                                Boolean.FALSE, Boolean.FALSE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
@@ -187,7 +187,7 @@ public class ClassLoaderProviderTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE },
                                                                Boolean.FALSE, Boolean.FALSE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadTargetFolderClassloaderTest");
@@ -264,7 +264,7 @@ public class ClassLoaderProviderTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE, Boolean.FALSE);
-        KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
+        KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");
@@ -323,7 +323,7 @@ public class ClassLoaderProviderTest {
                                                                new String[]{ MavenCLIArgs.INSTALL},
                                                                Boolean.TRUE, Boolean.FALSE);
 
-        KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
+        KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
                                                       "KieMetadataTest.getResourcesFromADroolsPRJWithError");

@@ -137,7 +137,7 @@ public class KieDefaultMavenCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE, Boolean.FALSE);
 
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned,res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildWithCloneTest");
@@ -215,7 +215,7 @@ public class KieDefaultMavenCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
 
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildWithPullRebaseUberfireTest");
@@ -277,7 +277,7 @@ public class KieDefaultMavenCompilerTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/dummy/"),res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildWithJGitDecoratorTest");
@@ -296,7 +296,7 @@ public class KieDefaultMavenCompilerTest {
         assertFalse(lastCommit.getId().toString().equals(commitBefore.getId().toString()));
 
         //recompile
-        res = compiler.compileSync(req);
+        res = compiler.compile(req);
 //        assert commits
         assertTrue(res.isSuccessful());
     }
@@ -353,7 +353,7 @@ public class KieDefaultMavenCompilerTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildWithAllDecoratorsTest");
@@ -372,7 +372,7 @@ public class KieDefaultMavenCompilerTest {
         assertFalse(lastCommit.getId().toString().equals(commitBefore.getId().toString()));
 
         //recompile
-        res = compiler.compileSync(req);
+        res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildWithAllDecoratorsTest");

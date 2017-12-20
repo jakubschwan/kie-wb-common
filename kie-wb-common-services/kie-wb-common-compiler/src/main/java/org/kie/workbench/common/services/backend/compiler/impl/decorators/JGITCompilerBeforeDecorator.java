@@ -52,7 +52,7 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
     }
 
     @Override
-    public T compileSync(CompilationRequest req) {
+    public T compile(CompilationRequest req) {
 
         final Path path = req.getInfo().getPrjPath();
         final CompilationRequest _req;
@@ -75,7 +75,7 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
             _req = req;
         }
 
-        return compiler.compileSync(_req);
+        return compiler.compile(_req);
     }
 
     private Git useInternalMap(JGitFileSystem fs,

@@ -77,7 +77,7 @@ public class KieClassLoaderProviderTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
                                                                Boolean.FALSE, Boolean.FALSE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieClassLoaderProviderTest.loadProjectClassloaderTest");
@@ -128,7 +128,7 @@ public class KieClassLoaderProviderTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
                                                                Boolean.FALSE, Boolean.FALSE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
@@ -177,7 +177,7 @@ public class KieClassLoaderProviderTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE, Boolean.FALSE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieClassLoaderProviderTest.loadTargetFolderClassloaderTest");

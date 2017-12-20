@@ -63,8 +63,8 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
     }
 
     @Override
-    public T compileSync(CompilationRequest req) {
-        T res = compiler.compileSync(req);
+    public T compile(CompilationRequest req) {
+        T res = compiler.compile(req);
         if (req.getInfo().isKiePluginPresent()) {
             return (T) handleKieMavenPlugin(req, res);
         }

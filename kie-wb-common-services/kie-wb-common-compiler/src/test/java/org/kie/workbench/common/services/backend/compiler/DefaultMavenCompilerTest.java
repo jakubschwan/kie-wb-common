@@ -133,7 +133,7 @@ public class DefaultMavenCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
 
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithCloneTest");
@@ -212,7 +212,7 @@ public class DefaultMavenCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE, Boolean.TRUE);
 
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithPullRebaseUberfireTest");
@@ -275,7 +275,7 @@ public class DefaultMavenCompilerTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/dummy/"),res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
@@ -294,7 +294,7 @@ public class DefaultMavenCompilerTest {
         assertFalse(lastCommit.getId().toString().equals(commitBefore.getId().toString()));
 
         //recompile
-        res = compiler.compileSync(req);
+        res = compiler.compile(req);
 //        assert commits
         assertTrue(res.isSuccessful());
     }
@@ -348,7 +348,7 @@ public class DefaultMavenCompilerTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
@@ -367,7 +367,7 @@ public class DefaultMavenCompilerTest {
         assertFalse(lastCommit.getId().toString().equals(commitBefore.getId().toString()));
 
         //recompile
-        res = compiler.compileSync(req);
+        res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
@@ -472,7 +472,7 @@ public class DefaultMavenCompilerTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/dummy/"), res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
@@ -493,7 +493,7 @@ public class DefaultMavenCompilerTest {
         compiler.cleanInternalCache();
 
         //recompile
-        res = compiler.compileSync(req);
+        res = compiler.compile(req);
 //        assert commits
         assertTrue(res.isSuccessful());
     }

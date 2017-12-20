@@ -37,8 +37,8 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
     }
 
     @Override
-    public T compileSync(CompilationRequest req) {
-        T res = compiler.compileSync(req);
+    public T compile(CompilationRequest req) {
+        T res = compiler.compile(req);
         T t ;
         if (req.getLogRequested()) {
             t =compiler.buildDefaultCompilationResponse(res.isSuccessful(),

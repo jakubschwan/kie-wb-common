@@ -94,7 +94,7 @@ public class KieMetadataTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE, Boolean.FALSE);
-        KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
+        KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
 
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
@@ -157,7 +157,7 @@ public class KieMetadataTest {
                                                                    info,
                                                                    new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS +alternateSettingsAbsPath},
                                                                    Boolean.TRUE, Boolean.FALSE);
-            KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
+            KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
 
             if (!res.isSuccessful()) {
                 TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
@@ -213,7 +213,7 @@ public class KieMetadataTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS +alternateSettingsAbsPath},
                                                                Boolean.FALSE, Boolean.FALSE);
-        KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
+        KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");

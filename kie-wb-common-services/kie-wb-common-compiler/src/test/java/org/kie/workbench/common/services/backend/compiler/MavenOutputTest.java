@@ -45,7 +45,7 @@ public class MavenOutputTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpNio, res.getMavenOutput(),
                                                       "MavenOutputTest.testOutputWithTakari");

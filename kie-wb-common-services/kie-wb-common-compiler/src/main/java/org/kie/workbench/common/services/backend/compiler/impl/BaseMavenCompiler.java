@@ -80,7 +80,7 @@ public abstract class BaseMavenCompiler<T extends CompilationResponse> implement
     }
 
     @Override
-    public T compileSync(CompilationRequest req) {
+    public T compile(CompilationRequest req) {
         if (logger.isDebugEnabled()) {
             logger.debug("KieCompilationRequest:{}", req);
         }

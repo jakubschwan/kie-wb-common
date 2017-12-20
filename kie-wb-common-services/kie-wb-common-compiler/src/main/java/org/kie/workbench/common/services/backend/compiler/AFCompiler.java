@@ -25,9 +25,9 @@ import org.uberfire.java.nio.file.Path;
 public interface AFCompiler<T extends CompilationResponse> {
 
     /**
-     * Compile a project starting from the main POM in a sync way
+     * Compile a project starting from the main POM
      */
-    T compileSync(final CompilationRequest req);
+    T compile(final CompilationRequest req);
 
     T buildDefaultCompilationResponse(final Boolean value);
 

@@ -50,7 +50,7 @@ public class KieMavenOutputTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
-        CompilationResponse res = compiler.compileSync(req);
+        CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
                                                       "KieMavenOutputTest.testOutputWithTakari");

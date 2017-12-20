@@ -141,170 +141,170 @@ public class DefaultAFBuilder implements AFBuilder {
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildAsync() {
+    public CompletableFuture<CompilationResponse> build() {
         req.getKieCliRequest().getMap().clear();
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildAndPackageAsync() {
+    public CompletableFuture<CompilationResponse> buildAndPackage() {
         req = new DefaultCompilationRequest(mavenRepo,
                                             info,
                                             new String[]{MavenCLIArgs.PACKAGE},
                                             Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildAndPackageAsync(Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<CompilationResponse> buildAndPackage(Boolean skipPrjDependenciesCreationList) {
         req = new DefaultCompilationRequest(mavenRepo,
                                             info,
                                             new String[]{MavenCLIArgs.PACKAGE},
                                             Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildAndInstallAsync() {
+    public CompletableFuture<CompilationResponse> buildAndInstall() {
 
         req = new DefaultCompilationRequest(mavenRepo,
                                             info,
                                             new String[]{MavenCLIArgs.INSTALL},
                                             Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildAndInstallAsync(Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<CompilationResponse> buildAndInstall(Boolean skipPrjDependenciesCreationList) {
         req = new DefaultCompilationRequest(mavenRepo,
                                             info,
                                             new String[]{MavenCLIArgs.INSTALL},
                                             Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildAsync(String mavenRepo) {
+    public CompletableFuture<CompilationResponse> build(String mavenRepo) {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildAsync(String mavenRepo, Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<CompilationResponse> build(String mavenRepo, Boolean skipPrjDependenciesCreationList) {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildAsync(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<CompilationResponse> build(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
 
 
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildAsync(String projectPath, String mavenRepo) {
+    public CompletableFuture<CompilationResponse> build(String projectPath, String mavenRepo) {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
 
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildAndPackageAsync(String projectPath, String mavenRepo) {
+    public CompletableFuture<CompilationResponse> buildAndPackage(String projectPath, String mavenRepo) {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.PACKAGE},
                                                                Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildAndPackageAsync(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<CompilationResponse> buildAndPackage(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.PACKAGE},
                                                                Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildAndInstallAsync(String kieProjectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<CompilationResponse> buildAndInstall(String kieProjectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(kieProjectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL},
                                                                Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
 
 
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildAndInstallAsync(String kieProjectPath, String mavenRepo) {
+    public CompletableFuture<CompilationResponse> buildAndInstall(String kieProjectPath, String mavenRepo) {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(kieProjectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL},
                                                                Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildSpecializedAsync(String kieProjectPath, String mavenRepo, String[] args) {
+    public CompletableFuture<CompilationResponse> buildSpecialized(String kieProjectPath, String mavenRepo, String[] args) {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(kieProjectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                args,
                                                                Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildSpecializedAsync(String kieProjectPath, String mavenRepo, String[] args, Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<CompilationResponse> buildSpecialized(String kieProjectPath, String mavenRepo, String[] args, Boolean skipPrjDependenciesCreationList) {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(kieProjectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                args,
                                                                Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildSpecializedAsync(String kieProjectPath, String mavenRepo, String[] args, Decorator decorator) {
+    public CompletableFuture<CompilationResponse> buildSpecialized(String kieProjectPath, String mavenRepo, String[] args, Decorator decorator) {
         AFCompiler compiler = MavenCompilerFactory.getCompiler(decorator);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(kieProjectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                args,
                                                                Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 
     @Override
-    public CompletableFuture<CompilationResponse> buildSpecializedAsync(String kieProjectPath, String mavenRepo, String[] args, Decorator decorator, Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<CompilationResponse> buildSpecialized(String kieProjectPath, String mavenRepo, String[] args, Decorator decorator, Boolean skipPrjDependenciesCreationList) {
         AFCompiler compiler = MavenCompilerFactory.getCompiler(decorator);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(kieProjectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                args,
                                                                Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compileSync(req));
+        return CompletableFuture.completedFuture(compiler.compile(req));
     }
 }
