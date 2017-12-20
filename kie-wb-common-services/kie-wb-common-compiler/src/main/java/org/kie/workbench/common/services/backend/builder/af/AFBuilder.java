@@ -15,18 +15,17 @@
  */
 package org.kie.workbench.common.services.backend.builder.af;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 
-/***
- * Defines the behaviours available in the AppFormer Builder
- */
 public interface AFBuilder {
 
     /**
      * Clean internal poms cached
      */
-    Boolean cleanInternalCache();
+    CompletableFuture<Boolean> cleanInternalCache();
 
     /**
      * Run a mvn compile if is used the contructor with no []args or run the maven tasks declared in the []args passed with
@@ -34,49 +33,49 @@ public interface AFBuilder {
      * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder and
      * maven repo remain the same between compilaton requests
      */
-    CompilationResponse build();
+    CompletableFuture<CompilationResponse> buildAsync();
 
     /**
      * Run a mvn package on the prj and maven repo configured in the constructor, maven output provided in the
      * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder and maven repo
      * remain the same between compilaton requests
      */
-    CompilationResponse buildAndPackage();
+    CompletableFuture<CompilationResponse> buildAndPackageAsync();
 
     /**
      * Run a mvn package on the prj and maven repo configured in the constructor, maven output provided in the
      * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder and maven repo
      * remain the same between compilaton requests
      */
-    CompilationResponse buildAndPackage(Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<CompilationResponse> buildAndPackageAsync(Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn install on the prj and maven repo configured in the constructor, maven output provided in the
      * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder
      * and maven repo remain the same between compilaton requests
      */
-    CompilationResponse buildAndInstall();
+    CompletableFuture<CompilationResponse> buildAndInstallAsync();
 
     /**
      * Run a mvn install on the prj and maven repo configured in the constructor, maven output provided in the
      * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder
      * and maven repo remain the same between compilaton requests
      */
-    CompilationResponse buildAndInstall(Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<CompilationResponse> buildAndInstallAsync(Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn compile on the prj configured in the constructor, maven output provided in the CompilationResponse,
      * useful if the project folder remain the same but
      * different maven repo are required between compilation requests
      */
-    CompilationResponse build(String mavenRepo);
+    CompletableFuture<CompilationResponse> buildAsync(String mavenRepo);
 
     /**
      * Run a mvn compile on the prj configured in the constructor, maven output provided in the CompilationResponse,
      * useful if the project folder remain the same but
      * different maven repo are required between compilation requests
      */
-    CompilationResponse build(String mavenRepo,
+    CompletableFuture<CompilationResponse> buildAsync(String mavenRepo,
                               Boolean skipPrjDependenciesCreationList);
 
     /**
@@ -84,7 +83,7 @@ public interface AFBuilder {
      * useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompilationResponse build(String projectPath,
+    CompletableFuture<CompilationResponse> buildAsync(String projectPath,
                               String mavenRepo,
                               Boolean skipPrjDependenciesCreationList);
 
@@ -93,7 +92,7 @@ public interface AFBuilder {
      * useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompilationResponse build(String projectPath,
+    CompletableFuture<CompilationResponse> buildAsync(String projectPath,
                               String mavenRepo);
 
     /**
@@ -101,7 +100,7 @@ public interface AFBuilder {
      * useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompilationResponse buildAndPackage(String projectPath,
+    CompletableFuture<CompilationResponse> buildAndPackageAsync(String projectPath,
                                         String mavenRepo);
 
     /**
@@ -109,7 +108,7 @@ public interface AFBuilder {
      * useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompilationResponse buildAndPackage(String projectPath,
+    CompletableFuture<CompilationResponse> buildAndPackageAsync(String projectPath,
                                         String mavenRepo,
                                         Boolean skipPrjDependenciesCreationList);
 
@@ -118,7 +117,7 @@ public interface AFBuilder {
      * useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompilationResponse buildAndInstall(String kieProjectPath,
+    CompletableFuture<CompilationResponse> buildAndInstallAsync(String kieProjectPath,
                                         String mavenRepo,
                                         Boolean skipPrjDependenciesCreationList);
 
@@ -127,7 +126,7 @@ public interface AFBuilder {
      * useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompilationResponse buildAndInstall(String kieProjectPath,
+    CompletableFuture<CompilationResponse> buildAndInstallAsync(String kieProjectPath,
                                         String mavenRepo);
 
     /**
@@ -135,7 +134,7 @@ public interface AFBuilder {
      * useful if the project folder, maven repo and
      * maven args changes between compilation Requests
      */
-    CompilationResponse buildSpecialized(String kieProjectPath,
+    CompletableFuture<CompilationResponse> buildSpecializedAsync(String kieProjectPath,
                                          String mavenRepo,
                                          String[] args);
 
@@ -144,7 +143,7 @@ public interface AFBuilder {
      * useful if the project folder, maven repo and
      * maven args changes between compilation Requests
      */
-    CompilationResponse buildSpecialized(String kieProjectPath,
+    CompletableFuture<CompilationResponse> buildSpecializedAsync(String kieProjectPath,
                                          String mavenRepo,
                                          String[] args,
                                          Boolean skipPrjDependenciesCreationList);
@@ -153,7 +152,7 @@ public interface AFBuilder {
      * Run a mvn {args}, maven output provided in the CompilationResponse, behaviour before and after compilation based
      * on the decoator
      */
-    CompilationResponse buildSpecialized(String kieProjectPath,
+    CompletableFuture<CompilationResponse> buildSpecializedAsync(String kieProjectPath,
                                          String mavenRepo,
                                          String[] args,
                                          Decorator decorator);
@@ -162,8 +161,9 @@ public interface AFBuilder {
      * Run a mvn {args}, maven output provided in the CompilationResponse, behaviour before and after compilation based
      * on the decoator
      */
-    CompilationResponse buildSpecialized(String kieProjectPath,
+    CompletableFuture<CompilationResponse> buildSpecializedAsync(String kieProjectPath,
                                          String mavenRepo,
                                          String[] args,
                                          Decorator decorator, Boolean skipPrjDependenciesCreationList);
+
 }
