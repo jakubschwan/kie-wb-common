@@ -416,8 +416,6 @@ public class AFMavenCli {
 
         plexusLoggerManager = new Slf4jLoggerManager();
         slf4jLogger = slf4jLoggerFactory.getLogger(this.getClass().getName());
-        Thread.currentThread().setName(cliRequest.getRequestUUID());
-        MDC.put(MavenConfig.COMPILATION_ID, cliRequest.getRequestUUID());
     }
 
     protected void version(AFCliRequest cliRequest) {

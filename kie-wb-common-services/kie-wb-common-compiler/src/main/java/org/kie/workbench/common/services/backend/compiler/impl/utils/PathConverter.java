@@ -34,7 +34,7 @@ public class PathConverter {
 
     public static org.uberfire.java.nio.file.Path getNioPath(org.guvnor.common.services.project.model.Project project) {
         org.uberfire.java.nio.file.Path nioPath;
-        if (!project.getRootPath().toString().startsWith("file://")) {
+        if (!project.getRootPath().toString().startsWith(FILE_URI)) {
             nioPath = org.uberfire.backend.server.util.Paths.convert(project.getRootPath());
         } else {
             nioPath = PathConverter.createPathFromVFS(project.getRootPath());

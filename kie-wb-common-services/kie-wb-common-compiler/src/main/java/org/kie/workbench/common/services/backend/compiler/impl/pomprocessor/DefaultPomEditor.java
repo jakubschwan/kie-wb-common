@@ -197,20 +197,6 @@ public class DefaultPomEditor implements PomEditor {
                 kieTakariPlugin.setArtifactId(conf.get(ConfigurationKey.KIE_TAKARI_PLUGIN));
                 kieTakariPlugin.setVersion(kieMavenPlugin.getVersion());
                 kieTakariPlugin.setExtensions(Boolean.parseBoolean(kieMavenPlugin.getExtensions()));
-               /* Xpp3Dom compilerId = new Xpp3Dom(MavenConfig.MAVEN_COMPILER_ID);
-                compilerId.setValue(conf.get(ConfigurationKey.COMPILER));
-                Xpp3Dom sourceVersion = new Xpp3Dom(MavenConfig.MAVEN_SOURCE);
-                sourceVersion.setValue(conf.get(ConfigurationKey.SOURCE_VERSION));
-                Xpp3Dom targetVersion = new Xpp3Dom(MavenConfig.MAVEN_TARGET);
-                targetVersion.setValue(conf.get(ConfigurationKey.TARGET_VERSION));
-                Xpp3Dom failOnError = new Xpp3Dom(MavenConfig.FAIL_ON_ERROR);
-                failOnError.setValue(conf.get(ConfigurationKey.FAIL_ON_ERROR));
-                Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
-                configuration.addChild(compilerId);
-                configuration.addChild(sourceVersion);
-                configuration.addChild(targetVersion);
-                configuration.addChild(failOnError);
-                kieTakariPlugin.setConfiguration(configuration);*/
                 plugins.set(kieMavenPluginPosition,
                             kieTakariPlugin);
                 build.setPlugins(plugins);

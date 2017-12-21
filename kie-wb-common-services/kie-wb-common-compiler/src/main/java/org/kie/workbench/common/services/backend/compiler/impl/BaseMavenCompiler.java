@@ -22,12 +22,14 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.impl.external339.ReusableAFMavenCli;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.IncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.pomprocessor.ProcessedPoms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 
@@ -81,6 +83,9 @@ public abstract class BaseMavenCompiler<T extends CompilationResponse> implement
 
     @Override
     public T compile(CompilationRequest req) {
+        MDC.clear();
+        MDC.put(MavenConfig.COMPILATION_ID, req.getRequestUUID());
+        Thread.currentThread().setName(req.getRequestUUID());
         if (logger.isDebugEnabled()) {
             logger.debug("KieCompilationRequest:{}", req);
         }
