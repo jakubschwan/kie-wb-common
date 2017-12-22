@@ -40,23 +40,23 @@ public class MavenCompilerFactory {
         AFCompiler<?> compiler;
         switch (decorator) {
             case NONE:
-                compiler = new DefaultMavenCompiler();
+                compiler = new BaseMavenCompiler();
                 break;
 
             case JGIT_BEFORE:
-                compiler = new JGITCompilerBeforeDecorator(new DefaultMavenCompiler());
+                compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler());
                 break;
 
             case LOG_OUTPUT_AFTER:
-                compiler = new OutputLogAfterDecorator(new DefaultMavenCompiler());
+                compiler = new OutputLogAfterDecorator(new BaseMavenCompiler());
                 break;
 
             case JGIT_BEFORE_AND_LOG_AFTER:
-                compiler = new JGITCompilerBeforeDecorator(new OutputLogAfterDecorator(new DefaultMavenCompiler()));
+                compiler = new JGITCompilerBeforeDecorator(new OutputLogAfterDecorator(new BaseMavenCompiler()));
                 break;
 
             default:
-                compiler = new DefaultMavenCompiler();
+                compiler = new BaseMavenCompiler();
         }
         return compiler;
     }

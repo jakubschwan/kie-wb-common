@@ -21,6 +21,7 @@ import java.util.List;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationResponse;
 import org.kie.workbench.common.services.backend.logback.OutputSharedMap;
 import org.slf4j.MDC;
 import org.uberfire.java.nio.file.Path;
@@ -41,14 +42,14 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
         T res = compiler.compile(req);
         T t ;
         if (req.getLogRequested()) {
-            t =compiler.buildDefaultCompilationResponse(res.isSuccessful(),
-                                                        OutputSharedMap.getLog(req.getKieCliRequest().getRequestUUID()),
-                                                        req.getInfo().getPrjPath());
+            t = (T) new DefaultCompilationResponse(res.isSuccessful(),
+                                               OutputSharedMap.getLog(req.getKieCliRequest().getRequestUUID()),
+                                               req.getInfo().getPrjPath());
             OutputSharedMap.removeLog(req.getKieCliRequest().getRequestUUID());
             MDC.clear();
             return t;
         } else {
-            t = compiler.buildDefaultCompilationResponse(res.isSuccessful(), Collections.emptyList(), req.getInfo().getPrjPath());
+            t =  (T) new DefaultCompilationResponse(res.isSuccessful(), Collections.emptyList(), req.getInfo().getPrjPath());
         }
         MDC.clear();
         return t;
@@ -59,13 +60,4 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
         return compiler.cleanInternalCache();
     }
 
-    @Override
-    public T buildDefaultCompilationResponse(final Boolean value) {
-        return compiler.buildDefaultCompilationResponse(value);
-    }
-
-    @Override
-    public T buildDefaultCompilationResponse(final Boolean successful, final List output, final Path workingDir) {
-        return (T) compiler.buildDefaultCompilationResponse(successful, output, workingDir);
-    }
 }

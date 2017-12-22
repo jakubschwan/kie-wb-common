@@ -45,7 +45,7 @@ import org.uberfire.java.nio.file.Path;
  * CompilationRequest req = new DefaultCompilationRequest(mavenRepo, info,new String[]{MavenArgs.COMPILE},new HashMap<>(), Boolean.TRUE );
  * CompilationResponse res = compiler.compileSync(req);
  */
-public abstract class BaseMavenCompiler<T extends CompilationResponse> implements AFCompiler<T> {
+public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompiler<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseMavenCompiler.class);
 
@@ -95,9 +95,9 @@ public abstract class BaseMavenCompiler<T extends CompilationResponse> implement
             if (!processedPoms.getResult()) {
                 List<String> msgs = new ArrayList<>(1);
                 msgs.add("[ERROR] Processing poms failed");
-                return buildDefaultCompilationResponse(Boolean.FALSE,
-                                                       msgs,
-                                                       req.getInfo().getPrjPath());
+                return (T) new DefaultKieCompilationResponse(Boolean.FALSE,
+                                                             msgs,
+                                                             req.getInfo().getPrjPath());
             }
         }
         req.getKieCliRequest().getRequest().setLocalRepositoryPath(req.getMavenRepo());
@@ -115,11 +115,10 @@ public abstract class BaseMavenCompiler<T extends CompilationResponse> implement
                                   kieClassWorld);
         Thread.currentThread().setContextClassLoader(original);
         if (exitCode == 0) {
-            return (T) buildDefaultCompilationResponse(Boolean.TRUE);
+            return (T) new DefaultKieCompilationResponse(Boolean.TRUE);
         } else {
-            return (T) buildDefaultCompilationResponse(Boolean.FALSE);
+            return (T) new DefaultKieCompilationResponse(Boolean.FALSE);
         }
     }
 
-    protected abstract T buildDefaultCompilationResponse(final Boolean successful, final List mavenOutput);
 }

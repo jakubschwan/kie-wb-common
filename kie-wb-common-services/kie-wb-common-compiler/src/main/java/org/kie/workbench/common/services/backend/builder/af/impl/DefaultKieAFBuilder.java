@@ -30,12 +30,12 @@ import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
+import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.KieAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.OutputLogAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.kie.KieDefaultMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.JGitUtils;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.PathConverter;
@@ -83,7 +83,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
         this.originalProjectRootPath = projectRootPath;
         this.git = git;
         this.mavenRepo = mavenRepo;
-        this.compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new KieDefaultMavenCompiler()));
+        this.compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new BaseMavenCompiler()));
 
         info = new WorkspaceCompilationInfo(workingDir);
         req = new DefaultCompilationRequest(mavenRepo,

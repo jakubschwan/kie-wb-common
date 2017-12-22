@@ -216,16 +216,6 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
         }
     }
 
-    @Override
-    public T buildDefaultCompilationResponse(final Boolean value) {
-        return (T) compiler.buildDefaultCompilationResponse(value);
-    }
-
-    @Override
-    public T buildDefaultCompilationResponse(final Boolean successful, final List output, final Path workingDir) {
-        return (T) compiler.buildDefaultCompilationResponse(successful, output, workingDir);
-    }
-
     static class KieTuple {
 
         private Object optionalObj;

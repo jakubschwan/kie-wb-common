@@ -91,24 +91,8 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
         return repo;
     }
 
-    private Git useHolder(JGitFileSystem fs,
-                          CompilationRequest req) {
-        Git repo;
-        repo = JGitUtils.tempClone(fs, req.getRequestUUID());
-//        if (!gitCache.containsJGitFileSystem(fs)) {
-//            gitCache.addJGitFileSystem(fs, repo);
-//        }
-//        repo = (Git)gitCache.getGit(fs);
-        return repo;
+    private Git useHolder(JGitFileSystem fs, CompilationRequest req) {
+        return JGitUtils.tempClone(fs, req.getRequestUUID());
     }
 
-    @Override
-    public T buildDefaultCompilationResponse(final Boolean value) {
-        return compiler.buildDefaultCompilationResponse(value);
-    }
-
-    @Override
-    public T buildDefaultCompilationResponse(final Boolean successful, final List mavenOutput, final Path workingDir) {
-        return (T) compiler.buildDefaultCompilationResponse(successful, mavenOutput, workingDir);
-    }
 }
