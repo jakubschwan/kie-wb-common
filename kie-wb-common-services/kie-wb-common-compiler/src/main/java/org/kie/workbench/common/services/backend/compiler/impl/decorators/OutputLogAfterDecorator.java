@@ -17,6 +17,7 @@ package org.kie.workbench.common.services.backend.compiler.impl.decorators;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
@@ -53,6 +54,11 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
         }
         MDC.clear();
         return t;
+    }
+
+    @Override
+    public CompilationResponse compile(CompilationRequest req, Map override) {
+        return compiler.compile(req, override);
     }
 
     @Override

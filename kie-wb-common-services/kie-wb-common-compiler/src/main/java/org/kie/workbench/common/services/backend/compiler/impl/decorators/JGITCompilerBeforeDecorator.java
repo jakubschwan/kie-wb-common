@@ -78,6 +78,11 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
         return compiler.compile(_req);
     }
 
+    @Override
+    public CompilationResponse compile(CompilationRequest req, Map override) {
+        return compiler.compile(req, override);
+    }
+
     private Git useInternalMap(JGitFileSystem fs,
                                CompilationRequest req) {
         Git repo;
@@ -94,5 +99,6 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
     private Git useHolder(JGitFileSystem fs, CompilationRequest req) {
         return JGitUtils.tempClone(fs, req.getRequestUUID());
     }
+
 
 }

@@ -15,8 +15,16 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import java.io.OutputStream;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
@@ -30,6 +38,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.pomprocessor.Proc
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 
@@ -48,7 +57,7 @@ import org.uberfire.java.nio.file.Path;
 public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompiler<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseMavenCompiler.class);
-
+    private int writeBlockSize = 1024;
     //private AFMavenCli cli;
     private ReusableAFMavenCli cli;
 
@@ -121,4 +130,33 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
         }
     }
 
+    @Override
+    public T compile(CompilationRequest req, Map<java.nio.file.Path, InputStream> override) {
+        for (Map.Entry<java.nio.file.Path, InputStream> entry : override.entrySet()) {
+            java.nio.file.Path path = entry.getKey();
+            InputStream input = entry.getValue();
+            try {
+                java.nio.file.Files.write(path, readAllBytes(input));
+            }catch (IOException e){
+                logger.error("Path not writed:"+entry.getKey()+ "\n");
+                logger.error(e.getMessage());
+                logger.error("\n");
+            }
+        }
+        return compile(req);
+    }
+
+    public byte[] readAllBytes(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        copy(in, out);
+        out.close();
+        return out.toByteArray();
+    }
+
+    public void copy(InputStream in, OutputStream out) throws IOException
+    {
+        byte[] bytes = new byte[writeBlockSize];
+        int len;
+        while ((len = in.read(bytes)) != -1) out.write(bytes, 0, len);
+    }
 }

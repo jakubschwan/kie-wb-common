@@ -72,6 +72,11 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
     }
 
     @Override
+    public CompilationResponse compile(CompilationRequest req, Map override) {
+        return compiler.compile(req, override);
+    }
+
+    @Override
     public Boolean cleanInternalCache() {
         return compiler.cleanInternalCache();
     }
