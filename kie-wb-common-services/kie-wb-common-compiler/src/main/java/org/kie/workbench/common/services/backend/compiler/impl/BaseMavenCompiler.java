@@ -24,7 +24,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
@@ -62,6 +62,8 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
     private ReusableAFMavenCli cli;
 
     private IncrementalCompilerEnabler enabler;
+
+    private final ReentrantLock lock = new ReentrantLock();
 
     public BaseMavenCompiler() {
         cli = new ReusableAFMavenCli();
@@ -132,16 +134,21 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
 
     @Override
     public T compile(CompilationRequest req, Map<java.nio.file.Path, InputStream> override) {
-        for (Map.Entry<java.nio.file.Path, InputStream> entry : override.entrySet()) {
-            java.nio.file.Path path = entry.getKey();
-            InputStream input = entry.getValue();
-            try {
-                java.nio.file.Files.write(path, readAllBytes(input));
-            }catch (IOException e){
-                logger.error("Path not writed:"+entry.getKey()+ "\n");
-                logger.error(e.getMessage());
-                logger.error("\n");
+        lock.lock();
+        try {
+            for (Map.Entry<java.nio.file.Path, InputStream> entry : override.entrySet()) {
+                java.nio.file.Path path = entry.getKey();
+                InputStream input = entry.getValue();
+                try {
+                    java.nio.file.Files.write(path, readAllBytes(input));
+                } catch (IOException e) {
+                    logger.error("Path not writed:" + entry.getKey() + "\n");
+                    logger.error(e.getMessage());
+                    logger.error("\n");
+                }
             }
+        }finally {
+            lock.unlock();
         }
         return compile(req);
     }
