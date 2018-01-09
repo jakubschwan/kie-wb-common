@@ -1,9 +1,6 @@
 package org.kie.workbench.common.services.backend.compiler.impl.utils;
 
 import org.guvnor.common.services.shared.builder.model.BuildMessage;
-import org.guvnor.common.services.shared.message.Level;
-import org.uberfire.backend.server.util.Paths;
-import org.uberfire.java.nio.file.Path;
 
 public abstract class BaseInputProcessor implements InputProcessor {
 

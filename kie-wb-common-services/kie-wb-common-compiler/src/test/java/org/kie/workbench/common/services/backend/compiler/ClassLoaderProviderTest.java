@@ -87,7 +87,7 @@ public class ClassLoaderProviderTest {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
-                                                               Boolean.FALSE, Boolean.FALSE);
+                                                               Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
@@ -137,7 +137,7 @@ public class ClassLoaderProviderTest {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
-                                                               Boolean.FALSE, Boolean.FALSE);
+                                                               Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
@@ -186,7 +186,7 @@ public class ClassLoaderProviderTest {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE },
-                                                               Boolean.FALSE, Boolean.FALSE);
+                                                               Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
@@ -263,7 +263,7 @@ public class ClassLoaderProviderTest {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
-                                                               Boolean.FALSE, Boolean.FALSE);
+                                                               Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
@@ -321,7 +321,7 @@ public class ClassLoaderProviderTest {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{ MavenCLIArgs.INSTALL},
-                                                               Boolean.TRUE, Boolean.FALSE);
+                                                               Boolean.FALSE);
 
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
         if (!res.isSuccessful()) {

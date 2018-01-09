@@ -16,9 +16,7 @@
 package org.kie.workbench.common.services.backend.builder.af;
 
 import java.io.InputStream;
-import java.util.concurrent.CompletableFuture;
 
-import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.uberfire.java.nio.file.Path;
 
@@ -27,13 +25,12 @@ public interface KieAFBuilder {
     /**
      * Clean internal poms cached
      */
-    CompletableFuture<Boolean> cleanInternalCache();
+    Boolean cleanInternalCache();
 
     /**
      * Run a mvn compile and create the output and the prj dependencies in the response
      */
-    CompletableFuture<KieCompilationResponse> validate(final Path path,
-                                    final InputStream inputStream);
+    KieCompilationResponse validate(final Path path, final InputStream inputStream);
 
     /**
      * Run a mvn compile if is used the contructor with no []args or run the maven tasks declared in the []args passed with
@@ -41,137 +38,115 @@ public interface KieAFBuilder {
      * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder and
      * maven repo remain the same between compilaton requests
      */
-    CompletableFuture<KieCompilationResponse> build();
+    KieCompilationResponse build();
 
     /**
      * Run a mvn compile and create the output and the prj dependencies in the response
      */
-    CompletableFuture<KieCompilationResponse> build(Boolean logRequested, Boolean skipPrjDependenciesCreationList);
-
-    /**
-     * Run a mvn package on the prj and maven repo configured in the constructor, maven output provided in the
-     * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder and maven repo
-     * remain the same between compilaton requests
-     */
-    CompletableFuture<KieCompilationResponse> buildAndPackage();
-
-    /**
-     * Run a mvn package on the prj and maven repo configured in the constructor, maven output provided in the
-     * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder and maven repo
-     * remain the same between compilaton requests
-     */
-    CompletableFuture<KieCompilationResponse> buildAndPackage(Boolean skipPrjDependenciesCreationList);
-
-    /**
-     * Run a mvn install on the prj and maven repo configured in the constructor, maven output provided in the
-     * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder
-     * and maven repo remain the same between compilaton requests
-     */
-    CompletableFuture<KieCompilationResponse> buildAndInstall();
-
-    /**
-     * Run a mvn install on the prj and maven repo configured in the constructor, maven output provided in the
-     * CompilationResponse, the internal objects in the impl will be reused, useful if the project folder
-     * and maven repo remain the same between compilaton requests
-     */
-    CompletableFuture<KieCompilationResponse> buildAndInstall(Boolean skipPrjDependenciesCreationList);
+    KieCompilationResponse build(Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn compile on the prj configured in the constructor, maven output provided in the CompilationResponse,
      * a new CompilationRequest will be created at every invocation, useful if the project folder remain the same but
      * different maven repo are required between compilation requests
      */
-    CompletableFuture<KieCompilationResponse> build(String mavenRepo);
+    KieCompilationResponse build(String mavenRepo);
 
     /**
      * Run a mvn compile on the prj configured in the constructor, maven output provided in the CompilationResponse,
      * a new CompilationRequest will be created at every invocation, useful if the project folder remain the same but
      * different maven repo are required between compilation requests
      */
-    CompletableFuture<KieCompilationResponse> build(String mavenRepo, Boolean skipPrjDependenciesCreationList);
+    KieCompilationResponse build(String mavenRepo, Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> build(String projectPath,
-                                 String mavenRepo);
+    KieCompilationResponse build(String projectPath, String mavenRepo);
+
 
     /**
      * Run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> build(String projectPath,
-                                 String mavenRepo, Boolean skipPrjDependenciesCreationList);
+    KieCompilationResponse build(Path projectPath, String mavenRepo);
+
 
     /**
-     * Run a mvn compile package on the projectPath, maven output provided in the CompilationResponse
+     * Run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAndPackage(String projectPath,
-                                           String mavenRepo);
+    KieCompilationResponse build(Path projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList);
 
     /**
-     * Run a mvn compile package on the projectPath, maven output provided in the CompilationResponse
+     * Run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAndPackage(String projectPath,
-                                           String mavenRepo, Boolean skipPrjDependenciesCreationList);
+    KieCompilationResponse build(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn install on the projectPath, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAndInstall(String projectPath,
-                                           String mavenRepo);
+    KieCompilationResponse buildAndInstall(Path projectPath, String mavenRepo);
 
     /**
      * Run a mvn install on the projectPath, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAndInstall(String projectPath,
-                                           String mavenRepo, Boolean skipPrjDependenciesCreationList);
+    KieCompilationResponse buildAndInstall(String projectPath, String mavenRepo);
+
+    /**
+     * Run a mvn install on the projectPath, maven output provided in the CompilationResponse
+     * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
+     * between compilation Requests
+     */
+    KieCompilationResponse buildAndInstall(Path projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList);
+
+    /**
+     * Run a mvn install on the projectPath, maven output provided in the CompilationResponse
+     * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
+     * between compilation Requests
+     */
+    KieCompilationResponse buildAndInstall(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn {args}, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder, maven repo and
      * maven args changes between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildSpecialized(String projectPath,
-                                            String mavenRepo,
-                                            String[] args);
+    KieCompilationResponse buildSpecialized(Path projectPath, String mavenRepo, String[] args);
 
     /**
      * Run a mvn {args}, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder, maven repo and
      * maven args changes between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildSpecialized(String projectPath,
+    KieCompilationResponse buildSpecialized(String projectPath, String mavenRepo, String[] args);
+
+
+    /**
+     * Run a mvn {args}, maven output provided in the CompilationResponse
+     * a new CompilationRequest will be created at every invocation, useful if the project folder, maven repo and
+     * maven args changes between compilation Requests
+     */
+    KieCompilationResponse buildSpecialized(Path projectPath,
                                             String mavenRepo,
                                             String[] args, Boolean skipPrjDependenciesCreationList);
 
     /**
-     * Run a mvn {args}, maven output provided in the CompilationResponse, behaviour before and after compilation based
-     * on the decoator, a new CompilationRequest will be created at every invocation
+     * Run a mvn {args}, maven output provided in the CompilationResponse
+     * a new CompilationRequest will be created at every invocation, useful if the project folder, maven repo and
+     * maven args changes between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildSpecialized(String projectPath,
-                                            String mavenRepo,
-                                            String[] args,
-                                            KieDecorator decorator);
-
-    /**
-     * Run a mvn {args}, maven output provided in the CompilationResponse, behaviour before and after compilation based
-     * on the decoator, a new CompilationRequest will be created at every invocation
-     */
-    CompletableFuture<KieCompilationResponse> buildSpecialized(String projectPath,
-                                            String mavenRepo,
-                                            String[] args,
-                                            KieDecorator decorator, Boolean skipPrjDependenciesCreationList);
+    KieCompilationResponse buildSpecialized(String projectPath, String mavenRepo,
+                                            String[] args, Boolean skipPrjDependenciesCreationList);
 
 }

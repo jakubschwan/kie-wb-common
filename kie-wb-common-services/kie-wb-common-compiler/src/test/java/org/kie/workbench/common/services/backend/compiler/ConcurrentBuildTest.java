@@ -181,7 +181,7 @@ public class ConcurrentBuildTest {
                                                                              MavenCLIArgs.COMPILE,
                                                                              MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                      },
-                                                                     Boolean.TRUE, Boolean.FALSE);
+                                                                     Boolean.FALSE);
         final KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
         logger.info("\nFinished " + res.isSuccessful() + " Single metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
         if (!res.isSuccessful()) {
@@ -215,7 +215,7 @@ public class ConcurrentBuildTest {
                                                                              MavenCLIArgs.COMPILE,
                                                                              MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                      },
-                                                                     Boolean.TRUE, Boolean.FALSE);
+                                                                     Boolean.FALSE);
         final KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
         logger.info("\nFinished " + res.isSuccessful() + " all Metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
         if (!res.isSuccessful()) {

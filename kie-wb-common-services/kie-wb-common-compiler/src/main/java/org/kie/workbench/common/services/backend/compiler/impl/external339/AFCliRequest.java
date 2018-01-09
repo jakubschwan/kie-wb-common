@@ -46,24 +46,17 @@ public class AFCliRequest {
     private MavenExecutionRequest request;
     private Map<String, Object> map;
     private String requestUUID;
-    private Boolean logRequested;
 
     public AFCliRequest(String multiModuleProjectDirectory,
                         String[] args,
                         Map<String, Object> map,
-                        String requestUUID,
-                        Boolean logRequested) {
+                        String requestUUID) {
         this.multiModuleProjectDirectory = multiModuleProjectDirectory;
         this.workingDirectory = multiModuleProjectDirectory.toString();
         this.request = new DefaultMavenExecutionRequest();
         this.args = args;
         this.map = new HashMap<>(map);
         this.requestUUID = requestUUID;
-        this.logRequested = logRequested;
-    }
-
-    public Boolean isLogRequested() {
-        return logRequested;
     }
 
     public String getRequestUUID() {
@@ -166,7 +159,6 @@ public class AFCliRequest {
         sb.append(", request=").append(request);
         sb.append(", map=").append(map);
         sb.append(", requestUUID='").append(requestUUID).append('\'');
-        sb.append(", logRequested=").append(logRequested);
         sb.append('}');
         return sb.toString();
     }

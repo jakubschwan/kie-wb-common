@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
@@ -28,7 +27,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -36,7 +34,6 @@ import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilat
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.KieAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.OutputLogAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.JGitUtils;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.PathConverter;
 import org.uberfire.java.nio.file.Path;
@@ -49,7 +46,6 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     private Git git;
     private AFCompiler<KieCompilationResponse> compiler;
     private WorkspaceCompilationInfo info;
-    private CompilationRequest req;
     private String mavenRepo;
 
     public DefaultKieAFBuilder(final Path projectRootPath,
@@ -86,10 +82,6 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
         this.compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new BaseMavenCompiler()));
 
         info = new WorkspaceCompilationInfo(workingDir);
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            new String[]{MavenCLIArgs.PACKAGE},
-                                            Boolean.TRUE, Boolean.FALSE);
     }
 
     private String getFolderName() {
@@ -97,8 +89,8 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     }
 
     @Override
-    public CompletableFuture<Boolean> cleanInternalCache() {
-        return CompletableFuture.completedFuture(compiler.cleanInternalCache());
+    public Boolean cleanInternalCache() {
+        return compiler.cleanInternalCache();
     }
 
     public AFCompiler getCompiler() {
@@ -107,10 +99,6 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
 
     public WorkspaceCompilationInfo getInfo() {
         return info;
-    }
-
-    public CompilationRequest getReq() {
-        return req;
     }
 
     public String getMavenRepo() {
@@ -131,17 +119,43 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
         }
     }
 
-    /*******************************************************************************************************************************/
+    private KieCompilationResponse internalBuild(String mavenRepo, WorkspaceCompilationInfo info,
+                                                 boolean skipProjectDepCreation, String goal) {
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+                                                               info,
+                                                               new String[]{goal},
+                                                               skipProjectDepCreation);
+        return compiler.compile(req);
+    }
+
+    private KieCompilationResponse internalBuild(String mavenRepo, WorkspaceCompilationInfo info,
+                                                 boolean skipProjectDepCreation, String[] args) {
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+                                                               info,
+                                                               args,
+                                                               skipProjectDepCreation);
+        return compiler.compile(req);
+    }
+
+    private KieCompilationResponse doBuild(final Boolean skipPrjDependenciesCreationList) {
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+                                                               info,
+                                                               new String[]{MavenCLIArgs.COMPILE},
+                                                               skipPrjDependenciesCreationList);
+        return compiler.compile(req);
+    }
+
+    /******************************************************************************************************************/
+
 
     @Override
-    public CompletableFuture<KieCompilationResponse> validate(final Path path,
-                                                              final InputStream inputStream) {
+    public KieCompilationResponse validate(final Path path, final InputStream inputStream) {
         if (path.getFileSystem() instanceof JGitFileSystem) {
             final java.nio.file.Path convertedToCheckedPath = git.getRepository().getDirectory().toPath().getParent().resolve(path.toString().substring(1));
 
             try {
                 Files.copy(inputStream, convertedToCheckedPath, StandardCopyOption.REPLACE_EXISTING);
-                return CompletableFuture.completedFuture(doBuild(Boolean.TRUE, Boolean.FALSE));
+                return doBuild(Boolean.FALSE);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } finally {
@@ -162,7 +176,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
         }
         try {
             Files.copy(inputStream, _path, StandardCopyOption.REPLACE_EXISTING);
-            return CompletableFuture.completedFuture(doBuild(true, false));
+            return doBuild(Boolean.FALSE);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
@@ -175,215 +189,126 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> build() {
+    public KieCompilationResponse build() {
         gitPullAndRebase();
-        req.getKieCliRequest().getMap().clear();
-        return CompletableFuture.completedFuture(compiler.compile(req));
-    }
-
-    @Override
-    public CompletableFuture<KieCompilationResponse> build(final Boolean logRequested,
-                                                           final Boolean skipPrjDependenciesCreationList) {
-        gitPullAndRebase();
-        return CompletableFuture.completedFuture(doBuild(logRequested, skipPrjDependenciesCreationList));
-    }
-
-    private KieCompilationResponse doBuild(final Boolean logRequested,
-                                           final Boolean skipPrjDependenciesCreationList) {
-        req.getKieCliRequest().getMap().clear();
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            new String[]{MavenCLIArgs.COMPILE},
-                                            logRequested,
-                                            skipPrjDependenciesCreationList);
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+                                                               info,
+                                                               new String[]{MavenCLIArgs.COMPILE},
+                                                               Boolean.FALSE);
         return compiler.compile(req);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAndPackage() {
+    public KieCompilationResponse build(final Boolean skipPrjDependenciesCreationList) {
         gitPullAndRebase();
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            new String[]{MavenCLIArgs.PACKAGE},
-                                            Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+        return doBuild(skipPrjDependenciesCreationList);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAndPackage(Boolean skipPrjDependenciesCreationList) {
+    public KieCompilationResponse build(String mavenRepo) {
         gitPullAndRebase();
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            new String[]{MavenCLIArgs.PACKAGE},
-                                            Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+        return internalBuild(mavenRepo, info, Boolean.FALSE, MavenCLIArgs.COMPILE);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAndInstall() {
+    public KieCompilationResponse build(String mavenRepo, Boolean skipPrjDependenciesCreationList) {
         gitPullAndRebase();
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            new String[]{MavenCLIArgs.INSTALL},
-                                            Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+        return internalBuild(mavenRepo, info, skipPrjDependenciesCreationList, MavenCLIArgs.COMPILE);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAndInstall(Boolean skipPrjDependenciesCreationList) {
+    public KieCompilationResponse build(String projectPath, String mavenRepo) {
         gitPullAndRebase();
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            new String[]{MavenCLIArgs.INSTALL},
-                                            Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+        return internalBuild(mavenRepo, new WorkspaceCompilationInfo(Paths.get(projectPath)),
+                             Boolean.FALSE, MavenCLIArgs.COMPILE);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> build(String mavenRepo) {
+    public KieCompilationResponse build(Path projectPath, String mavenRepo) {
         gitPullAndRebase();
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               info,
-                                                               new String[]{MavenCLIArgs.COMPILE},
-                                                               Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+        return internalBuild(mavenRepo, new WorkspaceCompilationInfo(projectPath), Boolean.FALSE,
+                             MavenCLIArgs.COMPILE);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> build(String mavenRepo, Boolean skipPrjDependenciesCreationList) {
+    public KieCompilationResponse build(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
         gitPullAndRebase();
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               info,
-                                                               new String[]{MavenCLIArgs.COMPILE},
-                                                               Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+        return internalBuild(mavenRepo, new WorkspaceCompilationInfo(Paths.get(projectPath)),
+                             skipPrjDependenciesCreationList, MavenCLIArgs.COMPILE);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> build(String projectPath,
-                                                           String mavenRepo) {
+    public KieCompilationResponse build(Path projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
         gitPullAndRebase();
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(projectPath));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               info,
-                                                               new String[]{MavenCLIArgs.COMPILE},
-                                                               Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+        return internalBuild(mavenRepo, new WorkspaceCompilationInfo(projectPath),
+                             skipPrjDependenciesCreationList, MavenCLIArgs.COMPILE);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> build(String projectPath,
-                                                           String mavenRepo, Boolean skipPrjDependenciesCreationList) {
+    public KieCompilationResponse buildAndInstall(String projectPath, String mavenRepo) {
         gitPullAndRebase();
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(projectPath));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               info,
-                                                               new String[]{MavenCLIArgs.COMPILE},
-                                                               Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+        return internalBuild(mavenRepo, new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath)),
+                             Boolean.FALSE, MavenCLIArgs.INSTALL);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAndPackage(String projectPath,
-                                                                     String mavenRepo) {
+    public KieCompilationResponse buildAndInstall(String projectPath, String mavenRepo,
+                                                  Boolean skipPrjDependenciesCreationList) {
         gitPullAndRebase();
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(projectPath));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               info,
-                                                               new String[]{MavenCLIArgs.PACKAGE},
-                                                               Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+        return internalBuild(mavenRepo, new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath)),
+                             skipPrjDependenciesCreationList, MavenCLIArgs.INSTALL);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAndPackage(String projectPath,
-                                                                     String mavenRepo, Boolean skipPrjDependenciesCreationList) {
-        gitPullAndRebase();
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(projectPath));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               info,
-                                                               new String[]{MavenCLIArgs.PACKAGE},
-                                                               Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+    public KieCompilationResponse buildAndInstall(Path projectPath, String mavenRepo) {
+        return null;
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAndInstall(String projectPath,
-                                                                     String mavenRepo) {
-        gitPullAndRebase();
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               info,
-                                                               new String[]{MavenCLIArgs.INSTALL},
-                                                               Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+    public KieCompilationResponse buildAndInstall(Path projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
+        return null;
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAndInstall(String projectPath,
-                                                                     String mavenRepo, Boolean skipPrjDependenciesCreationList) {
-        gitPullAndRebase();
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               info,
-                                                               new String[]{MavenCLIArgs.INSTALL},
-                                                               Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compile(req));
-    }
-
-    @Override
-    public CompletableFuture<KieCompilationResponse> buildSpecialized(String projectPath,
-                                                                      String mavenRepo,
-                                                                      String[] args) {
+    public KieCompilationResponse buildSpecialized(String projectPath,
+                                                   String mavenRepo,
+                                                   String[] args) {
         gitPullAndRebase();
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                args,
-                                                               Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+                                                               Boolean.FALSE);
+        return compiler.compile(req);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildSpecialized(String projectPath,
-                                                                      String mavenRepo,
-                                                                      String[] args, Boolean skipPrjDependenciesCreationList) {
+    public KieCompilationResponse buildSpecialized(String projectPath,
+                                                   String mavenRepo,
+                                                   String[] args, Boolean skipPrjDependenciesCreationList) {
         gitPullAndRebase();
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               info,
-                                                               args,
-                                                               Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+        return internalBuild(mavenRepo,
+                             new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath)),
+                             skipPrjDependenciesCreationList,
+                             args);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildSpecialized(String projectPath,
-                                                                      String mavenRepo,
-                                                                      String[] args,
-                                                                      KieDecorator decorator) {
+    public KieCompilationResponse buildSpecialized(Path projectPath, String mavenRepo, String[] args) {
         gitPullAndRebase();
-        AFCompiler<KieCompilationResponse> compiler = KieMavenCompilerFactory.getCompiler(decorator);
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               info,
-                                                               args,
-                                                               Boolean.TRUE, Boolean.FALSE);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+        return internalBuild(mavenRepo,
+                             new WorkspaceCompilationInfo(projectPath),
+                             Boolean.FALSE,
+                             args);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildSpecialized(String projectPath,
-                                                                      String mavenRepo,
-                                                                      String[] args,
-                                                                      KieDecorator decorator, Boolean skipPrjDependenciesCreationList) {
+    public KieCompilationResponse buildSpecialized(Path projectPath, String mavenRepo, String[] args,
+                                                   Boolean skipPrjDependenciesCreationList) {
         gitPullAndRebase();
-        AFCompiler<KieCompilationResponse> compiler = KieMavenCompilerFactory.getCompiler(decorator);
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               info,
-                                                               args,
-                                                               Boolean.TRUE, skipPrjDependenciesCreationList);
-        return CompletableFuture.completedFuture(compiler.compile(req));
+        return internalBuild(mavenRepo,
+                             new WorkspaceCompilationInfo(projectPath),
+                             skipPrjDependenciesCreationList,
+                             args);
     }
 }

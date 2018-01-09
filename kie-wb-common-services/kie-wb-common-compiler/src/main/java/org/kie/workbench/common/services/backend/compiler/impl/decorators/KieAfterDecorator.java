@@ -41,7 +41,6 @@ import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompila
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uberfire.java.nio.file.Path;
 
 import static org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils.getStringFromTargets;
 import static org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils.getStringsFromAllDependencies;
@@ -71,10 +70,10 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
         return (T) handleNormalBuild(req, res);
     }
 
-    @Override
+    /* temporary @Override
     public CompilationResponse compile(CompilationRequest req, Map override) {
         return compiler.compile(req, override);
-    }
+    }*/
 
     @Override
     public Boolean cleanInternalCache() {

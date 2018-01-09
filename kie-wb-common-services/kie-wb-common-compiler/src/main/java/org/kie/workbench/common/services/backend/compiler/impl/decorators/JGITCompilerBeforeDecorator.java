@@ -17,7 +17,6 @@
 package org.kie.workbench.common.services.backend.compiler.impl.decorators;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jgit.api.Git;
@@ -69,7 +68,6 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
             _req = new DefaultCompilationRequest(req.getMavenRepo(),
                                                  new WorkspaceCompilationInfo(Paths.get(repo.getRepository().getDirectory().toPath().getParent().resolve(path.getFileName().toString()).normalize().toUri())),
                                                  req.getOriginalArgs(),
-                                                 req.getLogRequested(),
                                                  req.skipPrjDependenciesCreationList());
         } else {
             _req = req;
@@ -78,10 +76,10 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
         return compiler.compile(_req);
     }
 
-    @Override
+    /* temporary @Override
     public CompilationResponse compile(CompilationRequest req, Map override) {
         return compiler.compile(req, override);
-    }
+    }*/
 
     private Git useInternalMap(JGitFileSystem fs,
                                CompilationRequest req) {

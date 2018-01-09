@@ -19,22 +19,17 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
-
 import ch.qos.logback.classic.sift.SiftingAppender;
 import ch.qos.logback.classic.spi.Configurator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.Context;
-
 import ch.qos.logback.core.joran.spi.JoranException;
-
 import ch.qos.logback.core.sift.AppenderFactory;
 import ch.qos.logback.core.sift.Discriminator;
 import ch.qos.logback.core.spi.ContextAwareBase;
-import ch.qos.logback.core.status.Status;
 import ch.qos.logback.core.util.StatusPrinter;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppender;
 import org.kie.workbench.common.services.backend.logback.appender.UUIDThreadNameDiscriminator;

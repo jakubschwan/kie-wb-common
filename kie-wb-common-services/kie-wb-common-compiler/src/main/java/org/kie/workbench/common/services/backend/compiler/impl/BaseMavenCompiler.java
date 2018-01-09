@@ -18,9 +18,7 @@ package org.kie.workbench.common.services.backend.compiler.impl;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.io.OutputStream;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +36,9 @@ import org.kie.workbench.common.services.backend.compiler.impl.pomprocessor.Proc
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
+import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 
 /**
  * Run maven with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
@@ -132,25 +130,50 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
         }
     }
 
-    @Override
-    public T compile(CompilationRequest req, Map<java.nio.file.Path, InputStream> override) {
-        lock.lock();
-        try {
-            for (Map.Entry<java.nio.file.Path, InputStream> entry : override.entrySet()) {
-                java.nio.file.Path path = entry.getKey();
-                InputStream input = entry.getValue();
+    //@Override
+    public T compile(CompilationRequest req, Map<Path, InputStream> override) {
+        /* @TODO change the PATH with Uberfire type and create two branch, uno for the non git (the current implementation) with a revert of the filesy changed
+        and for a git version with a revert */
+        List<BackupItem> backup = new ArrayList<>(override.size());
+        Path firstPath = override.entrySet().iterator().next().getKey();
+        if(firstPath.getFileSystem() instanceof JGitFileSystem){
+            workOnGitFS(override,backup);
+        }else {
+            workOnRegularFS(override,backup);
+        }
+        T result = compile(req);
+        //@TODO rollback FS
+        return result;
+    }
+
+    private void workOnRegularFS(Map<Path, InputStream> override, List<BackupItem> backup) {
+        for (Map.Entry<Path, InputStream> entry : override.entrySet()) {
+            Path path = entry.getKey();
+            InputStream input = entry.getValue();
                 try {
-                    java.nio.file.Files.write(path, readAllBytes(input));
+                    //backup.add(new BackupItem(path, Files.readAllBytes(path)));
+                    Files.write(path, readAllBytes(input));
                 } catch (IOException e) {
                     logger.error("Path not writed:" + entry.getKey() + "\n");
                     logger.error(e.getMessage());
                     logger.error("\n");
                 }
-            }
-        }finally {
-            lock.unlock();
         }
-        return compile(req);
+    }
+
+    private void workOnGitFS(Map<Path, InputStream> override, List<BackupItem>  backup) {
+        for (Map.Entry<Path, InputStream> entry : override.entrySet()) {
+            Path path = entry.getKey();
+            InputStream input = entry.getValue();
+
+            try {
+                Files.write(path, readAllBytes(input));
+            } catch (IOException e) {
+                logger.error("Path not writed:" + entry.getKey() + "\n");
+                logger.error(e.getMessage());
+                logger.error("\n");
+            }
+        }
     }
 
     public byte[] readAllBytes(InputStream in) throws IOException {
@@ -165,5 +188,23 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
         byte[] bytes = new byte[writeBlockSize];
         int len;
         while ((len = in.read(bytes)) != -1) out.write(bytes, 0, len);
+    }
+
+    class BackupItem {
+        private byte[] content;
+        private Path path;
+
+        public BackupItem(Path path, byte[] content){
+            this.path = path;
+            this.content = content;
+        }
+
+        public byte[] getContent() {
+            return content;
+        }
+
+        public Path getPath() {
+            return path;
+        }
     }
 }

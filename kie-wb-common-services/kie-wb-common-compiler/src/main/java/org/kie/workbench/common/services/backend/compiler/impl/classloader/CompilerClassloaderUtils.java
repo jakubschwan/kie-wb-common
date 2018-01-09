@@ -51,7 +51,6 @@ import org.kie.workbench.common.services.backend.compiler.impl.MavenCompilerFact
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.DotFileFilter;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.DirectoryStream;
@@ -90,7 +89,6 @@ public class CompilerClassloaderUtils {
         CompilationRequest req = new DefaultCompilationRequest(localRepo,
                                                                info,
                                                                new String[]{MavenConfig.DEPS_BUILD_CLASSPATH, sb.toString()},
-                                                               Boolean.TRUE,
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         if (res.isSuccessful()) {

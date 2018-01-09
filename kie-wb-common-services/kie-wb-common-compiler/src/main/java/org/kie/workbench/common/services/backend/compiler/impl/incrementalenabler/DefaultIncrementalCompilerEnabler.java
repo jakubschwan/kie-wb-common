@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.configuration.Compilers;
 import org.kie.workbench.common.services.backend.compiler.configuration.ConfigurationContextProvider;
 import org.kie.workbench.common.services.backend.compiler.impl.pomprocessor.DefaultPomEditor;
 import org.kie.workbench.common.services.backend.compiler.impl.pomprocessor.PomPlaceHolder;

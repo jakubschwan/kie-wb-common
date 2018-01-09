@@ -15,10 +15,14 @@
  */
 package org.kie.workbench.common.services.backend.compiler.configuration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
-
-import java.util.*;
 
 
 /**

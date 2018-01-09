@@ -15,17 +15,12 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.decorators;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationResponse;
 import org.kie.workbench.common.services.backend.logback.OutputSharedMap;
 import org.slf4j.MDC;
-import org.uberfire.java.nio.file.Path;
 
 /***
  * After decorator to read and store the maven output into a List<String> in the CompilationResponse
@@ -42,24 +37,18 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
     public T compile(CompilationRequest req) {
         T res = compiler.compile(req);
         T t ;
-        if (req.getLogRequested()) {
             t = (T) new DefaultCompilationResponse(res.isSuccessful(),
                                                OutputSharedMap.getLog(req.getKieCliRequest().getRequestUUID()),
                                                req.getInfo().getPrjPath());
             OutputSharedMap.removeLog(req.getKieCliRequest().getRequestUUID());
-            MDC.clear();
-            return t;
-        } else {
-            t =  (T) new DefaultCompilationResponse(res.isSuccessful(), Collections.emptyList(), req.getInfo().getPrjPath());
-        }
         MDC.clear();
         return t;
     }
 
-    @Override
+    /* temporary @Override
     public CompilationResponse compile(CompilationRequest req, Map override) {
         return compiler.compile(req, override);
-    }
+    }*/
 
     @Override
     public Boolean cleanInternalCache() {

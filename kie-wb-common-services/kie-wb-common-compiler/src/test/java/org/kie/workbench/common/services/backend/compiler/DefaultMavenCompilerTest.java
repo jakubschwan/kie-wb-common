@@ -210,7 +210,7 @@ public class DefaultMavenCompilerTest {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
-                                                               Boolean.TRUE, Boolean.TRUE);
+                                                               Boolean.TRUE);
 
         CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
@@ -411,7 +411,7 @@ public class DefaultMavenCompilerTest {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, "-X"},
-                                                               Boolean.FALSE, Boolean.FALSE);
+                                                               Boolean.FALSE);
         DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
         assertTrue(enabler.process(req).getResult());
 

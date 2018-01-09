@@ -15,7 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -36,46 +35,39 @@ public class DefaultCompilationRequest implements CompilationRequest {
     private String requestUUID;
     private String[] originalArgs;
     private String mavenRepo;
-    private Boolean logRequested;
     private Boolean skipPrjDependenciesCreationList;
 
     /***
      * @param mavenRepo a string representation of the Path
      * @param info
      * @param args param for maven, can be used {@link org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs}
-     * @param logRequested if is true the output of the build will be provided as a List<String>
      */
     public DefaultCompilationRequest(String mavenRepo,
                                      WorkspaceCompilationInfo info,
-                                     String[] args,
-                                     Boolean logRequested) {
+                                     String[] args) {
         this.mavenRepo = mavenRepo;
         this.info = info;
         this.skipPrjDependenciesCreationList = Boolean.TRUE;
         this.requestUUID = UUID.randomUUID().toString();
 
         this.originalArgs = args;
-        this.logRequested = logRequested;
         Map internalMap = new HashMap();
         internalMap.put(MavenConfig.COMPILATION_ID, this.requestUUID);
         this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
                                     args,
                                     internalMap,
-                                    this.requestUUID,
-                                    logRequested);
+                                    this.requestUUID);
     }
 
     /***
      * @param mavenRepo a string representation of the Path
      * @param info
      * @param args param for maven, can be used {@link org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs}
-     * @param logRequested if is true the output of the build will be provided as a List<String>
      * @param skipPrjDependenciesCreationList if false a List with all dependencies of the project will be available in the response
      */
     public DefaultCompilationRequest(String mavenRepo,
                                      WorkspaceCompilationInfo info,
                                      String[] args,
-                                     Boolean logRequested,
                                      Boolean skipPrjDependenciesCreationList) {
         this.mavenRepo = mavenRepo;
         this.info = info;
@@ -83,14 +75,12 @@ public class DefaultCompilationRequest implements CompilationRequest {
         this.requestUUID = UUID.randomUUID().toString();
 
         this.originalArgs = args;
-        this.logRequested = logRequested;
         Map internalMap = new HashMap();
         internalMap.put(MavenConfig.COMPILATION_ID, this.requestUUID);
         this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
                                     args,
                                     internalMap,
-                                    this.requestUUID,
-                                    logRequested);
+                                    this.requestUUID);
     }
 
     @Override
@@ -135,11 +125,6 @@ public class DefaultCompilationRequest implements CompilationRequest {
     @Override
     public Map<String, Object> getMap() {
         return req.getMap();
-    }
-
-    @Override
-    public Boolean getLogRequested() {
-        return logRequested;
     }
 
     @Override

@@ -16,6 +16,7 @@
 package org.kie.workbench.common.services.backend.logback;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +29,11 @@ public class OutputSharedMap {
     private static Map<String, List<String>> map = new ConcurrentHashMap();
 
     public static List<String> getLog(String key){
-        return map.get(key);
+        if(map.containsKey(key)) {
+            return map.get(key);
+        }else{
+            return Collections.emptyList();
+        }
     }
 
     public static void removeLog(String key){

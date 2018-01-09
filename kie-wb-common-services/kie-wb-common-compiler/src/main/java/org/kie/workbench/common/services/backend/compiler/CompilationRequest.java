@@ -38,8 +38,6 @@ public interface CompilationRequest {
 
     String[] getOriginalArgs();
 
-    Boolean getLogRequested();
-
     Map<String, Object> getMap();
 
     String getRequestUUID();

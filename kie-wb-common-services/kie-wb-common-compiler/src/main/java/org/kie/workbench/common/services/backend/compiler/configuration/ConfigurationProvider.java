@@ -16,9 +16,9 @@
 
 package org.kie.workbench.common.services.backend.compiler.configuration;
 
-import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
-
 import java.util.Map;
+
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 
 /***
  * Define the behaviour of a Configuration provider
