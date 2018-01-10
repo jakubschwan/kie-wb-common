@@ -344,13 +344,11 @@ public class KieDefaultMavenCompilerTest {
         Path tmpRootCloned = Files.createTempDirectory("cloned");
         Path tmpCloned = Files.createDirectories(Paths.get(tmpRootCloned.toString(),
                                                            ".clone.git"));
-        //@TODO find a way to retrieve the address git://... of the repo
+
         final Git cloned = Git.cloneRepository().setURI("git://localhost:9418/repo").setBare(false).setDirectory(tmpCloned.toFile()).call();
 
         assertNotNull(cloned);
 
-        //@TODO refactor and use only one between the URI or Git
-        //@TODO find a way to resolve the problem of the prjname inside .git folder
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
@@ -385,8 +383,8 @@ public class KieDefaultMavenCompilerTest {
         TestUtil.rm(tmpRootCloned.toFile());
     }
 
-    /* temporary @Test */
-    public void buildCompileWithOverrideTest() throws Exception {
+    @Test
+    public void buildCompileWithOverrideOnRegularFSTest() throws Exception {
         String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
 
@@ -420,17 +418,15 @@ public class KieDefaultMavenCompilerTest {
         Path tmpRootCloned = Files.createTempDirectory("cloned");
         Path tmpCloned = Files.createDirectories(Paths.get(tmpRootCloned.toString(),
                                                            ".clone.git"));
-        //@TODO find a way to retrieve the address git://... of the repo
+
         final Git cloned = Git.cloneRepository().setURI("git://localhost:9418/repo").setBare(false).setDirectory(tmpCloned.toFile()).call();
 
         assertNotNull(cloned);
 
-        //@TODO refactor and use only one between the URI or Git
-        //@TODO find a way to resolve the problem of the prjname inside .git folder
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.DEBUG, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE);
         byte[] encoded = Files.readAllBytes(Paths.get(req.getInfo().getPrjPath().toString(),
                                                       "/src/main/java/dummy/Dummy.java"));
@@ -453,30 +449,31 @@ public class KieDefaultMavenCompilerTest {
 
         //change some files
         Map<org.uberfire.java.nio.file.Path, InputStream> override = new HashMap<>();
+
         org.uberfire.java.nio.file.Path path = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath()+"/src/main/java/dummy/DummyOverride.java");
         InputStream input = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/DummyOverride.java"));
         override.put(path,input);
 
-        org.uberfire.java.nio.file.Path pathTwo = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath()+"/src/main/java/dummy/Dummy.java");
-        InputStream inputTwo = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/Dummy.java"));
+        org.uberfire.java.nio.file.Path pathTwo = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath()+"/pom.xml");
+        InputStream inputTwo = new FileInputStream(new File("target/test-classes/dummy_override/pom.xml"));
         override.put(pathTwo,inputTwo);
 
-        //recompile
-        /* temporary res = compiler.compile(req, override); */
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerTest.buildCompileWithOverrideTest");
-        }
+        org.uberfire.java.nio.file.Path pathThree = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath()+"/src/main/java/dummy/Dummy.java");
+        InputStream inputThree = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/Dummy.java"));
+        override.put(pathThree,inputThree);
 
-        assertTrue(res.isSuccessful());
+        //recompile
+        res = compiler.compile(req, override);
+        Assert.assertTrue(res.isSuccessful());
+
+        assertFalse(new File(req.getInfo().getPrjPath()+"/target/classes/dummy/Dummy.class").exists());
         assertTrue(new File(req.getInfo().getPrjPath()+"/target/classes/dummy/DummyOverride.class").exists());
 
         encoded = Files.readAllBytes(Paths.get(req.getInfo().getPrjPath().toString(),
                                                       "/src/main/java/dummy/Dummy.java"));
-        dummyAsAstring = new String(encoded,
-                                         StandardCharsets.UTF_8);
-        assertTrue(dummyAsAstring.contains("public Dummy(Integer age) {\n" +
-                                                   "        this.age = age;\n" +
+        dummyAsAstring = new String(encoded, StandardCharsets.UTF_8);
+        assertTrue(dummyAsAstring.contains("public Dummy(String name) {\n" +
+                                                   "        this.name = name;\n" +
                                                    "    }"));
         TestUtil.rm(tmpRootCloned.toFile());
     }

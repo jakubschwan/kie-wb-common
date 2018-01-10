@@ -19,12 +19,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.UUID;
 
 import org.codehaus.plexus.classworlds.ClassWorld;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -33,6 +37,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.external339.Reusa
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.IncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.pomprocessor.ProcessedPoms;
+import org.kie.workbench.common.services.backend.compiler.impl.utils.JGitUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -56,16 +61,12 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
 
     private static final Logger logger = LoggerFactory.getLogger(BaseMavenCompiler.class);
     private int writeBlockSize = 1024;
-    //private AFMavenCli cli;
     private ReusableAFMavenCli cli;
 
     private IncrementalCompilerEnabler enabler;
 
-    private final ReentrantLock lock = new ReentrantLock();
-
     public BaseMavenCompiler() {
         cli = new ReusableAFMavenCli();
-        //cli = new AFMavenCli();
         enabler = new DefaultIncrementalCompilerEnabler();
     }
 
@@ -83,11 +84,6 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
 
     public Boolean cleanInternalCache() {
         return enabler.cleanHistory() && cli.cleanInternals();
-    }
-
-    public void invalidatePomHistory() {
-        enabler.cleanHistory();
-        cli.cleanInternals();
     }
 
     @Override
@@ -130,19 +126,27 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
         }
     }
 
-    //@Override
+    @Override
     public T compile(CompilationRequest req, Map<Path, InputStream> override) {
-        /* @TODO change the PATH with Uberfire type and create two branch, uno for the non git (the current implementation) with a revert of the filesy changed
-        and for a git version with a revert */
         List<BackupItem> backup = new ArrayList<>(override.size());
         Path firstPath = override.entrySet().iterator().next().getKey();
-        if(firstPath.getFileSystem() instanceof JGitFileSystem){
-            workOnGitFS(override,backup);
-        }else {
-            workOnRegularFS(override,backup);
+        boolean isGitFS = firstPath.getFileSystem() instanceof JGitFileSystem;
+        Git git = null;
+        if (isGitFS) {
+            git = JGitUtils.tempClone((JGitFileSystem) firstPath.getFileSystem(), UUID.randomUUID().toString());
+            workOnGitFS(override, git);
+        } else {
+            workOnRegularFS(override, backup);
         }
+
         T result = compile(req);
-        //@TODO rollback FS
+
+        if (isGitFS) {
+            restoreGitFS(git);
+        } else {
+            restoreRegularFS(backup);
+        }
+
         return result;
     }
 
@@ -150,28 +154,49 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
         for (Map.Entry<Path, InputStream> entry : override.entrySet()) {
             Path path = entry.getKey();
             InputStream input = entry.getValue();
-                try {
-                    //backup.add(new BackupItem(path, Files.readAllBytes(path)));
-                    Files.write(path, readAllBytes(input));
-                } catch (IOException e) {
-                    logger.error("Path not writed:" + entry.getKey() + "\n");
-                    logger.error(e.getMessage());
-                    logger.error("\n");
-                }
-        }
-    }
-
-    private void workOnGitFS(Map<Path, InputStream> override, List<BackupItem>  backup) {
-        for (Map.Entry<Path, InputStream> entry : override.entrySet()) {
-            Path path = entry.getKey();
-            InputStream input = entry.getValue();
-
             try {
+                boolean isChanged = Files.exists(path);
+                backup.add(new BackupItem(path, isChanged ? Files.readAllBytes(path) : null, isChanged));
                 Files.write(path, readAllBytes(input));
             } catch (IOException e) {
                 logger.error("Path not writed:" + entry.getKey() + "\n");
                 logger.error(e.getMessage());
                 logger.error("\n");
+            }
+        }
+    }
+
+    private void restoreRegularFS(List<BackupItem> backup) {
+        for (BackupItem item : backup) {
+            if (item.isAChange) {
+                Files.write(item.getPath(), item.getContent());
+            } else {
+                Files.delete(item.getPath());
+            }
+        }
+    }
+
+    private void workOnGitFS(Map<Path, InputStream> override, Git git) {
+        for (Map.Entry<Path, InputStream> entry : override.entrySet()) {
+            Path path = entry.getKey();
+            InputStream input = entry.getValue();
+            java.nio.file.Path convertedToCheckedPath = git.getRepository().getDirectory().toPath().getParent().resolve(path.toString().substring(1));
+            try {
+                java.nio.file.Files.copy(input, convertedToCheckedPath, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                logger.error("Path not writed:" + entry.getKey() + "\n");
+                logger.error(e.getMessage());
+                logger.error("\n");
+            }
+        }
+    }
+
+    private void restoreGitFS(Git git) {
+        if (git != null) {
+            try {
+                git.reset().setMode(ResetCommand.ResetType.HARD).call();
+            } catch (GitAPIException ex) {
+                logger.error("Git reset exception:" + ex.getMessage() + "\n");
             }
         }
     }
@@ -183,20 +208,32 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
         return out.toByteArray();
     }
 
-    public void copy(InputStream in, OutputStream out) throws IOException
-    {
+    public void copy(InputStream in, OutputStream out) throws IOException {
         byte[] bytes = new byte[writeBlockSize];
         int len;
-        while ((len = in.read(bytes)) != -1) out.write(bytes, 0, len);
+        while ((len = in.read(bytes)) != -1) {
+            out.write(bytes, 0, len);
+        }
     }
 
     class BackupItem {
+
         private byte[] content;
         private Path path;
+        private boolean isAChange;
 
-        public BackupItem(Path path, byte[] content){
+        public BackupItem(Path path, byte[] content, boolean isAChange) {
             this.path = path;
             this.content = content;
+            this.isAChange = isAChange;
+        }
+
+        public boolean isAChange() {
+            return isAChange;
+        }
+
+        public boolean isAnAddition() {
+            return !isAChange;
         }
 
         public byte[] getContent() {

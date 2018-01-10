@@ -20,7 +20,7 @@
                     <compilerId>jdt</compilerId>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <failOnError>true</failOnError>
+                    <failOnError>false</failOnError>
                 </configuration>
                 <executions>
                     <execution>
@@ -30,7 +30,7 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <compilerId>javac</compilerId>
+                            <compilerId>jdt</compilerId>
                         </configuration>
                     </execution>
                 </executions>

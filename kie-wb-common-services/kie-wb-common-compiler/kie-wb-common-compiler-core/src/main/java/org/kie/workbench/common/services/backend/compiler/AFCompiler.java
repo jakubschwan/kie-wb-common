@@ -15,6 +15,11 @@
  */
 package org.kie.workbench.common.services.backend.compiler;
 
+import java.io.InputStream;
+import java.util.Map;
+
+import org.uberfire.java.nio.file.Path;
+
 /***
  * Define the behaviour of a Compiler
  */
@@ -25,7 +30,7 @@ public interface AFCompiler<T extends CompilationResponse> {
      */
     T compile(final CompilationRequest req);
 
-    // temporary T compile( final CompilationRequest req, final Map<Path, InputStream> override);
+    T compile( final CompilationRequest req, final Map<Path, InputStream> override);
 
     Boolean cleanInternalCache();
 }

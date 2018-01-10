@@ -76,10 +76,10 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
         return compiler.compile(_req);
     }
 
-    /* temporary @Override
+    @Override
     public CompilationResponse compile(CompilationRequest req, Map override) {
         return compiler.compile(req, override);
-    }*/
+    }
 
     private Git useInternalMap(JGitFileSystem fs,
                                CompilationRequest req) {

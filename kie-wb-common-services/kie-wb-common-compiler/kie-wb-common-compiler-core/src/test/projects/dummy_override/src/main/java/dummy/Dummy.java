@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Dummy implements Serializable {
 
-    private Integer age;
+    private Intege age;
 
     public Dummy(Integer age) {
         this.age = age;

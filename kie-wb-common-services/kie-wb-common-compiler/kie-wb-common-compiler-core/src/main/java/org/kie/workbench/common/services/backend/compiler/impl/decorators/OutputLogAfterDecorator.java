@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.decorators;
 
+import java.util.Map;
+
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -45,10 +47,10 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
         return t;
     }
 
-    /* temporary @Override
+    @Override
     public CompilationResponse compile(CompilationRequest req, Map override) {
         return compiler.compile(req, override);
-    }*/
+    }
 
     @Override
     public Boolean cleanInternalCache() {

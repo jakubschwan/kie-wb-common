@@ -166,7 +166,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
 
     /******************************************************************************************************************/
 
-
+    //@TODO replace and remove with org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler.compile(org.kie.workbench.common.services.backend.compiler.CompilationRequest, java.util.Map<org.uberfire.java.nio.file.Path,java.io.InputStream>)
     @Override
     public KieCompilationResponse validate(final Path path, final InputStream inputStream) {
         if (path.getFileSystem() instanceof JGitFileSystem) {
