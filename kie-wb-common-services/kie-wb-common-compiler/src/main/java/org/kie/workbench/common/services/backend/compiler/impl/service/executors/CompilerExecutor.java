@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.compiler;
+package org.kie.workbench.common.services.backend.compiler.impl.service.executors;
 
 import java.util.concurrent.CompletableFuture;
 
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.uberfire.java.nio.file.Path;
 
-public interface AFCompilerService {
+/***
+ * This interface provides Async behaviour and use rich objects provided in a local build requested from a local class
+ */
+public interface CompilerExecutor {
 
     /************************************ Suitable for the Local Builds ***********************************************/
 
@@ -73,59 +76,9 @@ public interface AFCompilerService {
      * maven args changes between compilation Requests
      */
     CompletableFuture<KieCompilationResponse> buildSpecializedAsync(Path projectPath,
-                                            String mavenRepo,
-                                            String[] args, Boolean skipPrjDependenciesCreationList);
+                                                                    String mavenRepo,
+                                                                    String[] args, Boolean skipPrjDependenciesCreationList);
 
 
 
-    /************************************ Suitable for the REST Builds ************************************************/
-
-
-    /**
-     * When a HTTP call asks a build this method run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse
-     * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
-     * between compilation Requests
-     */
-    KieCompilationResponse build(String projectPath, String mavenRepo);
-
-
-   /**
-     * When a HTTP call asks a build this method run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse
-     * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
-     * between compilation Requests
-     */
-    KieCompilationResponse build(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList);
-
-
-    /**
-     * When a HTTP call asks a build this method run a mvn install on the projectPath, maven output provided in the CompilationResponse
-     * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
-     * between compilation Requests
-     */
-    KieCompilationResponse buildAndInstall(String projectPath, String mavenRepo);
-
-
-    /**
-     * When a HTTP call asks a build this method run a mvn install on the projectPath, maven output provided in the CompilationResponse
-     * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
-     * between compilation Requests
-     */
-    KieCompilationResponse buildAndInstall(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList);
-
-
-    /**
-     * When a HTTP call asks a build this method run a mvn {args}, maven output provided in the CompilationResponse
-     * a new CompilationRequest will be created at every invocation, useful if the project folder, maven repo and
-     * maven args changes between compilation Requests
-     */
-    KieCompilationResponse buildSpecialized(String projectPath, String mavenRepo, String[] args);
-
-
-    /**
-     * When a HTTP call asks a build this method run a mvn {args}, maven output provided in the CompilationResponse
-     * a new CompilationRequest will be created at every invocation, useful if the project folder, maven repo and
-     * maven args changes between compilation Requests
-     */
-    KieCompilationResponse buildSpecialized(String projectPath, String mavenRepo,
-                                            String[] args, Boolean skipPrjDependenciesCreationList);
 }

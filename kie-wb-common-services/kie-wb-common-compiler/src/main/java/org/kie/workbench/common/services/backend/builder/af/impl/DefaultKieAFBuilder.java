@@ -65,6 +65,25 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
         setup(projectRootPath, mavenRepo, git, projectRepo);
     }
 
+
+    public DefaultKieAFBuilder(final String projectRoot,
+                               final String mavenRepo) {
+        final Path projectRepo;
+        final Path projectRootPath = Paths.get(projectRoot);
+        if (projectRootPath.getFileSystem() instanceof JGitFileSystem) {
+            this.git = JGitUtils.tempClone((JGitFileSystem) projectRootPath.getFileSystem(), getFolderName());
+            try {
+                projectRepo = Paths.get(git.getRepository().getDirectory().getParentFile().toPath().resolve(projectRootPath.getFileName().toString()).toFile().getCanonicalFile().toPath().toUri());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            git = null;
+            projectRepo = projectRootPath;
+        }
+        setup(projectRootPath, mavenRepo, git, projectRepo);
+    }
+
     public DefaultKieAFBuilder(final Path projectRootPath,
                                final String mavenRepo,
                                final Git git,

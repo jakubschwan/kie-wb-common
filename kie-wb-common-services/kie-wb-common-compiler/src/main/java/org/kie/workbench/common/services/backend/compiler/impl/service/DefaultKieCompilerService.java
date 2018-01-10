@@ -22,19 +22,19 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.kie.workbench.common.services.backend.compiler.AFCompilerService;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.service.runners.DefaultLocalExecutor;
+import org.kie.workbench.common.services.backend.compiler.impl.service.executors.DefaultLocalExecutor;
+import org.kie.workbench.common.services.backend.compiler.impl.service.executors.DefaultRemoteExecutor;
 import org.uberfire.java.nio.file.Path;
 
-/**
- * In this class we will put the logic to route locally or remotely
- * */
 @ApplicationScoped
 public class DefaultKieCompilerService implements AFCompilerService {
 
     private DefaultLocalExecutor localExecutor;
+    private DefaultRemoteExecutor remoteExecutor;
 
     public DefaultKieCompilerService(){
         localExecutor = new DefaultLocalExecutor(Executors.newCachedThreadPool());
+        remoteExecutor = new DefaultRemoteExecutor(Executors.newCachedThreadPool());
     }
 
 
@@ -75,32 +75,32 @@ public class DefaultKieCompilerService implements AFCompilerService {
 
     @Override
     public KieCompilationResponse build(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
-        return localExecutor.build(projectPath, mavenRepo, skipPrjDependenciesCreationList);
+        return remoteExecutor.build(projectPath, mavenRepo, skipPrjDependenciesCreationList);
     }
 
     @Override
     public KieCompilationResponse build(String projectPath, String mavenRepo) {
-        return localExecutor.build(projectPath, mavenRepo);
+        return remoteExecutor.build(projectPath, mavenRepo);
     }
 
 
     @Override
     public KieCompilationResponse buildAndInstall(String projectPath, String mavenRepo) {
-        return localExecutor.buildAndInstall(projectPath, mavenRepo);
+        return remoteExecutor.buildAndInstall(projectPath, mavenRepo);
     }
 
     @Override
     public KieCompilationResponse buildAndInstall(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
-        return localExecutor.buildAndInstall(projectPath, mavenRepo, skipPrjDependenciesCreationList);
+        return remoteExecutor.buildAndInstall(projectPath, mavenRepo, skipPrjDependenciesCreationList);
     }
 
     @Override
     public KieCompilationResponse buildSpecialized(String projectPath, String mavenRepo, String[] args) {
-        return localExecutor.buildSpecialized(projectPath, mavenRepo, args);
+        return remoteExecutor.buildSpecialized(projectPath, mavenRepo, args);
     }
 
     @Override
     public KieCompilationResponse buildSpecialized(String projectPath, String mavenRepo, String[] args, Boolean skipPrjDependenciesCreationList) {
-        return localExecutor.buildSpecialized(projectPath, mavenRepo, args, skipPrjDependenciesCreationList);
+        return remoteExecutor.buildSpecialized(projectPath, mavenRepo, args, skipPrjDependenciesCreationList);
     }
 }
