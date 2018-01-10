@@ -77,7 +77,7 @@
     <dependencies>
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-compiler</artifactId>
+      <artifactId>kie-wb-common-compiler-core</artifactId>
       <version>${version.org.kie}</version>
     </dependency>
     </dependencies>
