@@ -11,7 +11,7 @@
 
   <artifactId>kie-wb-common-compiler-core</artifactId>
 
-  <name>Kie Workbench - Common - Compiler Core</name>
+  <name>Kie Workbench - Common - Compiler - Core</name>
   <description>Kie Workbench - Common - Compiler - Core</description>
 
   <properties>

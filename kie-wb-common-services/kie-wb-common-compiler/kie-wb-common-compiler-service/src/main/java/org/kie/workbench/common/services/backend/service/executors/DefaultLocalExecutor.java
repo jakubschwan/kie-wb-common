@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.compiler.impl.service.executors;
+package org.kie.workbench.common.services.backend.service.executors;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -22,9 +22,7 @@ import org.guvnor.common.services.backend.cache.LRUCache;
 import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
 import org.kie.workbench.common.services.backend.builder.af.impl.DefaultKieAFBuilder;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.service.executors.CompilerExecutor;
 import org.uberfire.java.nio.file.Path;
-import org.uberfire.java.nio.file.Paths;
 
 public class DefaultLocalExecutor implements CompilerExecutor {
 

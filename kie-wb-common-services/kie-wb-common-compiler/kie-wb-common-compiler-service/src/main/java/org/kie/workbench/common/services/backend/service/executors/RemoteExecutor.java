@@ -1,4 +1,4 @@
-package org.kie.workbench.common.services.backend.compiler.impl.service.executors;
+package org.kie.workbench.common.services.backend.service.executors;
 
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 

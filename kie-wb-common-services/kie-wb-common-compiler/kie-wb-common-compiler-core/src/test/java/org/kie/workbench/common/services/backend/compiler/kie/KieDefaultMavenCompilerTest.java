@@ -34,6 +34,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
@@ -383,7 +384,7 @@ public class KieDefaultMavenCompilerTest {
         TestUtil.rm(tmpRootCloned.toFile());
     }
 
-    @Test
+    @Ignore @Test
     public void buildCompileWithOverrideOnRegularFSTest() throws Exception {
         String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);

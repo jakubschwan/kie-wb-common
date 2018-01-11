@@ -21,6 +21,7 @@
 
    <modules>
     <module>kie-wb-common-compiler-core</module>
+    <module>kie-wb-common-compiler-service</module>
     <module>kie-wb-common-compiler-rest</module>
   </modules>
 

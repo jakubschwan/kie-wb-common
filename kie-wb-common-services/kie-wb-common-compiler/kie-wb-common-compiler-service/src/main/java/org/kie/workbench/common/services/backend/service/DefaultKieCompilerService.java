@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.compiler.impl.service;
+package org.kie.workbench.common.services.backend.service;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.kie.workbench.common.services.backend.compiler.AFCompilerService;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.service.executors.DefaultLocalExecutor;
-import org.kie.workbench.common.services.backend.compiler.impl.service.executors.DefaultRemoteExecutor;
+import org.kie.workbench.common.services.backend.service.executors.DefaultLocalExecutor;
+import org.kie.workbench.common.services.backend.service.executors.DefaultRemoteExecutor;
 import org.uberfire.java.nio.file.Path;
 
 @ApplicationScoped
