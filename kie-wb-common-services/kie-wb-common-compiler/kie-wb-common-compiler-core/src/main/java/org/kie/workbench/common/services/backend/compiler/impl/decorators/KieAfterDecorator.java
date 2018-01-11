@@ -62,23 +62,29 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
     }
 
     @Override
+    public Boolean cleanInternalCache() {
+        return compiler.cleanInternalCache();
+    }
+
+    @Override
     public T compile(CompilationRequest req) {
         T res = compiler.compile(req);
+        return handleAfter(req, res);
+    }
+
+    @Override
+    public CompilationResponse compile(CompilationRequest req, Map override) {
+        T res = (T)compiler.compile(req, override);
+        return handleAfter(req, res);
+    }
+
+    private T handleAfter(CompilationRequest req, T res) {
         if (req.getInfo().isKiePluginPresent()) {
             return (T) handleKieMavenPlugin(req, res);
         }
         return (T) handleNormalBuild(req, res);
     }
 
-    @Override
-    public CompilationResponse compile(CompilationRequest req, Map override) {
-        return compiler.compile(req, override);
-    }
-
-    @Override
-    public Boolean cleanInternalCache() {
-        return compiler.cleanInternalCache();
-    }
 
     private KieCompilationResponse handleKieMavenPlugin(CompilationRequest req,
                                                         CompilationResponse res) {

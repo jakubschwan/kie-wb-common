@@ -52,7 +52,17 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
 
     @Override
     public T compile(CompilationRequest req) {
+        final CompilationRequest _req = handleBefore(req);
+        return compiler.compile(_req);
+    }
 
+    @Override
+    public CompilationResponse compile(CompilationRequest req, Map override) {
+        final CompilationRequest _req = handleBefore(req);
+        return compiler.compile(_req, override);
+    }
+
+    private CompilationRequest handleBefore(CompilationRequest req) {
         final Path path = req.getInfo().getPrjPath();
         final CompilationRequest _req;
 
@@ -72,14 +82,10 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
         } else {
             _req = req;
         }
-
-        return compiler.compile(_req);
+        return _req;
     }
 
-    @Override
-    public CompilationResponse compile(CompilationRequest req, Map override) {
-        return compiler.compile(req, override);
-    }
+
 
     private Git useInternalMap(JGitFileSystem fs,
                                CompilationRequest req) {

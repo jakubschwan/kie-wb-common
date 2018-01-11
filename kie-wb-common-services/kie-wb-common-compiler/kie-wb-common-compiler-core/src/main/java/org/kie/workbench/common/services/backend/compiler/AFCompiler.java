@@ -30,6 +30,9 @@ public interface AFCompiler<T extends CompilationResponse> {
      */
     T compile(final CompilationRequest req);
 
+    /**
+     * Compile a project overriding or creating the elements in the Map and then revert this changes
+     */
     T compile( final CompilationRequest req, final Map<Path, InputStream> override);
 
     Boolean cleanInternalCache();

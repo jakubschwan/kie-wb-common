@@ -22,6 +22,6 @@ import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 /***
  * Extends the Compiler behaviour to the decorators
  */
-public interface CompilerDecorator<T extends CompilationResponse, C extends AFCompiler<T>> extends AFCompiler<T> {
+public interface CompilerDecorator<T extends CompilationResponse> extends AFCompiler<T> {
 
 }

@@ -38,18 +38,22 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
     @Override
     public T compile(CompilationRequest req) {
         T res = compiler.compile(req);
-        T t ;
-            t = (T) new DefaultCompilationResponse(res.isSuccessful(),
-                                               OutputSharedMap.getLog(req.getKieCliRequest().getRequestUUID()),
-                                               req.getInfo().getPrjPath());
-            OutputSharedMap.removeLog(req.getKieCliRequest().getRequestUUID());
-        MDC.clear();
-        return t;
+        return handleMavenOutput(req, res);
     }
 
     @Override
     public CompilationResponse compile(CompilationRequest req, Map override) {
-        return compiler.compile(req, override);
+        T res =  (T) compiler.compile(req, override);
+        return handleMavenOutput(req, res);
+    }
+
+    private T handleMavenOutput(CompilationRequest req, T res) {
+        T t = (T) new DefaultCompilationResponse(res.isSuccessful(),
+                                                 OutputSharedMap.getLog(req.getKieCliRequest().getRequestUUID()),
+                                                 req.getInfo().getPrjPath());
+        OutputSharedMap.removeLog(req.getKieCliRequest().getRequestUUID());
+        MDC.clear();
+        return t;
     }
 
     @Override
