@@ -85,7 +85,10 @@ public class KieDefaultMavenCompilerTest {
     @After
     public void tearDown() throws IOException {
         fileSystemTestingUtils.cleanup();
-        TestUtil.rm(new File("src/../.security/"));
+        File sec = new File("src/../.security/");
+        if(sec.exists()) {
+            TestUtil.rm(sec);
+        }
     }
 
     @Test
@@ -384,7 +387,7 @@ public class KieDefaultMavenCompilerTest {
         TestUtil.rm(tmpRootCloned.toFile());
     }
 
-    @Ignore @Test
+    @Test
     public void buildCompileWithOverrideOnRegularFSTest() throws Exception {
         String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
@@ -407,7 +410,7 @@ public class KieDefaultMavenCompilerTest {
         ioService.startBatch(origin);
 
         ioService.write(origin.getPath("/dummy/pom.xml"),
-                        new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/dummy/pom.xml").toPath())));
+                        new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/dummy_override/pom.xml").toPath())));
         ioService.write(origin.getPath("/dummy/src/main/java/dummy/Dummy.java"),
                         new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/dummy/src/main/java/dummy/Dummy.java").toPath())));
         ioService.endBatch();
@@ -427,7 +430,7 @@ public class KieDefaultMavenCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.DEBUG, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE);
         byte[] encoded = Files.readAllBytes(Paths.get(req.getInfo().getPrjPath().toString(),
                                                       "/src/main/java/dummy/Dummy.java"));
@@ -455,13 +458,9 @@ public class KieDefaultMavenCompilerTest {
         InputStream input = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/DummyOverride.java"));
         override.put(path,input);
 
-        org.uberfire.java.nio.file.Path pathTwo = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath()+"/pom.xml");
-        InputStream inputTwo = new FileInputStream(new File("target/test-classes/dummy_override/pom.xml"));
+        org.uberfire.java.nio.file.Path pathTwo = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath()+"/src/main/java/dummy/Dummy.java");
+        InputStream inputTwo = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/Dummy.java"));
         override.put(pathTwo,inputTwo);
-
-        org.uberfire.java.nio.file.Path pathThree = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath()+"/src/main/java/dummy/Dummy.java");
-        InputStream inputThree = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/Dummy.java"));
-        override.put(pathThree,inputThree);
 
         //recompile
         res = compiler.compile(req, override);
