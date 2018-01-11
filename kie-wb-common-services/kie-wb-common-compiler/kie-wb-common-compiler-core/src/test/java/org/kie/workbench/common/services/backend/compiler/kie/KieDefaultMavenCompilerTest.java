@@ -45,6 +45,7 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLI
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
+import org.kie.workbench.common.services.backend.compiler.impl.utils.JGitUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.io.IOService;
@@ -389,50 +390,26 @@ public class KieDefaultMavenCompilerTest {
 
     @Test
     public void buildCompileWithOverrideOnRegularFSTest() throws Exception {
+
         String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
 
-        String MASTER_BRANCH = "master";
+        Path tmpRoot = Files.createTempDirectory("repo");
+        //NIO creation and copy content
+        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
+        TestUtil.copyTree(Paths.get("src/test/projects/dummy"), temp);
+        //end NIO
 
-        //Setup origin in memory
-        final URI originRepo = URI.create("git://repo");
-        final JGitFileSystem origin = (JGitFileSystem) ioService.newFileSystem(originRepo,
-                                                                               new HashMap<String, Object>() {{
-                                                                                   put("init",
-                                                                                       Boolean.TRUE);
-                                                                                   put("internal",
-                                                                                       Boolean.TRUE);
-                                                                                   put("listMode",
-                                                                                       "ALL");
-                                                                               }});
-        assertNotNull(origin);
-
-        ioService.startBatch(origin);
-
-        ioService.write(origin.getPath("/dummy/pom.xml"),
-                        new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/dummy_override/pom.xml").toPath())));
-        ioService.write(origin.getPath("/dummy/src/main/java/dummy/Dummy.java"),
-                        new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/dummy/src/main/java/dummy/Dummy.java").toPath())));
-        ioService.endBatch();
-
-        RevCommit lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
-        assertNotNull(lastCommit);
-
-        // clone into a regularfs
-        Path tmpRootCloned = Files.createTempDirectory("cloned");
-        Path tmpCloned = Files.createDirectories(Paths.get(tmpRootCloned.toString(),
-                                                           ".clone.git"));
-
-        final Git cloned = Git.cloneRepository().setURI("git://localhost:9418/repo").setBare(false).setDirectory(tmpCloned.toFile()).call();
-
-        assertNotNull(cloned);
-
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"));
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE);
-        byte[] encoded = Files.readAllBytes(Paths.get(req.getInfo().getPrjPath().toString(),
+
+        byte[] pomOverride = Files.readAllBytes(Paths.get("src/test/projects/dummy_override/pom.xml"));
+        Files.write(Paths.get(temp.toString(),"pom.xml"), pomOverride);
+
+        byte[] encoded = Files.readAllBytes(Paths.get(temp.toString(),
                                                       "/src/main/java/dummy/Dummy.java"));
         String dummyAsAstring = new String(encoded,
                                            StandardCharsets.UTF_8);
@@ -442,14 +419,12 @@ public class KieDefaultMavenCompilerTest {
 
         CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildCompileWithOverrideTest");
         }
         assertTrue(res.isSuccessful());
         assertFalse(new File(req.getInfo().getPrjPath()+"/target/classes/dummy/DummyOverride.class").exists());
 
-        lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
-        assertNotNull(lastCommit);
 
         //change some files
         Map<org.uberfire.java.nio.file.Path, InputStream> override = new HashMap<>();
@@ -475,6 +450,7 @@ public class KieDefaultMavenCompilerTest {
         assertTrue(dummyAsAstring.contains("public Dummy(String name) {\n" +
                                                    "        this.name = name;\n" +
                                                    "    }"));
-        TestUtil.rm(tmpRootCloned.toFile());
+        TestUtil.rm(temp.toFile());
     }
+
 }
