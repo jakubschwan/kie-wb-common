@@ -31,6 +31,7 @@ import org.kie.workbench.common.forms.jbpm.model.authoring.task.TaskFormModel;
 import org.kie.workbench.common.forms.jbpm.service.bpmn.util.BPMNVariableUtils;
 import org.kie.workbench.common.forms.model.ModelProperty;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildData;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildDataImpl;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
@@ -135,7 +136,7 @@ public class BPMNFormModelGeneratorImplTest {
     public void init() throws ClassNotFoundException {
         when(projectService.resolveProject(any())).thenReturn(project);
         when(project.getRootPath()).thenReturn(path);
-        final ProjectBuildData projectBuildData = mock(ProjectBuildData.class);
+        final ProjectBuildData projectBuildData = mock(ProjectBuildDataImpl.class);
         when(projectBuildData.getClassLoader()).thenReturn(projectClassLoader);
         when(projectCache.getOrCreateEntry(project)).thenReturn(projectBuildData);
         when(projectClassLoader.loadClass(anyString())).thenAnswer(invocation -> Object.class);

@@ -73,23 +73,7 @@
     </plugins>
   </build>
 
-  <dependencyManagement>
-    <dependencies>
-    <dependency>
-      <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-compiler-service</artifactId>
-      <version>${version.org.kie}</version>
-    </dependency>
-      <dependency>
-        <groupId>org.kie.workbench.services</groupId>
-        <artifactId>kie-wb-common-compiler-core</artifactId>
-        <version>${version.org.kie}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
-
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-compiler-service</artifactId>
@@ -389,7 +373,6 @@
       <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
       <scope>test</scope>
     </dependency>
-
 
   </dependencies>
 

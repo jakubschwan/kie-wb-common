@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.jbpm.model.authoring.JBPMProcessModel;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildData;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildDataImpl;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
@@ -107,7 +108,7 @@ public class BPMFinderServiceImplTest {
 
         when(classLoader.loadClass(any())).thenAnswer((Answer<Class>) invocation -> String.class);
 
-        final ProjectBuildData projectBuildData = mock(ProjectBuildData.class);
+        final ProjectBuildData projectBuildData = mock(ProjectBuildDataImpl.class);
         when(projectBuildData.getClassLoader()).thenReturn(classLoader);
         when(projectCache.getOrCreateEntry(project)).thenReturn(projectBuildData);
 

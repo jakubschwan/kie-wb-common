@@ -22,6 +22,7 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.soup.project.datamodel.imports.Imports;
 import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildData;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildDataImpl;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.datamodel.backend.server.IncrementalDataModelServiceImpl;
 import org.kie.workbench.common.services.datamodel.model.PackageDataModelOracleIncrementalPayload;
@@ -54,7 +55,7 @@ public class MockIncrementalDataModelServiceCaller implements Caller<Incremental
                                         packageLoader.getPackageName());
         final ProjectCache projectCache = mock(ProjectCache.class);
 
-        final ProjectBuildData projectBuildData = mock(ProjectBuildData.class);
+        final ProjectBuildData projectBuildData = mock(ProjectBuildDataImpl.class);
         when(projectBuildData.getPackageDataModelOracle(any())).thenReturn(packageLoader);
         when(projectCache.getOrCreateEntry(project)).thenReturn(projectBuildData);
 

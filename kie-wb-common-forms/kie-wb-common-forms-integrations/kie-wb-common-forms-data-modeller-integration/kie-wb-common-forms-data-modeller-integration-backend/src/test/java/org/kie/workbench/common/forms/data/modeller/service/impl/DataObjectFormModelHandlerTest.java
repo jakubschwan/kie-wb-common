@@ -53,6 +53,7 @@ import org.kie.workbench.common.forms.service.shared.FieldManager;
 import org.kie.workbench.common.screens.datamodeller.backend.server.handler.JPADomainHandler;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildData;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildDataImpl;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.datamodeller.core.DataModel;
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
@@ -114,7 +115,7 @@ public class DataObjectFormModelHandlerTest extends AbstractDataObjectTest {
     public void setUp() throws Exception {
 
         when(projectService.resolveProject(any())).thenReturn(project);
-        final ProjectBuildData projectBuildData = mock(ProjectBuildData.class);
+        final ProjectBuildData projectBuildData = mock(ProjectBuildDataImpl.class);
         when(projectBuildData.getClassLoader()).thenReturn(classLoader);
         when(projectCache.getOrCreateEntry(project)).thenReturn(projectBuildData);
         when(classLoader.loadClass(any())).thenAnswer((Answer<Class>) invocation -> String.class);

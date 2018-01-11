@@ -36,6 +36,7 @@ import org.kie.workbench.common.forms.serialization.impl.FormDefinitionSerialize
 import org.kie.workbench.common.forms.serialization.impl.FormModelSerializer;
 import org.kie.workbench.common.forms.service.shared.FieldManager;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildData;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildDataImpl;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
@@ -84,7 +85,7 @@ public abstract class BPMNVFSFormDefinitionGeneratorServiceTest extends Abstract
     public void setup() throws IOException {
 
         when(projectService.resolveProject(any())).thenReturn(project);
-        final ProjectBuildData projectBuildData = mock(ProjectBuildData.class);
+        final ProjectBuildData projectBuildData = mock(ProjectBuildDataImpl.class);
         when(projectBuildData.getClassLoader()).thenReturn(this.getClass().getClassLoader());
         when(projectCache.getOrCreateEntry(project)).thenReturn(projectBuildData);
 

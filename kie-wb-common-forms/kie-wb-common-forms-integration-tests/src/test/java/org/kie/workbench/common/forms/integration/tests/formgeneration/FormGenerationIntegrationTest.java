@@ -71,6 +71,7 @@ import org.kie.workbench.common.forms.service.shared.FieldManager;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
 import org.kie.workbench.common.screens.datamodeller.service.ServiceException;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildData;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildDataImpl;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.datamodeller.core.DataModel;
 import org.kie.workbench.common.services.datamodeller.driver.FilterHolder;
@@ -214,7 +215,7 @@ public class FormGenerationIntegrationTest {
                                                             formModelSynchronizationUtil);
 
         when(projectService.resolveProject(any())).thenReturn(project);
-        final ProjectBuildData buildData = mock(ProjectBuildData.class);
+        final ProjectBuildData buildData = mock(ProjectBuildDataImpl.class);
         when(projectCache.getOrCreateEntry(project)).thenReturn(buildData);
         when(buildData.getClassLoader()).thenReturn(projectClassLoader);
 

@@ -30,6 +30,7 @@ import org.kie.workbench.common.screens.datamodeller.model.persistence.Property;
 import org.kie.workbench.common.screens.datamodeller.model.persistence.TransactionType;
 import org.kie.workbench.common.screens.datamodeller.validation.PersistenceDescriptorValidator;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildData;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildDataImpl;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
@@ -80,7 +81,7 @@ public class PersistenceDescriptorValidatorTest {
         classLoader = this.getClass().getClassLoader();
         when(projectService.resolveProject(path)).thenReturn(project);
 
-        final ProjectBuildData projectBuildData = mock(ProjectBuildData.class);
+        final ProjectBuildData projectBuildData = mock(ProjectBuildDataImpl.class);
         when(projectBuildData.getClassLoader()).thenReturn(classLoader);
         when(projectCache.getOrCreateEntry(project)).thenReturn(projectBuildData);
     }
