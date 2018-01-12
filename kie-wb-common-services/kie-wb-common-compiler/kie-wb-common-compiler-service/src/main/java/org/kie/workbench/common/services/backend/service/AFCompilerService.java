@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.services.backend.service;
 
+import java.io.InputStream;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
@@ -30,6 +32,13 @@ public interface AFCompilerService {
      * between compilation Requests
      */
     CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo);
+
+    /**
+     * Run a mvn compile on the projectPath with mavenRepo specified, overriding the content contained in the Map, maven output provided in the CompilationResponse
+     * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
+     * between compilation Requests
+     */
+    CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo, Map<Path, InputStream> override);
 
     /**
      * Run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse

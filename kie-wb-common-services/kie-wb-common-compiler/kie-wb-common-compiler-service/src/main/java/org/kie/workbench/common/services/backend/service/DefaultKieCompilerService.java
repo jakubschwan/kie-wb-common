@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.services.backend.service;
 
+import java.io.InputStream;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 
@@ -43,6 +45,11 @@ public class DefaultKieCompilerService implements AFCompilerService {
     @Override
     public CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo) {
         return localExecutor.buildAsync(projectPath, mavenRepo);
+    }
+
+    @Override
+    public CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo, Map<Path, InputStream> override) {
+        return localExecutor.buildAsync(projectPath, mavenRepo, override);
     }
 
     @Override

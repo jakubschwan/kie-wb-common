@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.services.backend.service.executors;
 
+import java.io.InputStream;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
@@ -79,10 +81,26 @@ public class DefaultLocalExecutor implements CompilerExecutor {
         return CompletableFuture.supplyAsync(() -> ((KieCompilationResponse) compiler.compile(req)), executor);
     }
 
+    private CompletableFuture<KieCompilationResponse> internalBuild(Path projectPath, String mavenRepo,
+                                                                    boolean skipProjectDepCreation, String goal, Map<Path, InputStream> override) {
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(projectPath);
+        AFCompiler compiler = getCompiler(projectPath, mavenRepo);
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+                                                               info,
+                                                               new String[]{goal},
+                                                               skipProjectDepCreation);
+        return CompletableFuture.supplyAsync(() -> ((KieCompilationResponse) compiler.compile(req, override)), executor);
+    }
+
     /************************************ Suitable for the Local Builds ***********************************************/
     @Override
     public CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo) {
         return internalBuild(projectPath, mavenRepo, Boolean.FALSE, MavenCLIArgs.COMPILE);
+    }
+
+    @Override
+    public CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo, Map<Path, InputStream> override) {
+        return internalBuild(projectPath, mavenRepo, Boolean.FALSE, MavenCLIArgs.COMPILE, override);
     }
 
     @Override
