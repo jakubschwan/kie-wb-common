@@ -31,53 +31,53 @@ public interface AFCompilerService {
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo);
+    CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo);
 
     /**
      * Run a mvn compile on the projectPath with mavenRepo specified, overriding the content contained in the Map, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo, Map<Path, InputStream> override);
+    CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo, Map<Path, InputStream> override);
 
     /**
      * Run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo,
-                                                         Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo,
+                                                    Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn install on the projectPath, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAndInstallAsync(Path projectPath, String mavenRepo);
+    CompletableFuture<KieCompilationResponse> buildAndInstall(Path projectPath, String mavenRepo);
 
     /**
      * Run a mvn install on the projectPath, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAndInstallAsync(Path projectPath, String mavenRepo,
-                                                                   Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<KieCompilationResponse> buildAndInstall(Path projectPath, String mavenRepo,
+                                                              Boolean skipPrjDependenciesCreationList);
 
     /**
      * Run a mvn {args}, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder, maven repo and
      * maven args changes between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildSpecializedAsync(Path projectPath, String mavenRepo, String[] args);
+    CompletableFuture<KieCompilationResponse> buildSpecialized(Path projectPath, String mavenRepo, String[] args);
 
     /**
      * Run a mvn {args}, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder, maven repo and
      * maven args changes between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildSpecializedAsync(Path projectPath,
-                                                                    String mavenRepo,
-                                                                    String[] args, Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<KieCompilationResponse> buildSpecialized(Path projectPath,
+                                                               String mavenRepo,
+                                                               String[] args, Boolean skipPrjDependenciesCreationList);
 
     /************************************ Suitable for the REST Builds ************************************************/
 
