@@ -34,7 +34,6 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
@@ -45,7 +44,6 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLI
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
-import org.kie.workbench.common.services.backend.compiler.impl.utils.JGitUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.io.IOService;
@@ -87,7 +85,7 @@ public class KieDefaultMavenCompilerTest {
     public void tearDown() throws IOException {
         fileSystemTestingUtils.cleanup();
         File sec = new File("src/../.security/");
-        if(sec.exists()) {
+        if (sec.exists()) {
             TestUtil.rm(sec);
         }
     }
@@ -147,7 +145,7 @@ public class KieDefaultMavenCompilerTest {
 
         CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned,res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildWithCloneTest");
         }
         assertTrue(res.isSuccessful());
@@ -287,7 +285,7 @@ public class KieDefaultMavenCompilerTest {
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/dummy/"),res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/dummy/"), res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildWithJGitDecoratorTest");
         }
         assertTrue(res.isSuccessful());
@@ -407,7 +405,7 @@ public class KieDefaultMavenCompilerTest {
                                                                Boolean.TRUE);
 
         byte[] pomOverride = Files.readAllBytes(Paths.get("src/test/projects/dummy_override/pom.xml"));
-        Files.write(Paths.get(temp.toString(),"pom.xml"), pomOverride);
+        Files.write(Paths.get(temp.toString(), "pom.xml"), pomOverride);
 
         byte[] encoded = Files.readAllBytes(Paths.get(temp.toString(),
                                                       "/src/main/java/dummy/Dummy.java"));
@@ -423,29 +421,28 @@ public class KieDefaultMavenCompilerTest {
                                                       "KieDefaultMavenCompilerTest.buildCompileWithOverrideTest");
         }
         assertTrue(res.isSuccessful());
-        assertFalse(new File(req.getInfo().getPrjPath()+"/target/classes/dummy/DummyOverride.class").exists());
-
+        assertFalse(new File(req.getInfo().getPrjPath() + "/target/classes/dummy/DummyOverride.class").exists());
 
         //change some files
         Map<org.uberfire.java.nio.file.Path, InputStream> override = new HashMap<>();
 
-        org.uberfire.java.nio.file.Path path = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath()+"/src/main/java/dummy/DummyOverride.java");
+        org.uberfire.java.nio.file.Path path = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath() + "/src/main/java/dummy/DummyOverride.java");
         InputStream input = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/DummyOverride.java"));
-        override.put(path,input);
+        override.put(path, input);
 
-        org.uberfire.java.nio.file.Path pathTwo = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath()+"/src/main/java/dummy/Dummy.java");
+        org.uberfire.java.nio.file.Path pathTwo = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath() + "/src/main/java/dummy/Dummy.java");
         InputStream inputTwo = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/Dummy.java"));
-        override.put(pathTwo,inputTwo);
+        override.put(pathTwo, inputTwo);
 
         //recompile
         res = compiler.compile(req, override);
         Assert.assertTrue(res.isSuccessful());
 
-        assertFalse(new File(req.getInfo().getPrjPath()+"/target/classes/dummy/Dummy.class").exists());
-        assertTrue(new File(req.getInfo().getPrjPath()+"/target/classes/dummy/DummyOverride.class").exists());
+        assertFalse(new File(req.getInfo().getPrjPath() + "/target/classes/dummy/Dummy.class").exists());
+        assertTrue(new File(req.getInfo().getPrjPath() + "/target/classes/dummy/DummyOverride.class").exists());
 
         encoded = Files.readAllBytes(Paths.get(req.getInfo().getPrjPath().toString(),
-                                                      "/src/main/java/dummy/Dummy.java"));
+                                               "/src/main/java/dummy/Dummy.java"));
         dummyAsAstring = new String(encoded, StandardCharsets.UTF_8);
         assertTrue(dummyAsAstring.contains("public Dummy(String name) {\n" +
                                                    "        this.name = name;\n" +
@@ -453,4 +450,81 @@ public class KieDefaultMavenCompilerTest {
         TestUtil.rm(temp.toFile());
     }
 
+    @Test
+    public void buildCompileWithOverrideOnGitVFS() throws Exception {
+        final String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_LOG_AFTER);
+
+        final URI originRepo = URI.create("git://buildCompileWithOverrideOnGitVFS");
+        final JGitFileSystem origin = (JGitFileSystem) ioService.newFileSystem(originRepo,
+                                                                               new HashMap<String, Object>() {{
+                                                                                   put("init",
+                                                                                       Boolean.TRUE);
+                                                                                   put("internal",
+                                                                                       Boolean.TRUE);
+                                                                                   put("listMode",
+                                                                                       "ALL");
+                                                                               }});
+        assertNotNull(origin);
+
+        ioService.startBatch(origin);
+
+        ioService.write(origin.getPath("master","/dummy/pom.xml"), //git://buildCompileWithOverrideOnGitVFS/dummy/pom.xml
+                        new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/dummy_override/pom.xml").toPath())));
+        ioService.write(origin.getPath("master", "/dummy/src/main/java/dummy/Dummy.java"), //git://buildCompileWithOverrideOnGitVFS/dummy/src/main/java/dummy/Dummy.java
+                        new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/dummy/src/main/java/dummy/Dummy.java").toPath())));
+
+        ioService.endBatch();
+
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               new WorkspaceCompilationInfo(origin.getPath("master","/dummy/")),// git://buildCompileWithOverrideOnGitVFS/dummy/
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               Boolean.TRUE);
+
+        byte[] encoded = ioService.readAllBytes(origin.getPath("master","/dummy/src/main/java/dummy/Dummy.java"));
+
+        String dummyAsAstring = new String(encoded,
+                                           StandardCharsets.UTF_8);
+        assertFalse(dummyAsAstring.contains("public Dummy(Integer age) {\n" +
+                                                    "        this.age = age;\n" +
+                                                    "    }"));
+
+        CompilationResponse res = compiler.compile(req);
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getWorkingDir().get(),
+                                                      res.getMavenOutput(),
+                                                      "KieDefaultMavenCompilerTest.buildCompileWithOverrideTest");
+        }
+        assertTrue(res.isSuccessful());
+
+        assertFalse(new File(res.getWorkingDir().get() + "/target/classes/dummy/DummyOverride.class").exists()); ///file:///User/temp8998876986179/dummy//target/classes/dummy/DummyOverride.class
+
+        //change some files
+        Map<org.uberfire.java.nio.file.Path, InputStream> override = new HashMap<>();
+
+        org.uberfire.java.nio.file.Path path = origin.getPath("master", "/dummy/src/main/java/dummy/DummyOverride.java");
+        InputStream input = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/DummyOverride.java"));
+        override.put(path, input);
+
+        org.uberfire.java.nio.file.Path pathTwo = origin.getPath("master","/dummy//src/main/java/dummy/Dummy.java");
+        InputStream inputTwo = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/Dummy.java"));
+        override.put(pathTwo, inputTwo);
+
+        //recompile
+        res = compiler.compile(req, override);
+        Assert.assertTrue(res.isSuccessful());
+
+        assertFalse(new File(res.getWorkingDir().get() + "/target/classes/dummy/Dummy.class").exists());
+        assertTrue(new File(res.getWorkingDir().get() + "/target/classes/dummy/DummyOverride.class").exists());
+
+        encoded = Files.readAllBytes(Paths.get(res.getWorkingDir().get().toString(),
+                                               "/src/main/java/dummy/Dummy.java"));
+        dummyAsAstring = new String(encoded, StandardCharsets.UTF_8);
+        assertTrue(dummyAsAstring.contains("public Dummy(String name) {\n" +
+                                                   "        this.name = name;\n" +
+                                                   "    }"));
+
+        compiler.cleanInternalCache();
+        TestUtil.rm(origin.getGit().getRepository().getDirectory());
+    }
 }

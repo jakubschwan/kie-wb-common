@@ -24,14 +24,12 @@ public interface AFCompilerService {
 
     /************************************ Suitable for the Local Builds ***********************************************/
 
-
     /**
      * Run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
     CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo);
-
 
     /**
      * Run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse
@@ -41,14 +39,12 @@ public interface AFCompilerService {
     CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo,
                                                          Boolean skipPrjDependenciesCreationList);
 
-
     /**
      * Run a mvn install on the projectPath, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
     CompletableFuture<KieCompilationResponse> buildAndInstallAsync(Path projectPath, String mavenRepo);
-
 
     /**
      * Run a mvn install on the projectPath, maven output provided in the CompilationResponse
@@ -58,7 +54,6 @@ public interface AFCompilerService {
     CompletableFuture<KieCompilationResponse> buildAndInstallAsync(Path projectPath, String mavenRepo,
                                                                    Boolean skipPrjDependenciesCreationList);
 
-
     /**
      * Run a mvn {args}, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder, maven repo and
@@ -66,20 +61,16 @@ public interface AFCompilerService {
      */
     CompletableFuture<KieCompilationResponse> buildSpecializedAsync(Path projectPath, String mavenRepo, String[] args);
 
-
     /**
      * Run a mvn {args}, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder, maven repo and
      * maven args changes between compilation Requests
      */
     CompletableFuture<KieCompilationResponse> buildSpecializedAsync(Path projectPath,
-                                            String mavenRepo,
-                                            String[] args, Boolean skipPrjDependenciesCreationList);
-
-
+                                                                    String mavenRepo,
+                                                                    String[] args, Boolean skipPrjDependenciesCreationList);
 
     /************************************ Suitable for the REST Builds ************************************************/
-
 
     /**
      * When a HTTP call asks a build this method run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse
@@ -88,14 +79,12 @@ public interface AFCompilerService {
      */
     KieCompilationResponse build(String projectPath, String mavenRepo);
 
-
-   /**
+    /**
      * When a HTTP call asks a build this method run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
     KieCompilationResponse build(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList);
-
 
     /**
      * When a HTTP call asks a build this method run a mvn install on the projectPath, maven output provided in the CompilationResponse
@@ -104,7 +93,6 @@ public interface AFCompilerService {
      */
     KieCompilationResponse buildAndInstall(String projectPath, String mavenRepo);
 
-
     /**
      * When a HTTP call asks a build this method run a mvn install on the projectPath, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
@@ -112,14 +100,12 @@ public interface AFCompilerService {
      */
     KieCompilationResponse buildAndInstall(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList);
 
-
     /**
      * When a HTTP call asks a build this method run a mvn {args}, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder, maven repo and
      * maven args changes between compilation Requests
      */
     KieCompilationResponse buildSpecialized(String projectPath, String mavenRepo, String[] args);
-
 
     /**
      * When a HTTP call asks a build this method run a mvn {args}, maven output provided in the CompilationResponse

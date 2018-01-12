@@ -19,16 +19,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.codehaus.plexus.classworlds.ClassWorld;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.ResetCommand;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -37,13 +32,11 @@ import org.kie.workbench.common.services.backend.compiler.impl.external339.Reusa
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.IncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.pomprocessor.ProcessedPoms;
-import org.kie.workbench.common.services.backend.compiler.impl.utils.JGitUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
-import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 
 /**
  * Run maven with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
@@ -127,30 +120,10 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
     }
 
     @Override
-    public T compile(CompilationRequest req, Map<Path, InputStream> override) {
-        List<BackupItem> backup = new ArrayList<>(override.size());
-        Path firstPath = override.entrySet().iterator().next().getKey();
-        boolean isGitFS = firstPath.getFileSystem() instanceof JGitFileSystem;
-        Git git = null;
-        if (isGitFS) {
-            git = JGitUtils.tempClone((JGitFileSystem) firstPath.getFileSystem(), UUID.randomUUID().toString());
-            workOnGitFS(override, git);
-        } else {
-            workOnRegularFS(override, backup);
-        }
+    public T compile(final CompilationRequest req,
+                     final Map<Path, InputStream> override) {
 
-        T result = compile(req);
-
-        if (isGitFS) {
-            restoreGitFS(git);
-        } else {
-            restoreRegularFS(backup);
-        }
-
-        return result;
-    }
-
-    private void workOnRegularFS(Map<Path, InputStream> override, List<BackupItem> backup) {
+        final List<BackupItem> backup = new ArrayList<>(override.size());
         for (Map.Entry<Path, InputStream> entry : override.entrySet()) {
             Path path = entry.getKey();
             InputStream input = entry.getValue();
@@ -164,41 +137,20 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
                 logger.error("\n");
             }
         }
-    }
 
-    private void restoreRegularFS(List<BackupItem> backup) {
-        for (BackupItem item : backup) {
-            if (item.isAChange) {
-                Files.write(item.getPath(), item.getContent());
-            } else {
-                Files.delete(item.getPath());
+        T result = compile(req);
+
+        if (req.getRestoreOverride()) {
+            for (BackupItem item : backup) {
+                if (item.isAChange) {
+                    Files.write(item.getPath(), item.getContent());
+                } else {
+                    Files.delete(item.getPath());
+                }
             }
         }
-    }
 
-    private void workOnGitFS(Map<Path, InputStream> override, Git git) {
-        for (Map.Entry<Path, InputStream> entry : override.entrySet()) {
-            Path path = entry.getKey();
-            InputStream input = entry.getValue();
-            java.nio.file.Path convertedToCheckedPath = git.getRepository().getDirectory().toPath().getParent().resolve(path.toString().substring(1));
-            try {
-                java.nio.file.Files.copy(input, convertedToCheckedPath, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                logger.error("Path not writed:" + entry.getKey() + "\n");
-                logger.error(e.getMessage());
-                logger.error("\n");
-            }
-        }
-    }
-
-    private void restoreGitFS(Git git) {
-        if (git != null) {
-            try {
-                git.reset().setMode(ResetCommand.ResetType.HARD).call();
-            } catch (GitAPIException ex) {
-                logger.error("Git reset exception:" + ex.getMessage() + "\n");
-            }
-        }
+        return result;
     }
 
     public byte[] readAllBytes(InputStream in) throws IOException {

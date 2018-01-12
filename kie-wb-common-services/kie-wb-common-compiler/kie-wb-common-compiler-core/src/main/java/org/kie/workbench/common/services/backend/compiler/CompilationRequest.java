@@ -45,4 +45,6 @@ public interface CompilationRequest {
     Boolean skipAutoSourceUpdate();
 
     Boolean skipPrjDependenciesCreationList();
+
+    Boolean getRestoreOverride();
 }

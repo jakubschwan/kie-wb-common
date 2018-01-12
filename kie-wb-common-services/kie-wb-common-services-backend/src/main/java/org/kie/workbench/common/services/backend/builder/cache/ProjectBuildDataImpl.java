@@ -54,13 +54,12 @@ import org.kie.soup.project.datamodel.imports.Import;
 import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
 import org.kie.soup.project.datamodel.oracle.ProjectDataModelOracle;
 import org.kie.soup.project.datamodel.oracle.TypeSource;
-import org.kie.workbench.common.services.backend.builder.af.impl.DefaultKieAFBuilder;
 import org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils;
 import org.kie.workbench.common.services.backend.compiler.impl.classloader.MapClassLoader;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.file.EnumerationsFileFilter;
 import org.kie.workbench.common.services.backend.file.GlobalsFileFilter;
-
+import org.kie.workbench.common.services.backend.service.AFCompilerService;
 import org.kie.workbench.common.services.datamodel.backend.server.builder.packages.PackageDataModelOracleBuilder;
 import org.kie.workbench.common.services.datamodel.backend.server.builder.projects.ProjectDataModelOracleBuilder;
 import org.kie.workbench.common.services.datamodel.spi.DataModelExtension;
@@ -112,7 +111,7 @@ public class ProjectBuildDataImpl implements ProjectBuildData {
     private final KieProject project;
     private final String mavenRepo;
 
-    private DefaultKieAFBuilder builder;
+    private AFCompilerService compilerService;
     private KieCompilationResponse response;
     private ReleaseId releaseId;
 
@@ -157,7 +156,7 @@ public class ProjectBuildDataImpl implements ProjectBuildData {
                                        final InputStream inputStream) {
         lock.lock();
         try {
-            final KieCompilationResponse res = getBuilder().validate(resourcePath, inputStream);
+            final KieCompilationResponse res = compilerService.buildAsync(convert(project.getRootPath()), mavenRepo, Collections.singletonMap(resourcePath, inputStream)).get();
 
             final BuildResults br = convertIntoBuildResults(res.getMavenOutput(),
                                                             convert(project.getRootPath()),
@@ -188,10 +187,8 @@ public class ProjectBuildDataImpl implements ProjectBuildData {
     public BuildResults buildAndInstall() {
         lock.lock();
         try {
-            final DefaultKieAFBuilder builder = getBuilder();
+            final KieCompilationResponse res = compilerService.buildAndInstallAsync(convert(project.getRootPath()), mavenRepo).get();
 
-            final KieCompilationResponse res = builder.buildAndInstall(builder.getInfo().getPrjPath().toString(),
-                                                                       mavenRepo);
             return convertIntoBuildResults(res.getMavenOutput(),
                                            convert(project.getRootPath()),
                                            res.getWorkingDir().get().getParent().toString());
@@ -202,7 +199,7 @@ public class ProjectBuildDataImpl implements ProjectBuildData {
 
     @Override
     public boolean isBuilt() {
-        return builder != null;
+        return response != null;
     }
 
     @Override
@@ -332,7 +329,7 @@ public class ProjectBuildDataImpl implements ProjectBuildData {
                                      final Package pkg) {
         final Path nioPackagePath = Paths.convert(pkg.getPackageMainResourcesPath());
         final Collection<Path> enumFiles = fileDiscoveryService.discoverFiles(nioPackagePath,
-                                                                                                         FILTER_ENUMERATIONS);
+                                                                              FILTER_ENUMERATIONS);
         for (final Path path : enumFiles) {
             final String enumDefinition = ioService.readAllString(path);
             dmoBuilder.addEnum(enumDefinition, classLoader);
@@ -347,7 +344,7 @@ public class ProjectBuildDataImpl implements ProjectBuildData {
         for (final DataModelExtension extension : extensions) {
             DirectoryStream.Filter<Path> filter = extension.getFilter();
             final Collection<Path> extensionFiles = fileDiscoveryService.discoverFiles(nioPackagePath,
-                                                                                                                  filter);
+                                                                                       filter);
             extensionFiles
                     .stream()
                     .map(file -> extension.getExtensions(file,
@@ -361,7 +358,7 @@ public class ProjectBuildDataImpl implements ProjectBuildData {
                                        final Package pkg) {
         final Path nioPackagePath = Paths.convert(pkg.getPackageMainResourcesPath());
         final Collection<Path> globalFiles = fileDiscoveryService.discoverFiles(nioPackagePath,
-                                                                                                           FILTER_GLOBALS);
+                                                                                FILTER_GLOBALS);
         for (final Path path : globalFiles) {
             final String definition = ioService.readAllString(path);
             dmoBuilder.addGlobals(definition);
@@ -406,20 +403,13 @@ public class ProjectBuildDataImpl implements ProjectBuildData {
         return packages;
     }
 
-    private DefaultKieAFBuilder getBuilder() {
-        if (builder == null || isReBuild.get()) {
-            if (builder == null) {
-                builder = new DefaultKieAFBuilder(convert(project.getRootPath()), mavenRepo);
-            } else {
-                builder = new DefaultKieAFBuilder(convert(project.getRootPath()), mavenRepo, builder.getGit(), workingDir);
-            }
-        }
-        return builder;
-    }
-
     private KieCompilationResponse getCompilationResponse() {
         if (response == null || isReBuild.get()) {
-            response = getBuilder().build();
+            try {
+                response = compilerService.buildAsync(convert(project.getRootPath()), mavenRepo).get();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         return response;
     }
