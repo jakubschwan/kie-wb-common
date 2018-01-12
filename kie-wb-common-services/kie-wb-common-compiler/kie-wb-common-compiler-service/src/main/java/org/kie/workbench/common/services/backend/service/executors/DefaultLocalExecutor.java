@@ -94,44 +94,44 @@ public class DefaultLocalExecutor implements CompilerExecutor {
 
     /************************************ Suitable for the Local Builds ***********************************************/
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo) {
+    public CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo) {
         return internalBuild(projectPath, mavenRepo, Boolean.FALSE, MavenCLIArgs.COMPILE);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo, Map<Path, InputStream> override) {
+    public CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo, Map<Path, InputStream> override) {
         return internalBuild(projectPath, mavenRepo, Boolean.FALSE, MavenCLIArgs.COMPILE, override);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo,
-                                                                Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo,
+                                                           Boolean skipPrjDependenciesCreationList) {
         return internalBuild(projectPath, mavenRepo, skipPrjDependenciesCreationList, MavenCLIArgs.COMPILE);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAndInstallAsync(Path projectPath, String mavenRepo) {
+    public CompletableFuture<KieCompilationResponse> buildAndInstall(Path projectPath, String mavenRepo) {
         return internalBuild(projectPath, mavenRepo, Boolean.FALSE, MavenCLIArgs.INSTALL);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAndInstallAsync(Path projectPath, String mavenRepo,
-                                                                          Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<KieCompilationResponse> buildAndInstall(Path projectPath, String mavenRepo,
+                                                                     Boolean skipPrjDependenciesCreationList) {
         return internalBuild(projectPath, mavenRepo, skipPrjDependenciesCreationList,
                              MavenCLIArgs.INSTALL);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildSpecializedAsync(Path projectPath, String mavenRepo,
-                                                                           String[] args) {
+    public CompletableFuture<KieCompilationResponse> buildSpecialized(Path projectPath, String mavenRepo,
+                                                                      String[] args) {
         return internalBuild(projectPath, mavenRepo, Boolean.FALSE,
                              args);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildSpecializedAsync(Path projectPath, String mavenRepo,
-                                                                           String[] args,
-                                                                           Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<KieCompilationResponse> buildSpecialized(Path projectPath, String mavenRepo,
+                                                                      String[] args,
+                                                                      Boolean skipPrjDependenciesCreationList) {
         return internalBuild(projectPath, mavenRepo, skipPrjDependenciesCreationList,
                              args);
     }

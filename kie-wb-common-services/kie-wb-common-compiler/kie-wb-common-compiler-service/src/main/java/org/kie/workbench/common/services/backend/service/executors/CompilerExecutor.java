@@ -35,14 +35,14 @@ public interface CompilerExecutor {
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo);
+    CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo);
 
     /**
      * Run a mvn compile on the projectPath with mavenRepo specified changing the content with the override contents, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo, Map<Path, InputStream> override);
+    CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo, Map<Path, InputStream> override);
 
 
     /**
@@ -50,8 +50,8 @@ public interface CompilerExecutor {
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAsync(Path projectPath, String mavenRepo,
-                                                         Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo,
+                                                    Boolean skipPrjDependenciesCreationList);
 
 
     /**
@@ -59,7 +59,7 @@ public interface CompilerExecutor {
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAndInstallAsync(Path projectPath, String mavenRepo);
+    CompletableFuture<KieCompilationResponse> buildAndInstall(Path projectPath, String mavenRepo);
 
 
     /**
@@ -67,8 +67,8 @@ public interface CompilerExecutor {
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAndInstallAsync(Path projectPath, String mavenRepo,
-                                                                   Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<KieCompilationResponse> buildAndInstall(Path projectPath, String mavenRepo,
+                                                              Boolean skipPrjDependenciesCreationList);
 
 
     /**
@@ -76,7 +76,7 @@ public interface CompilerExecutor {
      * a new CompilationRequest will be created at every invocation, useful if the project folder, maven repo and
      * maven args changes between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildSpecializedAsync(Path projectPath, String mavenRepo, String[] args);
+    CompletableFuture<KieCompilationResponse> buildSpecialized(Path projectPath, String mavenRepo, String[] args);
 
 
     /**
@@ -84,9 +84,9 @@ public interface CompilerExecutor {
      * a new CompilationRequest will be created at every invocation, useful if the project folder, maven repo and
      * maven args changes between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildSpecializedAsync(Path projectPath,
-                                                                    String mavenRepo,
-                                                                    String[] args, Boolean skipPrjDependenciesCreationList);
+    CompletableFuture<KieCompilationResponse> buildSpecialized(Path projectPath,
+                                                               String mavenRepo,
+                                                               String[] args, Boolean skipPrjDependenciesCreationList);
 
 
 
