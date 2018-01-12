@@ -73,33 +73,33 @@ public class DefaultKieCompilerService implements AFCompilerService {
     /************************************ Suitable for the REST Builds ************************************************/
 
     @Override
-    public KieCompilationResponse build(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<KieCompilationResponse> build(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
         return remoteExecutor.build(projectPath, mavenRepo, skipPrjDependenciesCreationList);
     }
 
     @Override
-    public KieCompilationResponse build(String projectPath, String mavenRepo) {
+    public CompletableFuture<KieCompilationResponse> build(String projectPath, String mavenRepo) {
         return remoteExecutor.build(projectPath, mavenRepo);
     }
 
 
     @Override
-    public KieCompilationResponse buildAndInstall(String projectPath, String mavenRepo) {
+    public CompletableFuture<KieCompilationResponse> buildAndInstall(String projectPath, String mavenRepo) {
         return remoteExecutor.buildAndInstall(projectPath, mavenRepo);
     }
 
     @Override
-    public KieCompilationResponse buildAndInstall(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<KieCompilationResponse> buildAndInstall(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
         return remoteExecutor.buildAndInstall(projectPath, mavenRepo, skipPrjDependenciesCreationList);
     }
 
     @Override
-    public KieCompilationResponse buildSpecialized(String projectPath, String mavenRepo, String[] args) {
+    public CompletableFuture<KieCompilationResponse> buildSpecialized(String projectPath, String mavenRepo, String[] args) {
         return remoteExecutor.buildSpecialized(projectPath, mavenRepo, args);
     }
 
     @Override
-    public KieCompilationResponse buildSpecialized(String projectPath, String mavenRepo, String[] args, Boolean skipPrjDependenciesCreationList) {
+    public CompletableFuture<KieCompilationResponse> buildSpecialized(String projectPath, String mavenRepo, String[] args, Boolean skipPrjDependenciesCreationList) {
         return remoteExecutor.buildSpecialized(projectPath, mavenRepo, args, skipPrjDependenciesCreationList);
     }
 }
