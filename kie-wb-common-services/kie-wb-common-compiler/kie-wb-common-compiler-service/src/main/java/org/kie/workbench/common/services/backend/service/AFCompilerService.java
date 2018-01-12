@@ -122,5 +122,5 @@ public interface AFCompilerService {
      * maven args changes between compilation Requests
      */
     CompletableFuture<KieCompilationResponse> buildSpecialized(String projectPath, String mavenRepo,
-                                            String[] args, Boolean skipPrjDependenciesCreationList);
+                                                               String[] args, Boolean skipPrjDependenciesCreationList);
 }

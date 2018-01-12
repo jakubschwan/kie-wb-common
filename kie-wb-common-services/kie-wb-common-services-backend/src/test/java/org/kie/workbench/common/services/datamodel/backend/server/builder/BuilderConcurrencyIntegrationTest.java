@@ -25,9 +25,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.builder.model.BuildResults;
-import org.guvnor.common.services.project.model.Project;
 import org.junit.Test;
-import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.slf4j.Logger;

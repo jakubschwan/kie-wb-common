@@ -62,16 +62,36 @@ public class JGitUtils {
     public static Git tempClone(final JGitFileSystem fs,
                                 final String uuid) {
         try {
+            File tempRepoPlace;
+            int i = 0;
+            while (true) {
+                tempRepoPlace = new File(TEMP + uuid + "_" + i,
+                                         fs.getGit().getRepository().getDirectory().getName().replaceFirst("\\.git",
+                                                                                                           ""));
+                if (tempRepoPlace.exists()) {
+                    i++;
+                } else {
+                    break;
+                }
+            }
             return Git.cloneRepository()
                     .setURI(fs.getGit().getRepository().getDirectory().toURI().toString())
-                    .setDirectory(new File(TEMP + uuid,
-                                           fs.getGit().getRepository().getDirectory().getName().replaceFirst("\\.git",
-                                                                                                             "")))
+                    .setDirectory(tempRepoPlace)
                     .setBare(false)
                     .setCloneAllBranches(true)
                     .call();
         } catch (GitAPIException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static boolean deleteDirectory(File directoryToBeDeleted) {
+        final File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
     }
 }

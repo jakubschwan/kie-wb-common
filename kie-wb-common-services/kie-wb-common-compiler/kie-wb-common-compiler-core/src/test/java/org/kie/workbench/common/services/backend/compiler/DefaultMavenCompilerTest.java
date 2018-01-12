@@ -435,7 +435,7 @@ public class DefaultMavenCompilerTest {
         String MASTER_BRANCH = "master";
 
         //Setup origin in memory
-        final URI originRepo = URI.create("git://repo");
+        final URI originRepo = URI.create("git://xxsddsrepo");
         final JGitFileSystem origin = (JGitFileSystem) ioService.newFileSystem(originRepo,
                                                                                new HashMap<String, Object>() {{
                                                                                    put("init",
@@ -480,7 +480,7 @@ public class DefaultMavenCompilerTest {
         assertTrue(res.isSuccessful());
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
-        ;
+
         assertNotNull(lastCommit);
 
         ioService.write(origin.getPath("/dummy/dummyA/src/main/java/dummy/DummyA.java"),
