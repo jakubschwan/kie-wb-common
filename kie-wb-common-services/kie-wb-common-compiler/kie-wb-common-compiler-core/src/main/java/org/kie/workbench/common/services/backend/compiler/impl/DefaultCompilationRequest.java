@@ -36,6 +36,7 @@ public class DefaultCompilationRequest implements CompilationRequest {
     private String[] originalArgs;
     private String mavenRepo;
     private Boolean skipPrjDependenciesCreationList;
+    private Boolean restoreOverride;
 
     /***
      * @param mavenRepo a string representation of the Path
@@ -69,10 +70,19 @@ public class DefaultCompilationRequest implements CompilationRequest {
                                      WorkspaceCompilationInfo info,
                                      String[] args,
                                      Boolean skipPrjDependenciesCreationList) {
+        this(mavenRepo, info, args, skipPrjDependenciesCreationList, true);
+    }
+
+    public DefaultCompilationRequest(String mavenRepo,
+                                     WorkspaceCompilationInfo info,
+                                     String[] args,
+                                     Boolean skipPrjDependenciesCreationList,
+                                     boolean restoreOverride) {
         this.mavenRepo = mavenRepo;
         this.info = info;
         this.skipPrjDependenciesCreationList = skipPrjDependenciesCreationList;
         this.requestUUID = UUID.randomUUID().toString();
+        this.restoreOverride = restoreOverride;
 
         this.originalArgs = args;
         Map internalMap = new HashMap();
@@ -130,5 +140,10 @@ public class DefaultCompilationRequest implements CompilationRequest {
     @Override
     public Boolean skipPrjDependenciesCreationList() {
         return skipPrjDependenciesCreationList;
+    }
+
+    @Override
+    public Boolean getRestoreOverride() {
+        return restoreOverride;
     }
 }

@@ -16,10 +16,14 @@
 
 package org.kie.workbench.common.services.backend.compiler.impl.decorators;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -33,76 +37,90 @@ import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 /***
  * Before decorator to update a git repo before the build
  */
-public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extends AFCompiler<T>> implements CompilerDecorator {
+public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extends AFCompiler<T>> implements CompilerDecorator<T> {
 
     private Map<JGitFileSystem, Git> gitMap;
-    private boolean holder;
     private C compiler;
 
     public JGITCompilerBeforeDecorator(C compiler) {
         this.compiler = compiler;
-        gitMap = new HashMap<>();
-        holder = Boolean.FALSE;
+        this.gitMap = new HashMap<>();
     }
 
     @Override
     public Boolean cleanInternalCache() {
+        this.gitMap = new HashMap<>();
         return compiler.cleanInternalCache();
     }
 
     @Override
     public T compile(CompilationRequest req) {
-        final CompilationRequest _req = handleBefore(req);
-        return compiler.compile(_req);
+        final Optional<Git> git = getGit(req);
+
+        return git.map(g -> compiler.compile(handleBefore(g, req))
+        ).orElseGet(() -> compiler.compile(req));
     }
 
     @Override
-    public CompilationResponse compile(CompilationRequest req, Map override) {
-        final CompilationRequest _req = handleBefore(req);
-        return compiler.compile(_req, override);
+    public T compile(final CompilationRequest req,
+                     final Map<Path, InputStream> override) {
+        final Optional<Git> git = getGit(req);
+
+        return git.map(g -> {
+                           final Map<Path, InputStream> _override = handleMap(g, override);
+                           final T result = compiler.compile(handleBefore(g, req), _override);
+                           try {
+                               g.reset().setMode(ResetCommand.ResetType.HARD).call();
+                           } catch (GitAPIException e) {
+                               throw new RuntimeException(e);
+                           }
+                           return result;
+                       }
+        ).orElseGet(() -> compiler.compile(req, override));
     }
 
-    private CompilationRequest handleBefore(CompilationRequest req) {
-        final Path path = req.getInfo().getPrjPath();
-        final CompilationRequest _req;
+    private Map<Path, InputStream> handleMap(final Git git,
+                                             final Map<Path, InputStream> override) {
+        final Map<Path, InputStream> result = new HashMap<>(override.size());
+        for (Map.Entry<Path, InputStream> entry : override.entrySet()) {
+            if (entry.getKey().getFileSystem() instanceof JGitFileSystem) {
+                final Path convertedToCheckedPath = Paths.get(git.getRepository().getDirectory().toPath().getParent().resolve(entry.getKey().toString().substring(1)).toUri());
+                result.put(convertedToCheckedPath, entry.getValue());
+            }
+        }
+        return result;
+    }
 
-        if (path.getFileSystem() instanceof JGitFileSystem) {
-            final JGitFileSystem fs = (JGitFileSystem) path.getFileSystem();
-            Git repo = holder ? useHolder(fs,
-                                          req) : useInternalMap(fs,
-                                                                req);
-            if (!req.skipAutoSourceUpdate()) {
-                JGitUtils.pullAndRebase(repo);
+    private CompilationRequest handleBefore(final Git git,
+                                            final CompilationRequest req) {
+        try {
+            if (req.getInfo().getPrjPath().getFileSystem() instanceof JGitFileSystem) {
+                final Path path = req.getInfo().getPrjPath();
+
+                JGitUtils.pullAndRebase(git);
+
+                return new DefaultCompilationRequest(req.getMavenRepo(),
+                                                     new WorkspaceCompilationInfo(Paths.get(git.getRepository().getDirectory().getParentFile().toPath().resolve(path.getFileName().toString()).toFile().getCanonicalFile().toPath().toUri())),
+                                                     req.getOriginalArgs(),
+                                                     req.skipPrjDependenciesCreationList(),
+                                                     false);
             }
 
-            _req = new DefaultCompilationRequest(req.getMavenRepo(),
-                                                 new WorkspaceCompilationInfo(Paths.get(repo.getRepository().getDirectory().toPath().getParent().resolve(path.getFileName().toString()).normalize().toUri())),
-                                                 req.getOriginalArgs(),
-                                                 req.skipPrjDependenciesCreationList());
-        } else {
-            _req = req;
+            return req;
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
-        return _req;
     }
 
-
-
-    private Git useInternalMap(JGitFileSystem fs,
-                               CompilationRequest req) {
-        Git repo;
-        if (!gitMap.containsKey(fs)) {
-            repo = JGitUtils.tempClone(fs,
-                                       req.getRequestUUID());
-            gitMap.put(fs,
-                       repo);
+    private Optional<Git> getGit(final CompilationRequest req) {
+        final Path projectPath = req.getInfo().getPrjPath();
+        if (projectPath.getFileSystem() instanceof JGitFileSystem) {
+            final JGitFileSystem fs = (JGitFileSystem) projectPath.getFileSystem();
+            if (!gitMap.containsKey(fs)) {
+                gitMap.put(fs, JGitUtils.tempClone(fs, req.getRequestUUID()));
+            }
+            return Optional.of(gitMap.get(fs));
         }
-        repo = gitMap.get(fs);
-        return repo;
+        return Optional.empty();
     }
-
-    private Git useHolder(JGitFileSystem fs, CompilationRequest req) {
-        return JGitUtils.tempClone(fs, req.getRequestUUID());
-    }
-
-
 }

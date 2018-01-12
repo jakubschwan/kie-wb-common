@@ -16,8 +16,13 @@
 
 package org.kie.workbench.common.services.backend.compiler.impl.decorators;
 
+import java.io.InputStream;
+import java.util.Map;
+
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
+import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.uberfire.java.nio.file.Path;
 
 /***
  * Extends the Compiler behaviour to the decorators
