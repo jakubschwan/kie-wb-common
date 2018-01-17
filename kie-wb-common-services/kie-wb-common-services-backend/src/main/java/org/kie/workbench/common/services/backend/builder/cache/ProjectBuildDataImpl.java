@@ -59,7 +59,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.classloader.MapCl
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.file.EnumerationsFileFilter;
 import org.kie.workbench.common.services.backend.file.GlobalsFileFilter;
-import org.kie.workbench.common.services.backend.service.AFCompilerService;
+import org.kie.workbench.common.services.backend.compiler.service.AFCompilerService;
 import org.kie.workbench.common.services.datamodel.backend.server.builder.packages.PackageDataModelOracleBuilder;
 import org.kie.workbench.common.services.datamodel.backend.server.builder.projects.ProjectDataModelOracleBuilder;
 import org.kie.workbench.common.services.datamodel.spi.DataModelExtension;
@@ -156,13 +156,15 @@ public class ProjectBuildDataImpl implements ProjectBuildData {
                                        final InputStream inputStream) {
         lock.lock();
         try {
-            final KieCompilationResponse res = compilerService.buildAsync(convert(project.getRootPath()), mavenRepo, Collections.singletonMap(resourcePath, inputStream)).get();
+            final KieCompilationResponse res = compilerService.build(convert(project.getRootPath()), mavenRepo, Collections.singletonMap(resourcePath, inputStream)).get();
 
             final BuildResults br = convertIntoBuildResults(res.getMavenOutput(),
                                                             convert(project.getRootPath()),
                                                             res.getWorkingDir().get().getParent().toString());
 
             return br.getMessages();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             lock.unlock();
         }
@@ -187,11 +189,13 @@ public class ProjectBuildDataImpl implements ProjectBuildData {
     public BuildResults buildAndInstall() {
         lock.lock();
         try {
-            final KieCompilationResponse res = compilerService.buildAndInstallAsync(convert(project.getRootPath()), mavenRepo).get();
+            final KieCompilationResponse res = compilerService.buildAndInstall(convert(project.getRootPath()), mavenRepo).get();
 
             return convertIntoBuildResults(res.getMavenOutput(),
                                            convert(project.getRootPath()),
                                            res.getWorkingDir().get().getParent().toString());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             lock.unlock();
         }
@@ -406,7 +410,7 @@ public class ProjectBuildDataImpl implements ProjectBuildData {
     private KieCompilationResponse getCompilationResponse() {
         if (response == null || isReBuild.get()) {
             try {
-                response = compilerService.buildAsync(convert(project.getRootPath()), mavenRepo).get();
+                response = compilerService.build(convert(project.getRootPath()), mavenRepo).get();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

@@ -9,13 +9,14 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>kie-wb-common-compiler-rest</artifactId>
+  <artifactId>kie-wb-common-compiler-distribution</artifactId>
 
-  <name>Kie Workbench - Common - Compiler - Rest</name>
-  <description>Kie Workbench - Common - Compiler - Rest</description>
+  <name>Kie Workbench - Common - Compiler - Distribution</name>
+  <description>Kie Workbench - Common - Compiler - Distribution</description>
+  <packaging>war</packaging>
 
   <properties>
-    <java.module.name>org.kie.wb.common.services.compiler.rest</java.module.name>
+    <java.module.name>org.kie.wb.common.services.backend.compiler.distribution</java.module.name>
   </properties>
 
   <build>
@@ -49,7 +50,7 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-      <plugin>
+      <!--<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <configuration>
@@ -69,34 +70,10 @@
             <nonFilteredFileExtension>xls</nonFilteredFileExtension>
           </nonFilteredFileExtensions>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.18.1</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-            <configuration>
-              <systemPropertyVariables>
-                <arquillian.launch>wildfly-managed</arquillian.launch>
-                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                <jboss.home>${project.basedir}/target/11.0.0.Final</jboss.home>
-              </systemPropertyVariables>
-              <redirectTestOutputToFile>false</redirectTestOutputToFile>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
+      </plugin>  -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.8</version>
         <executions>
           <execution>
             <id>unpack</id>
@@ -119,8 +96,18 @@
           </execution>
         </executions>
       </plugin>
-
-
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- Fork every test because it will launch a separate AS instance -->
+          <forkMode>always</forkMode>
+          <!-- <systemPropertyVariables>
+             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+           </systemPropertyVariables>-->
+          <redirectTestOutputToFile>false</redirectTestOutputToFile>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -131,23 +118,35 @@
         <artifactId>kie-wb-common-compiler-core</artifactId>
         <version>${version.org.kie}</version>
       </dependency>
+
       <dependency>
         <groupId>org.kie.workbench.services</groupId>
         <artifactId>kie-wb-common-compiler-service</artifactId>
         <version>${version.org.kie}</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-undertow</artifactId>
+        <version>${version.org.jboss.resteasy}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.arquillian.container</groupId>
+        <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
+        <version>${version.org.jboss.arquillian.container.weld}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.weld</groupId>
+        <artifactId>weld-core</artifactId>
+        <version>${version.org.jboss.weld.weld}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-compiler-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-compiler-service</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxrs</artifactId>
@@ -161,46 +160,110 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-client</artifactId>
+    </dependency>
+
+    <!--Compiler -->
+
+    <dependency>
+      <groupId>org.kie.workbench.services</groupId>
+      <artifactId>kie-wb-common-compiler-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.workbench.services</groupId>
+      <artifactId>kie-wb-common-compiler-service</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-nio2-api</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-
-    <!-- TEST -->
-    <dependency>
-      <groupId>org.wildfly.arquillian</groupId>
-      <artifactId>wildfly-arquillian-container-managed</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-nio2-model</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.arquillian.junit</groupId>
-      <artifactId>arquillian-junit-container</artifactId>
-      <scope>test</scope>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-services-api</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+
+  <dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-api</artifactId>
+  </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-nio2-jgit</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+  <!-- TEST -->
+  <dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>org.jboss.arquillian.junit</groupId>
+    <artifactId>arquillian-junit-container</artifactId>
+  </dependency>
+
+  <dependency>
+    <groupId>org.jboss.resteasy</groupId>
+    <artifactId>resteasy-undertow</artifactId>
+    <scope>test</scope>
+  </dependency>
+
+  <dependency>
+    <groupId>io.undertow</groupId>
+    <artifactId>undertow-servlet</artifactId>
+    <scope>test</scope>
+  </dependency>
 
   </dependencies>
 
   <profiles>
     <profile>
-      <id>wildfly-managed</id>
-
-
+      <id>arquillian-weld-ee-embedded</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.weld</groupId>
+          <artifactId>weld-core</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
     </profile>
-
   </profiles>
-
-
 
 </project>

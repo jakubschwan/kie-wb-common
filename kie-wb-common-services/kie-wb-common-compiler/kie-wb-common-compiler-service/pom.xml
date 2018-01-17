@@ -15,7 +15,7 @@
   <description>Kie Workbench - Common - Compiler - Service</description>
 
   <properties>
-    <java.module.name>org.kie.wb.common.services.compiler.service</java.module.name>
+    <java.module.name>org.kie.wb.common.services.backend.compiler.service</java.module.name>
   </properties>
 
   <build>
@@ -34,9 +34,9 @@
         <filtering>true</filtering>
       </testResource>
       <testResource>
-         <directory>src/test/resources</directory>
+        <directory>src/test/resources</directory>
         <filtering>true</filtering>
-       </testResource>
+      </testResource>
     </testResources>
     <plugins>
       <plugin>
@@ -49,7 +49,7 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-      <plugin>
+      <!--<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <configuration>
@@ -69,7 +69,45 @@
             <nonFilteredFileExtension>xls</nonFilteredFileExtension>
           </nonFilteredFileExtensions>
         </configuration>
-      </plugin>   
+      </plugin>-->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.wildfly</groupId>
+                  <artifactId>wildfly-dist</artifactId>
+                  <version>11.0.0.Final</version>
+                  <type>zip</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>target</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- Fork every test because it will launch a separate AS instance -->
+          <forkMode>always</forkMode>
+          <!-- <systemPropertyVariables>
+             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+           </systemPropertyVariables>-->
+          <redirectTestOutputToFile>false</redirectTestOutputToFile>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -79,6 +117,24 @@
         <groupId>org.kie.workbench.services</groupId>
         <artifactId>kie-wb-common-compiler-core</artifactId>
         <version>${version.org.kie}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-undertow</artifactId>
+        <version>${version.org.jboss.resteasy}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.arquillian.container</groupId>
+        <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
+        <version>${version.org.jboss.arquillian.container.weld}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.weld</groupId>
+        <artifactId>weld-core</artifactId>
+        <version>${version.org.jboss.weld.weld}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -116,6 +172,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-nio2-jgit</artifactId>
     </dependency>
@@ -131,5 +192,49 @@
       </exclusions>
     </dependency>
 
+    <!-- TEST -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-undertow</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.undertow</groupId>
+      <artifactId>undertow-servlet</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>arquillian-weld-ee-embedded</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-weld-ee-embedded-1.1</artifactId>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.weld</groupId>
+          <artifactId>weld-core</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
 </project>

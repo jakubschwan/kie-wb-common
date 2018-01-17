@@ -16,13 +16,13 @@
   <description>Kie Workbench - Common - Compiler</description>
 
   <properties>
-    <java.module.name>org.kie.wb.common.services.compiler</java.module.name>
+    <java.module.name>org.kie.wb.common.services.backend.compiler</java.module.name>
   </properties>
 
    <modules>
     <module>kie-wb-common-compiler-core</module>
     <module>kie-wb-common-compiler-service</module>
-    <module>kie-wb-common-compiler-rest</module>
+    <module>kie-wb-common-compiler-distribution</module>
   </modules>
 
 </project>

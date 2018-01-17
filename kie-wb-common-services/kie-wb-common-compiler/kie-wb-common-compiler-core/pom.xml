@@ -15,7 +15,7 @@
   <description>Kie Workbench - Common - Compiler - Core</description>
 
   <properties>
-    <java.module.name>org.kie.wb.common.services.compiler.core</java.module.name>
+    <java.module.name>org.kie.wb.common.services.backend.compiler.core</java.module.name>
   </properties>
 
   <build>
