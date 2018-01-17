@@ -35,9 +35,9 @@
         <filtering>true</filtering>
       </testResource>
       <testResource>
-         <directory>src/test/resources</directory>
+        <directory>src/test/resources</directory>
         <filtering>true</filtering>
-       </testResource>
+      </testResource>
     </testResources>
     <plugins>
       <plugin>
@@ -236,10 +236,10 @@
       <artifactId>logback-classic</artifactId>
     </dependency>
 
-  <dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-api</artifactId>
-  </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -260,13 +260,12 @@
 
     <!-- errai-cdi-jboss provides gwt-dev with the proper dependency exclusions and should be first on the classpath -->
 
-    <!-- Errai AS -->
+    <!-- Errai  -->
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-jboss-as-support</artifactId>
     </dependency>
 
-    <!-- CDI Integration Modules -->
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-cdi-client</artifactId>
@@ -283,37 +282,37 @@
       <artifactId>errai-cdi-server</artifactId>
     </dependency>
 
-
+    <!-- Uberfire -->
     <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-security-server</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-commons-editor-api</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-security-picketlink</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-backend-api</artifactId>
     </dependency>
 
-  <!-- TEST -->
-  <dependency>
-    <groupId>junit</groupId>
-    <artifactId>junit</artifactId>
-  </dependency>
-  <dependency>
-    <groupId>org.jboss.arquillian.junit</groupId>
-    <artifactId>arquillian-junit-container</artifactId>
-  </dependency>
+    <!-- TEST -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+    </dependency>
 
-  <dependency>
-    <groupId>org.jboss.resteasy</groupId>
-    <artifactId>resteasy-undertow</artifactId>
-    <scope>test</scope>
-  </dependency>
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-undertow</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-   <!-- <dependency>
-      <groupId>javax</groupId>
-      <artifactId>javaee-api</artifactId>
-    </dependency>-->
+    <!-- <dependency>
+       <groupId>javax</groupId>
+       <artifactId>javaee-api</artifactId>
+     </dependency>-->
     <!--<dependency>
       <groupId>org.jboss.spec</groupId>
       <artifactId>jboss-javaee-7.0</artifactId>
@@ -322,11 +321,11 @@
       <scope>provided</scope>
     </dependency>-->
 
-  <dependency>
-    <groupId>io.undertow</groupId>
-    <artifactId>undertow-servlet</artifactId>
-    <scope>test</scope>
-  </dependency>
+    <dependency>
+      <groupId>io.undertow</groupId>
+      <artifactId>undertow-servlet</artifactId>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
