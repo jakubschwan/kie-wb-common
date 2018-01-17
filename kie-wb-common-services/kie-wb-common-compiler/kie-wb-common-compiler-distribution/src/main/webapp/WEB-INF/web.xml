@@ -13,6 +13,7 @@
     <param-value>/rest</param-value>
   </context-param>
 
+  <!-- Note, this configuration needs to be removed with AS7 deployement -->
   <context-param>
     <param-name>resteasy.injector.factory</param-name>
     <param-value>org.jboss.resteasy.cdi.CdiInjectorFactory</param-value>

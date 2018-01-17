@@ -33,6 +33,7 @@
     <appender-ref ref="consoleAppender"/>
   </logger>-->
 
+  <logger name="org.jboss.resteasy" level="INFO"/>
   <logger name="org.drools" level="INFO"/>
   <logger name="org.kie" level="INFO"/>
   <logger name="org.guvnor" level="INFO"/>
