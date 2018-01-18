@@ -44,12 +44,20 @@ public class DefaultLocalExecutor implements CompilerExecutor {
     }
 
     private AFCompiler getCompiler(Path projectPath, String mavenRepo) {
-        AFCompiler compiler = compilerCacheForLocalInvocation.getEntry(projectPath).getCompiler();
-        if (compiler == null) {
-            CompileInfo info = setupCompileInfo(projectPath, mavenRepo);
-            compilerCacheForLocalInvocation.setEntry(projectPath, info);
-            compiler = info.getCompiler();
+        CompileInfo info = compilerCacheForLocalInvocation.getEntry(projectPath);
+        if(info != null && info.getCompiler() != null){
+            return info.getCompiler();
+        }else{
+            return getNewCachedAFCompiler(projectPath, mavenRepo);
         }
+    }
+
+    private AFCompiler getNewCachedAFCompiler(Path projectPath, String mavenRepo) {
+        CompileInfo info;
+        AFCompiler compiler;
+        info = setupCompileInfo(projectPath, mavenRepo);
+        compilerCacheForLocalInvocation.setEntry(projectPath, info);
+        compiler = info.getCompiler();
         return compiler;
     }
 

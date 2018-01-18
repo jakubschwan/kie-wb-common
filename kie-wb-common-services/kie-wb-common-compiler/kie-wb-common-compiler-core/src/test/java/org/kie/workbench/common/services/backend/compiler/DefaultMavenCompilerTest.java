@@ -490,11 +490,11 @@ public class DefaultMavenCompilerTest {
         assertNotNull(commitBefore);
         assertFalse(lastCommit.getId().toString().equals(commitBefore.getId().toString()));
 
-        compiler.cleanInternalCache();
+        Assert.assertTrue(compiler.cleanInternalCache());
 
-        //recompile
+        // recompile
         res = compiler.compile(req);
-//        assert commits
+        // assert commits
         assertTrue(res.isSuccessful());
     }
 }

@@ -307,7 +307,7 @@
       <artifactId>undertow-servlet</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
   </dependencies>
 
   <profiles>

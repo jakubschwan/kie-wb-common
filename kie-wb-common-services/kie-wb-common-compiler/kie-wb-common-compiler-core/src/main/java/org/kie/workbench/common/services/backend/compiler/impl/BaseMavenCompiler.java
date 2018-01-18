@@ -63,18 +63,6 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
         enabler = new DefaultIncrementalCompilerEnabler();
     }
 
-    /**
-     * Check if the folder exists and if it's writable and readable
-     * @param mavenRepo
-     * @return
-     */
-    public static Boolean isValidMavenRepo(final Path mavenRepo) {
-        if (mavenRepo.getParent() == null) {
-            return Boolean.FALSE;// used because Path("") is considered for Files.exists...
-        }
-        return Files.exists(mavenRepo) && Files.isDirectory(mavenRepo) && Files.isWritable(mavenRepo) && Files.isReadable(mavenRepo);
-    }
-
     public Boolean cleanInternalCache() {
         return enabler.cleanHistory() && cli.cleanInternals();
     }
@@ -142,7 +130,7 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
 
         if (req.getRestoreOverride()) {
             for (BackupItem item : backup) {
-                if (item.isAChange) {
+                if (item.isAChange()) {
                     Files.write(item.getPath(), item.getContent());
                 } else {
                     Files.delete(item.getPath());
@@ -182,10 +170,6 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
 
         public boolean isAChange() {
             return isAChange;
-        }
-
-        public boolean isAnAddition() {
-            return !isAChange;
         }
 
         public byte[] getContent() {
