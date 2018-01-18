@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.project;
+package org.kie.workbench.common.services.backend.compiler.impl.classloader;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class MapClassLoader extends ClassLoader {
 
     private Map<String, byte[]> map;
 
-    public MapClassLoader( Map<String, byte[]> map, ClassLoader parent ) {
+    public MapClassLoader(Map<String, byte[]> map, ClassLoader parent ) {
         super( parent );
         this.map = map;
     }
