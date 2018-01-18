@@ -49,7 +49,6 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
 
     @Override
     public Boolean cleanInternalCache() {
-        this.gitMap = new HashMap<>();
         return compiler.cleanInternalCache();
     }
 
