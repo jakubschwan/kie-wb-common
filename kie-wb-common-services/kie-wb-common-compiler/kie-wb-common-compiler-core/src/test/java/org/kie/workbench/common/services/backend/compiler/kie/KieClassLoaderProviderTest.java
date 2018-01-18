@@ -185,8 +185,7 @@ public class KieClassLoaderProviderTest {
         assertTrue(res.isSuccessful());
 
         List<String> pomList = MavenUtils.searchPoms(uberfireTmp);
-        Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.getClassloaderFromProjectTargets(pomList,
-                                                                                                      Boolean.FALSE);
+        Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.getClassloaderFromProjectTargets(pomList);
         assertNotNull(clazzLoader);
         assertTrue(clazzLoader.isPresent());
         ClassLoader prjClassloader = clazzLoader.get();

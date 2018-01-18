@@ -195,8 +195,7 @@ public class ClassLoaderProviderTest {
         assertTrue(res.isSuccessful());
 
         List<String> pomList = MavenUtils.searchPoms(uberfireTmp);
-        Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.getClassloaderFromProjectTargets(pomList,
-                                                                                                      Boolean.FALSE);
+        Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.getClassloaderFromProjectTargets(pomList);
         assertNotNull(clazzLoader);
         assertTrue(clazzLoader.isPresent());
         ClassLoader prjClassloader = clazzLoader.get();
@@ -308,7 +307,6 @@ public class ClassLoaderProviderTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
-        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
@@ -348,15 +346,6 @@ public class ClassLoaderProviderTest {
 
         Optional<KieModule> kieModuleOptional = res.getKieModule();
         Assert.assertTrue(kieModuleOptional.isPresent());
-        //KieModule kModule = kieModuleOptional.get();
-
-//        Assert.assertTrue(res.getProjectDependenciesAsURI().isPresent());
-//        Assert.assertTrue(res.getProjectDependenciesAsURI().get().size() == 5);
-//
-//        KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
-//                                                                        res.getProjectDependenciesAsURI().get());
-//
-//        Assert.assertNotNull(kieModuleMetaData);
 
         List<String> classloaderOptional = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
         Assert.assertTrue(classloaderOptional.size() == 3);

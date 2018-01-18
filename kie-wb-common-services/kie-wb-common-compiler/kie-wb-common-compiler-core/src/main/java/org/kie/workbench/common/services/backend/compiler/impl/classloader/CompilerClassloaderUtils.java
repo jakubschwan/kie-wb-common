@@ -180,9 +180,8 @@ public class CompilerClassloaderUtils {
         return buildResult(urls);
     }
 
-    public static Optional<ClassLoader> getClassloaderFromProjectTargets(List<String> pomsPaths,
-                                                                         Boolean loadIntoClassloader) {
-        List<URL> urls = loadIntoClassloader ? loadFiles(pomsPaths) : getTargetModulesURL(pomsPaths);
+    public static Optional<ClassLoader> getClassloaderFromProjectTargets(List<String> pomsPaths) {
+        List<URL> urls =  getTargetModulesURL(pomsPaths);
         return buildResult(urls);
     }
 
@@ -482,7 +481,7 @@ public class CompilerClassloaderUtils {
                 //Don't process dotFiles
                 if (!dotFileFilter.accept(path)) {
                     try {
-                        urls.add(path.toUri().toURL());
+                        urls.add(new URL("file://"+path.toUri()));
                     } catch (MalformedURLException ex) {
                         logger.error(ex.getMessage());
                     }
