@@ -9,6 +9,7 @@ import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.ClassLoaderProviderTest;
@@ -152,7 +153,7 @@ public class CompilerClassloaderUtilsTest {
         Assert.assertTrue(classLoader.isPresent());
     }
 
-    @Test
+    @Test @Ignore
     public void createClassloaderFromCpFiles() {
         String folderPath = Paths.get("src/test/projects/dummy_cp_files").toAbsolutePath().toString();
         Optional<ClassLoader> classLoader  = CompilerClassloaderUtils.createClassloaderFromCpFiles(folderPath);
