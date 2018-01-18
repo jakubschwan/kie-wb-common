@@ -129,7 +129,7 @@ public class CompilerClassloaderUtils {
         return f -> f.toString().contains(MAVEN_TARGET) && !f.toString().contains(META_INF) && !FilenameUtils.getName(f.toString()).startsWith(DOT_FILE);
     }
 
-    public static void searchCPFiles(final Path file,
+    private static void searchCPFiles(final Path file,
                                      final List<String> classPathFiles,
                                      final String... extensions) {
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(file.toAbsolutePath())) {
@@ -145,7 +145,7 @@ public class CompilerClassloaderUtils {
         }
     }
 
-    public static void searchTargetFiles(Path file,
+    private static void searchTargetFiles(Path file,
                                          List<String> classPathFiles,
                                          String... extensions) {
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(file.toAbsolutePath())) {
@@ -233,7 +233,7 @@ public class CompilerClassloaderUtils {
         }
     }
 
-    public static Optional<ClassLoader> buildResult(List<URL> urls) {
+    private static Optional<ClassLoader> buildResult(List<URL> urls) {
         if (urls.isEmpty()) {
             return Optional.empty();
         } else {
@@ -272,7 +272,7 @@ public class CompilerClassloaderUtils {
         return Collections.emptyList();
     }
 
-    public static List<URL> loadFiles(List<String> pomsPaths) {
+    private static List<URL> loadFiles(List<String> pomsPaths) {
         List<URL> targetModulesUrls = getTargetModulesURL(pomsPaths);
         if (!targetModulesUrls.isEmpty()) {
             List<URL> targetFiles = CompilerClassloaderUtils.addFilesURL(targetModulesUrls);
@@ -281,7 +281,7 @@ public class CompilerClassloaderUtils {
         return Collections.emptyList();
     }
 
-    public static List<URI> readFileAsURI(String filePath) {
+    private static List<URI> readFileAsURI(String filePath) {
 
         BufferedReader br = null;
         List<URI> urls = new ArrayList<>();
@@ -305,7 +305,7 @@ public class CompilerClassloaderUtils {
         return urls;
     }
 
-    public static void close(String filePath,
+    private static void close(String filePath,
                              BufferedReader br) {
         try {
             if (br != null) {
@@ -321,7 +321,7 @@ public class CompilerClassloaderUtils {
         }
     }
 
-    public static List<URL> readFileAsURL(String filePath) {
+    private static List<URL> readFileAsURL(String filePath) {
 
         BufferedReader br = null;
         List<URL> urls = new ArrayList<>();
@@ -346,7 +346,7 @@ public class CompilerClassloaderUtils {
         return urls;
     }
 
-    public static List<String> readFileAsString(String filePath) {
+    private static List<String> readFileAsString(String filePath) {
 
         BufferedReader br = null;
         List<String> items = new ArrayList<>();
@@ -381,15 +381,6 @@ public class CompilerClassloaderUtils {
                           RDROOLS_EXT,
                           XML_EXT,
                           SCENARIO_EXT);
-        return classPathFiles;
-    }
-
-    public static List<String> getStringsFromTargets(Path prjPath,
-                                                     String... extensions) {
-        final List<String> classPathFiles = new ArrayList<>();
-        searchCPFiles(prjPath,
-                      classPathFiles,
-                      extensions);
         return classPathFiles;
     }
 
@@ -428,7 +419,7 @@ public class CompilerClassloaderUtils {
         return deps;
     }
 
-    public static List<String> processScannedFilesAsString(List<String> classPathFiles) {
+    private static List<String> processScannedFilesAsString(List<String> classPathFiles) {
         final List<String> deps = new ArrayList<>();
         for (String file : classPathFiles) {
             if (FilenameUtils.getName(file).startsWith(".")) {
@@ -470,7 +461,7 @@ public class CompilerClassloaderUtils {
         return deps;
     }
 
-    public static List<URL> addFilesURL(List<URL> targetModulesUrls) {
+    private static List<URL> addFilesURL(List<URL> targetModulesUrls) {
         List<URL> targetFiles = new ArrayList<>(targetModulesUrls.size());
         for (URL url : targetModulesUrls) {
             try {
@@ -482,7 +473,7 @@ public class CompilerClassloaderUtils {
         return targetFiles;
     }
 
-    public static List<URL> visitFolders(final DirectoryStream<Path> directoryStream) {
+    private static List<URL> visitFolders(final DirectoryStream<Path> directoryStream) {
         List<URL> urls = new ArrayList<>();
         for (final Path path : directoryStream) {
             if (Files.isDirectory(path)) {
@@ -501,7 +492,7 @@ public class CompilerClassloaderUtils {
         return urls;
     }
 
-    public static byte[] getBytes(String pResourceName) {
+    private static byte[] getBytes(String pResourceName) {
         try {
             File resource = new File(pResourceName);
             return resource.exists() ? IoUtils.readBytesFromInputStream(new FileInputStream(pResourceName)) : null;
@@ -546,7 +537,7 @@ public class CompilerClassloaderUtils {
         return filtered;
     }
 
-    public static Class<?> getClass(String pkgName, String className, MapClassLoader classloader) {
+    public static Class<?> getClass(String pkgName, String className, ClassLoader classloader) {
         try {
             String input;
             if (pkgName != null && pkgName.trim().length() != 0) {
