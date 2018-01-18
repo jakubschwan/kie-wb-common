@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.ClassLoaderProviderTest;
@@ -131,9 +132,17 @@ public class CompilerClassloaderUtilsTest {
         Assert.assertTrue(classLoader.isPresent());
     }
 
+    @Test
+    public void getClassloaderFromAllDependencies() {
+        Optional<ClassLoader> classLoader  = CompilerClassloaderUtils.getClassloaderFromAllDependencies(tmpRoot.toString()+"/dummy",mavenRepo. toString());
+        Assert.assertTrue(classLoader.isPresent());
+    }
 
-
-
-
+    @Test
+    public void createClassloaderFromCpFiles() {
+        String folderPath = Paths.get("target/test-classes/dummy_cp_files").toAbsolutePath().toString();
+        Optional<ClassLoader> classLoader  = CompilerClassloaderUtils.createClassloaderFromCpFiles(folderPath);
+        Assert.assertTrue(classLoader.isPresent());
+    }
 
 }

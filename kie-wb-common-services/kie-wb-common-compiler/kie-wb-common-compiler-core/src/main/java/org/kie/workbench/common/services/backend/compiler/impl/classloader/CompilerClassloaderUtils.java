@@ -75,8 +75,7 @@ public class CompilerClassloaderUtils {
     protected static String META_INF = "META-INF";
     protected static String UTF_8 = "UTF-8";
 
-    private CompilerClassloaderUtils() {
-    }
+    private CompilerClassloaderUtils() {}
 
     /**
      * Execute a maven run to create the classloaders with the dependencies in the Poms, transitive included
@@ -271,15 +270,6 @@ public class CompilerClassloaderUtils {
         return Collections.emptyList();
     }
 
-    private static List<URL> loadFiles(List<String> pomsPaths) {
-        List<URL> targetModulesUrls = getTargetModulesURL(pomsPaths);
-        if (!targetModulesUrls.isEmpty()) {
-            List<URL> targetFiles = CompilerClassloaderUtils.addFilesURL(targetModulesUrls);
-            return targetFiles;
-        }
-        return Collections.emptyList();
-    }
-
     private static List<URI> readFileAsURI(String filePath) {
 
         BufferedReader br = null;
@@ -459,38 +449,7 @@ public class CompilerClassloaderUtils {
         }
         return deps;
     }
-
-    private static List<URL> addFilesURL(List<URL> targetModulesUrls) {
-        List<URL> targetFiles = new ArrayList<>(targetModulesUrls.size());
-        for (URL url : targetModulesUrls) {
-            try {
-                targetFiles.addAll(visitFolders(Files.newDirectoryStream(Paths.get(url.toURI()))));
-            } catch (URISyntaxException ex) {
-                logger.error(ex.getMessage());
-            }
-        }
-        return targetFiles;
-    }
-
-    private static List<URL> visitFolders(final DirectoryStream<Path> directoryStream) {
-        List<URL> urls = new ArrayList<>();
-        for (final Path path : directoryStream) {
-            if (Files.isDirectory(path)) {
-                visitFolders(Files.newDirectoryStream(path));
-            } else {
-                //Don't process dotFiles
-                if (!dotFileFilter.accept(path)) {
-                    try {
-                        urls.add(new URL("file://"+path.toUri()));
-                    } catch (MalformedURLException ex) {
-                        logger.error(ex.getMessage());
-                    }
-                }
-            }
-        }
-        return urls;
-    }
-
+    
     private static byte[] getBytes(String pResourceName) {
         try {
             File resource = new File(pResourceName);
