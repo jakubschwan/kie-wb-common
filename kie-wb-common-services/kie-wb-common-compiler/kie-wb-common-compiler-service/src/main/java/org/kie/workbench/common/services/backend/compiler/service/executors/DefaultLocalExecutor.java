@@ -23,13 +23,16 @@ import java.util.concurrent.ExecutorService;
 import org.guvnor.common.services.backend.cache.LRUCache;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.impl.MavenCompilerFactory;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.KieAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.OutputLogAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
 import org.uberfire.java.nio.file.Path;
 
 public class DefaultLocalExecutor implements CompilerExecutor {
@@ -62,7 +65,7 @@ public class DefaultLocalExecutor implements CompilerExecutor {
     }
 
     private CompileInfo setupCompileInfo(Path workingDir, String mavenRepo) {
-        AFCompiler compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new BaseMavenCompiler()));
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_KIE_AND_LOG_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(workingDir);
         return new CompileInfo(compiler, info, mavenRepo);
     }
