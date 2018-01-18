@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.ClassLoaderProviderTest;
@@ -109,6 +109,20 @@ public class CompilerClassloaderUtilsTest {
         Assert.assertTrue(it.size()==0);
     }
 
+    @Test
+    public void filterPathClasses() {
+        List<String> targets = new ArrayList<>(3);
+        targets.add("/target/classes/org/kie/test/A.class");
+        targets.add("/target/classes/io/akka/test/C.class");
+        targets.add("/target/classes/com/acme/test/D.class");
+        targets.add("/target/classes/com/acme/test/D.class");
+        targets.add(mavenRepo.toAbsolutePath().toString() + "/junit/junit/4.12/junit.jar");
+        targets.add(mavenRepo.toAbsolutePath().toString() +"/junit/junit/4.12/junit-4.12.jar");
+
+        Set<String> orgKie  = CompilerClassloaderUtils.filterPathClasses(targets, mavenRepo.toString());
+        Assert.assertTrue(orgKie.size() == 4);
+    }
+
 
     @Test
     public void loadDependenciesClassloaderFromProject() {
@@ -140,7 +154,7 @@ public class CompilerClassloaderUtilsTest {
 
     @Test
     public void createClassloaderFromCpFiles() {
-        String folderPath = Paths.get("target/test-classes/dummy_cp_files").toAbsolutePath().toString();
+        String folderPath = Paths.get("src/test/projects/dummy_cp_files").toAbsolutePath().toString();
         Optional<ClassLoader> classLoader  = CompilerClassloaderUtils.createClassloaderFromCpFiles(folderPath);
         Assert.assertTrue(classLoader.isPresent());
     }

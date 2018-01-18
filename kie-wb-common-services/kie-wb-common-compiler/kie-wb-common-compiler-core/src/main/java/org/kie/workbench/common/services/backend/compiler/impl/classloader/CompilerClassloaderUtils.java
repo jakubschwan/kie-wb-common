@@ -449,7 +449,7 @@ public class CompilerClassloaderUtils {
         }
         return deps;
     }
-    
+
     private static byte[] getBytes(String pResourceName) {
         try {
             File resource = new File(pResourceName);
