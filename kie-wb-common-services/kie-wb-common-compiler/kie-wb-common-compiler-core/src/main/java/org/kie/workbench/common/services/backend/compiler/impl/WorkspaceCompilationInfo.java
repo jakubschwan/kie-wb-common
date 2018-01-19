@@ -15,8 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl;
 
-import java.util.Optional;
-
 import org.uberfire.java.nio.file.Path;
 
 /***
