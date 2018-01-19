@@ -61,6 +61,11 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
         this.compiler = compiler;
     }
 
+    //for test
+    public C getCompiler(){
+        return compiler;
+    }
+
     @Override
     public Boolean cleanInternalCache() {
         return compiler.cleanInternalCache();

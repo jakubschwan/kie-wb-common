@@ -35,6 +35,11 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
         this.compiler = compiler;
     }
 
+    //for test
+    public C getCompiler(){
+        return compiler;
+    }
+
     @Override
     public T compile(CompilationRequest req) {
         T res = compiler.compile(req);

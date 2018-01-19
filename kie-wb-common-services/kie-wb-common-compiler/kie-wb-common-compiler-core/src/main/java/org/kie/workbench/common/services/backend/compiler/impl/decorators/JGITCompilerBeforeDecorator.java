@@ -47,6 +47,11 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
         this.gitMap = new HashMap<>();
     }
 
+    //for test
+    public C getCompiler(){
+        return compiler;
+    }
+
     @Override
     public Boolean cleanInternalCache() {
         return compiler.cleanInternalCache();
