@@ -1,6 +1,7 @@
 package org.kie.workbench.common.services.backend.compiler.impl.classloader;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,9 @@ public class CompilerClassloaderUtilsTest {
     private static Path mavenRepo;
     private static Logger logger = LoggerFactory.getLogger(ClassLoaderProviderTest.class);
     private static Path tmpRoot;
+    private static WorkspaceCompilationInfo info;
+    private static AFCompiler compiler;
+    private static String alternateSettingsAbsPath;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -47,18 +51,16 @@ public class CompilerClassloaderUtilsTest {
         }
 
         tmpRoot = Files.createTempDirectory("repo");
-        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                     "dummy"));
-        TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"),
-                          tmp);
+        alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
+        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
+        TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"), tmp);
 
         List<String> resources = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
         Assert.assertTrue(resources.size() == 0);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);
+        compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);
 
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
+        info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
@@ -153,11 +155,29 @@ public class CompilerClassloaderUtilsTest {
         Assert.assertTrue(classLoader.isPresent());
     }
 
-    @Test @Ignore
+    @Test
     public void createClassloaderFromCpFiles() {
-        String folderPath = Paths.get("src/test/projects/dummy_cp_files").toAbsolutePath().toString();
-        Optional<ClassLoader> classLoader  = CompilerClassloaderUtils.createClassloaderFromCpFiles(folderPath);
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               Boolean.FALSE);
+        compiler.compile(req);
+        Optional<ClassLoader> classLoader  = CompilerClassloaderUtils.createClassloaderFromCpFiles(tmpRoot.toString()+"/dummy/");
         Assert.assertTrue(classLoader.isPresent());
+    }
+
+
+    @Test
+    public void readFileAsURI(){
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               Boolean.FALSE);
+        compiler.compile(req);
+        List<String> classpathFiles = new ArrayList<>();
+        classpathFiles.add(tmpRoot+"/dummy/module.cpath");
+        List<URI> uris =CompilerClassloaderUtils.processScannedFilesAsURIs(classpathFiles);
+        Assert.assertTrue(uris.size() == 4);
     }
 
 }
