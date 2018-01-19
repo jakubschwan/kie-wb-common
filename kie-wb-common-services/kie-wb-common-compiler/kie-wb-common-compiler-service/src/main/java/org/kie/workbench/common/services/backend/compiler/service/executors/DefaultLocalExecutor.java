@@ -25,12 +25,8 @@ import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
-import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.impl.MavenCompilerFactory;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
-import org.kie.workbench.common.services.backend.compiler.impl.decorators.KieAfterDecorator;
-import org.kie.workbench.common.services.backend.compiler.impl.decorators.OutputLogAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
 import org.uberfire.java.nio.file.Path;
@@ -48,9 +44,9 @@ public class DefaultLocalExecutor implements CompilerExecutor {
 
     private AFCompiler getCompiler(Path projectPath, String mavenRepo) {
         CompileInfo info = compilerCacheForLocalInvocation.getEntry(projectPath);
-        if(info != null && info.getCompiler() != null){
+        if (info != null && info.getCompiler() != null) {
             return info.getCompiler();
-        }else{
+        } else {
             return getNewCachedAFCompiler(projectPath, mavenRepo);
         }
     }
@@ -128,8 +124,7 @@ public class DefaultLocalExecutor implements CompilerExecutor {
     @Override
     public CompletableFuture<KieCompilationResponse> buildAndInstall(Path projectPath, String mavenRepo,
                                                                      Boolean skipPrjDependenciesCreationList) {
-        return internalBuild(projectPath, mavenRepo, skipPrjDependenciesCreationList,
-                             MavenCLIArgs.INSTALL);
+        return internalBuild(projectPath, mavenRepo, skipPrjDependenciesCreationList, MavenCLIArgs.INSTALL);
     }
 
     @Override

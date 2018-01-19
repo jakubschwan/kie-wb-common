@@ -33,11 +33,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
+import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.impl.MavenCompilerFactory;
+
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
+import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.io.IOService;
@@ -120,7 +122,7 @@ public class DefaultMavenCompilerTest {
         assertNotNull(cloned);
 
         //Compile the repo
-        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
         Path prjFolder = Paths.get(gitClonedFolder + "/dummy/");
         byte[] encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         String pomAsAstring = new String(encoded,
@@ -197,7 +199,7 @@ public class DefaultMavenCompilerTest {
         assertTrue(rbResult.getStatus().isSuccessful());
 
         //Compile the repo
-        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
 
         byte[] encoded = Files.readAllBytes(Paths.get(tmpCloned + "/dummy/pom.xml"));
         String pomAsAstring = new String(encoded,
@@ -233,7 +235,7 @@ public class DefaultMavenCompilerTest {
 
     @Test
     public void buildWithJGitDecoratorTest() throws Exception {
-        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.JGIT_BEFORE);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE);
 
         String MASTER_BRANCH = "master";
 
@@ -268,8 +270,6 @@ public class DefaultMavenCompilerTest {
 
         assertNotNull(lastCommit);
 
-        //@TODO refactor and use only one between the URI or Git
-        //@TODO find a way to resolve the problem of the prjname inside .git folder
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("/dummy/"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
@@ -295,14 +295,13 @@ public class DefaultMavenCompilerTest {
 
         //recompile
         res = compiler.compile(req);
-//        assert commits
         assertTrue(res.isSuccessful());
     }
 
     //
     @Test
     public void buildWithAllDecoratorsTest() throws Exception {
-        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.JGIT_BEFORE_AND_LOG_AFTER);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_LOG_AFTER);
 
         String MASTER_BRANCH = "master";
 
@@ -404,9 +403,6 @@ public class DefaultMavenCompilerTest {
         assertFalse(pomAsAstring.contains("<source>1.8</source>"));
         assertFalse(pomAsAstring.contains("<target>1.8</target>"));
 
-        byte[] encodedDummyB = Files.readAllBytes(Paths.get(tmp.toAbsolutePath().toString(),
-                                                            "/dummyB/pom.xml"));
-
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
@@ -430,7 +426,7 @@ public class DefaultMavenCompilerTest {
 
     @Test
     public void cleanInternalTest() throws Exception {
-        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.JGIT_BEFORE);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE);
 
         String MASTER_BRANCH = "master";
 
@@ -465,8 +461,6 @@ public class DefaultMavenCompilerTest {
 
         assertNotNull(lastCommit);
 
-        //@TODO refactor and use only one between the URI or Git
-        //@TODO find a way to resolve the problem of the prjname inside .git folder
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("/dummy/"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,

@@ -36,7 +36,6 @@ import org.kie.workbench.common.services.backend.compiler.configuration.Decorato
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.impl.MavenCompilerFactory;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
@@ -80,7 +79,7 @@ public class ClassLoaderProviderTest {
         TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_classloader"),
                           tmp);
 
-        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.NONE);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
 
         Path uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
@@ -130,7 +129,7 @@ public class ClassLoaderProviderTest {
         TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_classloader"),
                           tmp);
 
-        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.NONE);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
 
         Path uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
@@ -179,7 +178,7 @@ public class ClassLoaderProviderTest {
         TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_classloader"),
                           tmp);
 
-        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.NONE);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
 
         Path uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
