@@ -108,11 +108,6 @@ public class DefaultCompilationRequest implements CompilationRequest {
         return info;
     }
 
-    @Override
-    public Optional<Path> getPomFile() {
-        return info.getEnhancedMainPomFile();
-    }
-
     public AFCliRequest getReq() {
         return req;
     }

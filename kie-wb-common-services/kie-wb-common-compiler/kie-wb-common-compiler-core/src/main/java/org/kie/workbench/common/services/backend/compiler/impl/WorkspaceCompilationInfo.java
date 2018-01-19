@@ -25,20 +25,12 @@ import org.uberfire.java.nio.file.Path;
 public class WorkspaceCompilationInfo {
 
     protected Path prjPath;
-    protected Path enhancedMainPomFile;
     protected Boolean kiePluginPresent = Boolean.FALSE;
 
     public WorkspaceCompilationInfo(Path prjPath) {
         this.prjPath = prjPath;
     }
 
-    public Boolean lateAdditionEnhancedMainPomFile(Path enhancedPom) {
-        if (enhancedMainPomFile == null && enhancedPom != null) {
-            this.enhancedMainPomFile = enhancedPom;
-            return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
-    }
 
     public Boolean lateAdditionKiePluginPresent(Boolean present) {
         if ((kiePluginPresent == null && present != null)) {
@@ -60,15 +52,10 @@ public class WorkspaceCompilationInfo {
         return prjPath;
     }
 
-    public Optional<Path> getEnhancedMainPomFile() {
-        return Optional.ofNullable(enhancedMainPomFile);
-    }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("WorkspaceCompilationInfo{");
         sb.append("prjPath:{").append(prjPath);
-        sb.append("}, enhancedMainPomFile:{").append(enhancedMainPomFile);
         sb.append('}');
         return sb.toString();
     }

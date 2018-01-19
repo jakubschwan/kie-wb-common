@@ -76,16 +76,8 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
             logger.debug("KieCompilationRequest:{}", req);
         }
 
-        if (!req.getInfo().getEnhancedMainPomFile().isPresent()) {
-            ProcessedPoms processedPoms = enabler.process(req);
-            if (!processedPoms.getResult()) {
-                List<String> msgs = new ArrayList<>(1);
-                msgs.add("[ERROR] Processing poms failed");
-                return (T) new DefaultKieCompilationResponse(Boolean.FALSE,
-                                                             msgs,
-                                                             req.getInfo().getPrjPath());
-            }
-        }
+        enabler.process(req);
+
         req.getKieCliRequest().getRequest().setLocalRepositoryPath(req.getMavenRepo());
         /**
          The classworld is now Created in the DefaultMaven compiler for this reasons:
@@ -95,10 +87,10 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
          */
 
         ClassLoader original = Thread.currentThread().getContextClassLoader();
-        ClassWorld kieClassWorld = new ClassWorld("plexus.core",
-                                                  getClass().getClassLoader());
-        int exitCode = cli.doMain(req.getKieCliRequest(),
-                                  kieClassWorld);
+        ClassWorld kieClassWorld = new ClassWorld("plexus.core", getClass().getClassLoader());
+        
+        int exitCode = cli.doMain(req.getKieCliRequest(), kieClassWorld);
+
         Thread.currentThread().setContextClassLoader(original);
         if (exitCode == 0) {
             return (T) new DefaultKieCompilationResponse(Boolean.TRUE);

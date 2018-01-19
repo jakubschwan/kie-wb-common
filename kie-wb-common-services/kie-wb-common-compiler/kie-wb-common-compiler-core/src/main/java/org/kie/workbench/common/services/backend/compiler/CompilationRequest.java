@@ -28,8 +28,6 @@ import org.uberfire.java.nio.file.Path;
  */
 public interface CompilationRequest {
 
-    Optional<Path> getPomFile();
-
     AFCliRequest getKieCliRequest();
 
     WorkspaceCompilationInfo getInfo();
