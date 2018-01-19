@@ -34,20 +34,7 @@ public class ConfigurationEnvironmentStrategy implements ConfigurationStrategy, 
     private Boolean valid = Boolean.TRUE;
 
     public ConfigurationEnvironmentStrategy() {
-        conf = new HashMap<>();
-        Map<String, String> env = System.getenv();
-        ConfigurationKey[] keys = ConfigurationKey.values();
-        for (ConfigurationKey key : keys) {
-            String value = env.get(key.name());
-            if (value == null) {
-                logger.info("Key {} not present in the Environment, skip to the next ConfigurationStrategy. \n",
-                            key.name());
-                valid = Boolean.FALSE;
-                break;
-            } else {
-                conf.put(key, value);
-            }
-        }
+        setUp(System.getenv());
     }
 
     /***
@@ -55,6 +42,10 @@ public class ConfigurationEnvironmentStrategy implements ConfigurationStrategy, 
      * @param env
      */
     public ConfigurationEnvironmentStrategy(Map<String, String> env) {
+        setUp(env);
+    }
+
+    private void setUp(Map<String, String> env) {
         conf = new HashMap<>();
         ConfigurationKey[] keys = ConfigurationKey.values();
         for (ConfigurationKey key : keys) {
