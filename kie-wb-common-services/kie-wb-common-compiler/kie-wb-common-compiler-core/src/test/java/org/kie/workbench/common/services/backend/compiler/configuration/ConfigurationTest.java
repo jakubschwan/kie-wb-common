@@ -38,15 +38,15 @@ public class ConfigurationTest {
     }
 
 
-    @Test @Ignore
-    public void loadEnvironmentConfig() throws  Exception{
+    @Test
+    public void loadEnvironmentConfig(){
         ConfigurationStrategy strategy = new ConfigurationEnvironmentStrategy();
         Map<ConfigurationKey, String> conf = strategy.loadConfiguration();
-        Assert.assertFalse(conf.keySet().size() ==  14);
+        Assert.assertTrue(conf.isEmpty());
 
-        setEnv(getMapForEnv());
-        strategy = new ConfigurationEnvironmentStrategy();
+        strategy = new ConfigurationEnvironmentStrategy(getMapForEnv());
         conf = strategy.loadConfiguration();
+        Assert.assertFalse(conf.isEmpty());
         Assert.assertTrue(conf.keySet().size() ==  14);
     }
 
@@ -69,10 +69,6 @@ public class ConfigurationTest {
         return  conf;
     }
 
-
-    protected static void setEnv(Map<String, String> newEnv) throws Exception {
-
-    }
 
 
 
