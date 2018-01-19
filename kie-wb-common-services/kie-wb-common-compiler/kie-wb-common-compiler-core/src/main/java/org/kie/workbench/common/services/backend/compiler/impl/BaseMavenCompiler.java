@@ -88,7 +88,7 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
 
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         ClassWorld kieClassWorld = new ClassWorld("plexus.core", getClass().getClassLoader());
-        
+
         int exitCode = cli.doMain(req.getKieCliRequest(), kieClassWorld);
 
         Thread.currentThread().setContextClassLoader(original);
