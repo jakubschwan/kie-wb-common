@@ -43,7 +43,7 @@ import org.uberfire.java.nio.file.Paths;
 public class DefaultIncrementalCompilerEnablerTest {
 
     private static Path mavenRepo;
-    private static Logger logger = LoggerFactory.getLogger(ClassLoaderProviderTest.class);
+    private static Logger logger = LoggerFactory.getLogger(DefaultIncrementalCompilerEnablerTest.class);
     private static Path tmpRoot;
     private static WorkspaceCompilationInfo info;
     private static AFCompiler compiler;

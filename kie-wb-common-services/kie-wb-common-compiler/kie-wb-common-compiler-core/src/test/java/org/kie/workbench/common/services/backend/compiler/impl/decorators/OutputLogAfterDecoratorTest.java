@@ -25,7 +25,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kie.workbench.common.services.backend.compiler.ClassLoaderProviderTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
@@ -42,7 +41,7 @@ import org.uberfire.java.nio.file.Paths;
 public class OutputLogAfterDecoratorTest {
 
     private static Path mavenRepo;
-    private static Logger logger = LoggerFactory.getLogger(ClassLoaderProviderTest.class);
+    private static Logger logger = LoggerFactory.getLogger(OutputLogAfterDecoratorTest.class);
     private static Path tmpRoot;
     private static String alternateSettingsAbsPath;
     private static  WorkspaceCompilationInfo info;

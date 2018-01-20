@@ -25,10 +25,8 @@ import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
-import org.kie.workbench.common.services.backend.compiler.ClassLoaderProviderTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
@@ -47,7 +45,7 @@ import org.uberfire.java.nio.file.Paths;
 public class CompilerClassloaderUtilsTest {
 
     private static Path mavenRepo;
-    private static Logger logger = LoggerFactory.getLogger(ClassLoaderProviderTest.class);
+    private static Logger logger = LoggerFactory.getLogger(CompilerClassloaderUtilsTest.class);
     private static Path tmpRoot;
     private static WorkspaceCompilationInfo info;
     private static AFCompiler compiler;

@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.junit.Test;
-import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
 import org.uberfire.java.nio.file.Paths;
 
@@ -30,7 +29,6 @@ public class MavenUtilsTest {
 
     @Test
     public void presenceOfDepInThePrj() throws Exception {
-        DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
         List<String> pomList = MavenUtils.searchPoms(Paths.get("src/test/projects/dummy_kie_multimodule_untouched/"));
         assertTrue(pomList.size() == 3);
         List<Artifact> deps = MavenUtils.resolveDependenciesFromMultimodulePrj(pomList);

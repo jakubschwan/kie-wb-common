@@ -29,7 +29,7 @@ import org.uberfire.java.nio.file.Paths;
 public class WorkspaceCompilationInfoTest {
 
     private static Path mavenRepo;
-    private static Logger logger = LoggerFactory.getLogger(ClassLoaderProviderTest.class);
+    private static Logger logger = LoggerFactory.getLogger(WorkspaceCompilationInfoTest.class);
     private static Path tmpRoot;
 
     @BeforeClass
