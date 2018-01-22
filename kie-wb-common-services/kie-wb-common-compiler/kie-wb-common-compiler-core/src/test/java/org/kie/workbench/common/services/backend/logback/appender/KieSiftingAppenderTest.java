@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.logback;
+package org.kie.workbench.common.services.backend.logback.appender;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +25,7 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
-import org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppender;
+import org.kie.workbench.common.services.backend.logback.OutputSharedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class KieSiftingAppenderTest {
     public void appendTest(){
         String compilationID ="80dbc168-a1fe-499d-a414-d4a37d13d100-1516620517065-0";
         String[] args = new String[]{};
-        LoggingEvent event = new LoggingEvent("org.kie.workbench.common.services.backend.logback.KieSiftingAppenderTest",
+        LoggingEvent event = new LoggingEvent("org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppenderTest",
                                                (ch.qos.logback.classic.Logger)logger,
                                                Level.INFO,
                                                "I'm a beatiful test message :)",
