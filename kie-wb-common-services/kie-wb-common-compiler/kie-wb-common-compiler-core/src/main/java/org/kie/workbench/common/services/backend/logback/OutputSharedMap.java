@@ -48,4 +48,8 @@ public class OutputSharedMap {
             map.get(key).add(msg);
         }
     }
+
+    public static void purgeAll(){
+        map.clear();
+    }
 }
