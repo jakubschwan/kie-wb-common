@@ -80,7 +80,7 @@ public class DefaultPomEditor implements PomEditor {
         return Boolean.TRUE;
     }
 
-    protected PluginPresents updatePom(Model model) {
+    private PluginPresents updatePom(Model model) {
 
         Build build = model.getBuild();
         if (build == null) {  //pom without build tag
@@ -206,7 +206,7 @@ public class DefaultPomEditor implements PomEditor {
         return overwritePOM;
     }
 
-    protected Plugin getNewCompilerPlugin() {
+    private Plugin getNewCompilerPlugin() {
 
         Plugin newCompilerPlugin = new Plugin();
         newCompilerPlugin.setGroupId(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP));
@@ -240,7 +240,7 @@ public class DefaultPomEditor implements PomEditor {
         return newCompilerPlugin;
     }
 
-    protected void disableMavenCompilerAlreadyPresent(Plugin plugin) {
+    private void disableMavenCompilerAlreadyPresent(Plugin plugin) {
         Xpp3Dom skipMain = new Xpp3Dom(MavenConfig.MAVEN_SKIP_MAIN);
         skipMain.setValue(TRUE);
         Xpp3Dom skip = new Xpp3Dom(MavenConfig.MAVEN_SKIP);
@@ -260,7 +260,7 @@ public class DefaultPomEditor implements PomEditor {
         plugin.setExecutions(executions);
     }
 
-    protected String[] addCreateClasspathMavenArgs(String[] args) {
+    private String[] addCreateClasspathMavenArgs(String[] args) {
         String[] newArgs = Arrays.copyOf(args, args.length + 2);
         newArgs[args.length] = MavenConfig.DEPS_BUILD_CLASSPATH;
         newArgs[args.length + 1] = MavenConfig.MAVEN_DEP_ARG_CLASSPATH;
@@ -282,7 +282,7 @@ public class DefaultPomEditor implements PomEditor {
         return holder;
     }
 
-    public void write(Path pom,
+    public boolean write(Path pom,
                       CompilationRequest request) {
 
         try {
@@ -290,7 +290,7 @@ public class DefaultPomEditor implements PomEditor {
             if (model == null) {
                 logger.error("Model null from pom file:",
                              pom.toString());
-                return;
+                return false;
             }
 
             PomPlaceHolder pomPH = new PomPlaceHolder(pom.toAbsolutePath().toString(),
@@ -332,8 +332,10 @@ public class DefaultPomEditor implements PomEditor {
                 }
                 history.add(pomPH);
             }
+            return true;
         } catch (Exception e) {
             logger.error(e.getMessage());
+            return false;
         }
     }
 }

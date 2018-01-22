@@ -17,13 +17,11 @@ package org.kie.workbench.common.services.backend.compiler.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.impl.external339.AFCliRequest;
-import org.uberfire.java.nio.file.Path;
 
 /***
  * Implementation of CompilationRequest, holds the information for the AFMavenCli

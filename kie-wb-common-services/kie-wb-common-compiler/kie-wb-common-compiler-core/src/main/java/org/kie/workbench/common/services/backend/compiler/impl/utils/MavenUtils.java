@@ -99,10 +99,10 @@ public class MavenUtils {
 
     public static String getMavenRepoDir(String defaultName) {
         boolean containedMaveRepo = System.getenv().containsKey(ArtifactRepositoryService.GLOBAL_M2_REPO_NAME);
-        if(containedMaveRepo) {
+        if (containedMaveRepo) {
             String mavenRepoName = ArtifactRepositoryService.GLOBAL_M2_REPO_NAME;
             return mavenRepoName + defaultName;
-        }else {
+        } else {
             String tempDir = System.getProperty("java.io.tmpdir");
             StringBuffer sb = new StringBuffer();
             sb.append(tempDir).append("/maven/repo/").append(defaultName);

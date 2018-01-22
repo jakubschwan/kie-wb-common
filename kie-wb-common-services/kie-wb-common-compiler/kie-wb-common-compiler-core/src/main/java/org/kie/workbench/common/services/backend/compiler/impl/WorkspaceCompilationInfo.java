@@ -29,7 +29,6 @@ public class WorkspaceCompilationInfo {
         this.prjPath = prjPath;
     }
 
-
     public Boolean lateAdditionKiePluginPresent(Boolean present) {
         if ((kiePluginPresent == null && present != null)) {
             this.kiePluginPresent = present;

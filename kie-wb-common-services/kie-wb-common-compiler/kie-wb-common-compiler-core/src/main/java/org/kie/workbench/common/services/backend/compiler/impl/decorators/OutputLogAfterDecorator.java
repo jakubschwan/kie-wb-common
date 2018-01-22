@@ -36,7 +36,7 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
     }
 
     //for test
-    public C getCompiler(){
+    public C getCompiler() {
         return compiler;
     }
 
@@ -48,7 +48,7 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
 
     @Override
     public CompilationResponse compile(CompilationRequest req, Map override) {
-        T res =  (T) compiler.compile(req, override);
+        T res = (T) compiler.compile(req, override);
         return handleMavenOutput(req, res);
     }
 
@@ -65,5 +65,4 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
     public Boolean cleanInternalCache() {
         return compiler.cleanInternalCache();
     }
-
 }

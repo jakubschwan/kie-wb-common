@@ -59,10 +59,9 @@ import static org.junit.Assert.assertTrue;
 
 public class KieDefaultMavenCompilerTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(KieDefaultMavenCompilerTest.class);
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
-    private static final Logger logger = LoggerFactory.getLogger(KieDefaultMavenCompilerTest.class);
-
     private Path mavenRepo;
 
     @Before
@@ -469,7 +468,7 @@ public class KieDefaultMavenCompilerTest {
 
         ioService.startBatch(origin);
 
-        ioService.write(origin.getPath("master","/dummy/pom.xml"), //git://buildCompileWithOverrideOnGitVFS/dummy/pom.xml
+        ioService.write(origin.getPath("master", "/dummy/pom.xml"), //git://buildCompileWithOverrideOnGitVFS/dummy/pom.xml
                         new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/dummy_override/pom.xml").toPath())));
         ioService.write(origin.getPath("master", "/dummy/src/main/java/dummy/Dummy.java"), //git://buildCompileWithOverrideOnGitVFS/dummy/src/main/java/dummy/Dummy.java
                         new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/dummy/src/main/java/dummy/Dummy.java").toPath())));
@@ -477,11 +476,11 @@ public class KieDefaultMavenCompilerTest {
         ioService.endBatch();
 
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                               new WorkspaceCompilationInfo(origin.getPath("master","/dummy/")),// git://buildCompileWithOverrideOnGitVFS/dummy/
+                                                               new WorkspaceCompilationInfo(origin.getPath("master", "/dummy/")),// git://buildCompileWithOverrideOnGitVFS/dummy/
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE);
 
-        byte[] encoded = ioService.readAllBytes(origin.getPath("master","/dummy/src/main/java/dummy/Dummy.java"));
+        byte[] encoded = ioService.readAllBytes(origin.getPath("master", "/dummy/src/main/java/dummy/Dummy.java"));
 
         String dummyAsAstring = new String(encoded,
                                            StandardCharsets.UTF_8);
@@ -506,7 +505,7 @@ public class KieDefaultMavenCompilerTest {
         InputStream input = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/DummyOverride.java"));
         override.put(path, input);
 
-        org.uberfire.java.nio.file.Path pathTwo = origin.getPath("master","/dummy//src/main/java/dummy/Dummy.java");
+        org.uberfire.java.nio.file.Path pathTwo = origin.getPath("master", "/dummy//src/main/java/dummy/Dummy.java");
         InputStream inputTwo = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/Dummy.java"));
         override.put(pathTwo, inputTwo);
 

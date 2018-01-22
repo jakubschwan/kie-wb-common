@@ -23,55 +23,28 @@ import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
-import org.uberfire.java.nio.file.Paths;
 
-public class OutputLogAfterDecoratorTest {
+public class OutputLogAfterDecoratorTest extends BaseCompilerTest {
 
-    private static Path mavenRepo;
-    private static Logger logger = LoggerFactory.getLogger(OutputLogAfterDecoratorTest.class);
-    private static Path tmpRoot;
-    private static String alternateSettingsAbsPath;
-    private static  WorkspaceCompilationInfo info;
-
-    @BeforeClass
-    public static void setUp() throws Exception {
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            logger.info("Creating a m2_repo into " + mavenRepo);
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
-        }
-
-        tmpRoot = Files.createTempDirectory("repo");
-        alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
-        TestUtil.copyTree(Paths.get("target/test-classes/dummy"), tmp);
-        info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
+    public OutputLogAfterDecoratorTest() {
+        super("target/test-classes/dummy");
     }
 
     @AfterClass
-    public static void tearDown(){
-        TestUtil.rm(tmpRoot.toFile());
+    public static void tearDown() {
+        BaseCompilerTest.tearDown();
     }
 
     @Test
-    public void compileTest(){
+    public void compileTest() {
 
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
@@ -85,7 +58,7 @@ public class OutputLogAfterDecoratorTest {
     }
 
     @Test
-    public void compileWithOverrideTest() throws Exception{
+    public void compileWithOverrideTest() throws Exception {
 
         Map<Path, InputStream> override = new HashMap<>();
         org.uberfire.java.nio.file.Path path = org.uberfire.java.nio.file.Paths.get(tmpRoot + "/dummy/src/main/java/dummy/DummyOverride.java");

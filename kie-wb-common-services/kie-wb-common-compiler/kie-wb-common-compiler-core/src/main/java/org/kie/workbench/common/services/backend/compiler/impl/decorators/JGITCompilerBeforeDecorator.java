@@ -48,7 +48,7 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
     }
 
     //for test
-    public C getCompiler(){
+    public C getCompiler() {
         return compiler;
     }
 

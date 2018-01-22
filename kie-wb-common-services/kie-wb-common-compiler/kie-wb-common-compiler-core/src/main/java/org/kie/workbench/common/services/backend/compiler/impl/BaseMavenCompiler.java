@@ -31,7 +31,6 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCon
 import org.kie.workbench.common.services.backend.compiler.impl.external339.ReusableAFMavenCli;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.IncrementalCompilerEnabler;
-import org.kie.workbench.common.services.backend.compiler.impl.pomprocessor.ProcessedPoms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;

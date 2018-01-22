@@ -36,85 +36,84 @@ public class MapClassLoader extends ClassLoader {
     private static final ProtectionDomain PROTECTION_DOMAIN;
 
     static {
-        PROTECTION_DOMAIN = (ProtectionDomain) AccessController.doPrivileged( new PrivilegedAction() {
+        PROTECTION_DOMAIN = (ProtectionDomain) AccessController.doPrivileged(new PrivilegedAction() {
 
             public Object run() {
                 return MapClassLoader.class.getProtectionDomain();
             }
-        } );
+        });
     }
-
 
     private Map<String, byte[]> map;
 
-    public MapClassLoader(Map<String, byte[]> map, ClassLoader parent ) {
-        super( parent );
+    public MapClassLoader(Map<String, byte[]> map, ClassLoader parent) {
+        super(parent);
         this.map = map;
     }
 
-    public Class<?> loadClass( final String name,
-            final boolean resolve ) throws ClassNotFoundException {
-        Class<?> cls = fastFindClass( name );
+    public Class<?> loadClass(final String name,
+                              final boolean resolve) throws ClassNotFoundException {
+        Class<?> cls = fastFindClass(name);
 
-        if ( cls == null ) {
-            cls = super.loadClass( name, resolve );
+        if (cls == null) {
+            cls = super.loadClass(name, resolve);
         }
 
-        if ( cls == null ) {
-            throw new ClassNotFoundException( "Unable to load class: " + name );
+        if (cls == null) {
+            throw new ClassNotFoundException("Unable to load class: " + name);
         }
 
         return cls;
     }
 
-    public Class<?> fastFindClass( final String name ) {
-        Class<?> cls = findLoadedClass( name );
+    public Class<?> fastFindClass(final String name) {
+        Class<?> cls = findLoadedClass(name);
 
-        if ( cls == null ) {
-            final byte[] clazzBytes = this.map.get( convertClassToResourcePath( name ) );
-            if ( clazzBytes != null ) {
-                int lastDotPos = name.lastIndexOf( '.' );
-                String pkgName = lastDotPos > 0 ? name.substring( 0, lastDotPos ) : "";
+        if (cls == null) {
+            final byte[] clazzBytes = this.map.get(convertClassToResourcePath(name));
+            if (clazzBytes != null) {
+                int lastDotPos = name.lastIndexOf('.');
+                String pkgName = lastDotPos > 0 ? name.substring(0, lastDotPos) : "";
 
-                if ( getPackage( pkgName ) == null ) {
-                    definePackage( pkgName,
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            null );
+                if (getPackage(pkgName) == null) {
+                    definePackage(pkgName,
+                                  "",
+                                  "",
+                                  "",
+                                  "",
+                                  "",
+                                  "",
+                                  null);
                 }
 
-                cls = defineClass( name,
-                        clazzBytes,
-                        0,
-                        clazzBytes.length,
-                        PROTECTION_DOMAIN );
+                cls = defineClass(name,
+                                  clazzBytes,
+                                  0,
+                                  clazzBytes.length,
+                                  PROTECTION_DOMAIN);
             }
 
-            if ( cls != null ) {
-                resolveClass( cls );
+            if (cls != null) {
+                resolveClass(cls);
             }
         }
 
         return cls;
     }
 
-    public InputStream getResourceAsStream( final String name ) {
-        final byte[] clsBytes = this.map.get( name );
-        if ( clsBytes != null ) {
-            return new ByteArrayInputStream( clsBytes );
+    public InputStream getResourceAsStream(final String name) {
+        final byte[] clsBytes = this.map.get(name);
+        if (clsBytes != null) {
+            return new ByteArrayInputStream(clsBytes);
         }
         return null;
     }
 
-    public URL getResource( String name ) {
+    public URL getResource(String name) {
         return null;
     }
 
-    public Enumeration<URL> getResources( String name ) throws IOException {
+    public Enumeration<URL> getResources(String name) throws IOException {
         return new Enumeration<URL>() {
 
             public boolean hasMoreElements() {
@@ -128,12 +127,11 @@ public class MapClassLoader extends ClassLoader {
     }
 
     public static String convertClassToResourcePath(final String pName) {
-        return pName.replace( '.',
-                '/' ) + ".class";
+        return pName.replace('.',
+                             '/') + ".class";
     }
 
-    public Set<String> getKeys(){
+    public Set<String> getKeys() {
         return map.keySet();
     }
-
 }

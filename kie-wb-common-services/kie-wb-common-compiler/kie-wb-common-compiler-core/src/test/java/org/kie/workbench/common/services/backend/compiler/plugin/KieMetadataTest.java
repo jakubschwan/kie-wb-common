@@ -103,7 +103,7 @@ public class KieMetadataTest {
 
         if (!res.isSuccessful()) {
             List<String> msgs = res.getMavenOutput();
-            for(String msg: msgs){
+            for (String msg : msgs) {
                 logger.info(msg);
             }
         }
@@ -155,7 +155,7 @@ public class KieMetadataTest {
 
             CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                    info,
-                                                                   new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS +alternateSettingsAbsPath},
+                                                                   new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                    Boolean.FALSE);
             KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
 
@@ -166,7 +166,7 @@ public class KieMetadataTest {
 
             if (!res.isSuccessful()) {
                 List<String> msgs = res.getMavenOutput();
-                for(String msg: msgs){
+                for (String msg : msgs) {
                     logger.info(msg);
                 }
             }
@@ -211,7 +211,7 @@ public class KieMetadataTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS +alternateSettingsAbsPath},
+                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
         if (!res.isSuccessful()) {
@@ -220,7 +220,7 @@ public class KieMetadataTest {
         }
         if (!res.isSuccessful()) {
             List<String> msgs = res.getMavenOutput();
-            for(String msg: msgs){
+            for (String msg : msgs) {
                 logger.info(msg);
             }
         }

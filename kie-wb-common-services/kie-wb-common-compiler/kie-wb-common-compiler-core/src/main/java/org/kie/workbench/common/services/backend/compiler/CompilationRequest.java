@@ -17,11 +17,9 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import java.util.Map;
-import java.util.Optional;
 
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.external339.AFCliRequest;
-import org.uberfire.java.nio.file.Path;
 
 /**
  * Wrap a compilation request

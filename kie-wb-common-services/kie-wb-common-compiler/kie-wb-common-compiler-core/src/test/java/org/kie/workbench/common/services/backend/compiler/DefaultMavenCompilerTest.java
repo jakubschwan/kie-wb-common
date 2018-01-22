@@ -32,11 +32,9 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
-
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
@@ -55,10 +53,9 @@ import static org.junit.Assert.assertTrue;
 
 public class DefaultMavenCompilerTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(DefaultMavenCompilerTest.class);
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
-    private static final Logger logger = LoggerFactory.getLogger(DefaultMavenCompilerTest.class);
-
     private Path mavenRepo;
 
     @Before
@@ -277,7 +274,7 @@ public class DefaultMavenCompilerTest {
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/dummy/"),res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/dummy/"), res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
         }
         assertTrue(res.isSuccessful());
@@ -376,7 +373,6 @@ public class DefaultMavenCompilerTest {
         TestUtil.rm(tmpRootCloned.toFile());
     }
 
-
     @Test
     public void testJDTCompiler() throws Exception {
 
@@ -421,8 +417,6 @@ public class DefaultMavenCompilerTest {
 
         TestUtil.rm(tmpRoot.toFile());
     }
-
-
 
     @Test
     public void cleanInternalTest() throws Exception {

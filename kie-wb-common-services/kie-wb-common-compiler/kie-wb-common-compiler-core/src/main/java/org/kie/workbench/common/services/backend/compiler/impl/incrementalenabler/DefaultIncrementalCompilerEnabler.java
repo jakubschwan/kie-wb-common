@@ -59,11 +59,12 @@ public class DefaultIncrementalCompilerEnabler implements IncrementalCompilerEna
         Boolean isPresent = isPresent(placeHolder);   // check if the main pom is already scanned and edited
         if (placeHolder.isValid() && !isPresent) {
             List<String> pomsList = MavenUtils.searchPoms(mainPom.getParent()); // recursive NIO search in all subfolders
+            boolean result = false;
             if (pomsList.size() > 0) {
-                processFoundPoms(pomsList,
+                result = processFoundPoms(pomsList,
                                  req);
             }
-            return new ProcessedPoms(Boolean.TRUE,
+            return new ProcessedPoms(result,
                                      pomsList);
         } else {
             return new ProcessedPoms(Boolean.FALSE,
@@ -71,17 +72,18 @@ public class DefaultIncrementalCompilerEnabler implements IncrementalCompilerEna
         }
     }
 
-    private void processFoundPoms(List<String> poms,
+    private boolean processFoundPoms(List<String> poms,
                                   CompilationRequest request) {
 
+        boolean result = true;
         for (String pom : poms) {
             Path tmpPom = Paths.get(URI.create(FILE_URI + pom));
             PomPlaceHolder tmpPlaceHolder = editor.readSingle(tmpPom);
             if (!isPresent(tmpPlaceHolder)) {
-                editor.write(tmpPom,
-                             request);
+                result = result && editor.write(tmpPom, request);
             }
         }
+        return result;
     }
 
     /**

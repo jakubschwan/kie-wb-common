@@ -32,16 +32,16 @@ public class MavenOutputConverterTest {
         fileSystemTestingUtils.setup();
     }
 
+    @AfterClass
+    public static void after() {
+        fileSystemTestingUtils.cleanup();
+    }
+
     @Before
     public void setup() throws IOException {
         final FileSystem fs = fileSystemTestingUtils.getFileSystem();
 
         this.path = fs.getRootDirectories().iterator().next().resolve("projectName");
-    }
-
-    @AfterClass
-    public static void after() {
-        fileSystemTestingUtils.cleanup();
     }
 
     @Test

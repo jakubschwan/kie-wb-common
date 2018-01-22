@@ -32,7 +32,6 @@ import org.junit.Test;
 import org.kie.api.builder.KieModule;
 import org.kie.scanner.KieModuleMetaData;
 import org.kie.scanner.KieModuleMetaDataImpl;
-import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -89,7 +88,7 @@ public class ClassLoaderProviderTest {
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadProjectClassloaderTest");
         }
         assertTrue(res.isSuccessful());
@@ -139,7 +138,7 @@ public class ClassLoaderProviderTest {
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
         }
         assertTrue(res.isSuccessful());
@@ -184,11 +183,11 @@ public class ClassLoaderProviderTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.COMPILE },
+                                                               new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadTargetFolderClassloaderTest");
         }
         assertTrue(res.isSuccessful());
@@ -317,17 +316,17 @@ public class ClassLoaderProviderTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{ MavenCLIArgs.INSTALL},
+                                                               new String[]{MavenCLIArgs.INSTALL},
                                                                Boolean.FALSE);
 
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
         if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmp,res.getMavenOutput(),
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieMetadataTest.getResourcesFromADroolsPRJWithError");
         }
         if (!res.isSuccessful()) {
             List<String> msgs = res.getMavenOutput();
-            for(String msg: msgs){
+            for (String msg : msgs) {
                 logger.info(msg);
             }
         }
@@ -349,6 +348,5 @@ public class ClassLoaderProviderTest {
         List<String> classloaderOptional = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
         Assert.assertTrue(classloaderOptional.size() == 3);
         TestUtil.rm(tmpRoot.toFile());
-
     }
 }

@@ -27,69 +27,68 @@ import org.kie.workbench.common.services.backend.compiler.impl.decorators.Output
 public class KieMavenCompilerFactoryTest {
 
     @Test
-    public void noneTest(){
+    public void noneTest() {
         AFCompiler none = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
         Assert.assertTrue(none instanceof BaseMavenCompiler);
     }
 
     @Test
-    public void logOutputAfterDecoratorTest(){
+    public void logOutputAfterDecoratorTest() {
         AFCompiler logAfter = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
         Assert.assertTrue(logAfter instanceof OutputLogAfterDecorator);
     }
 
     @Test
-    public void kieAfterDecoratorTest(){
+    public void kieAfterDecoratorTest() {
         AFCompiler kieAfter = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);
         Assert.assertTrue(kieAfter instanceof KieAfterDecorator);
     }
 
     @Test
-    public void jGitBeforeDecoratorTest(){
+    public void jGitBeforeDecoratorTest() {
         AFCompiler jgitBefore = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE);
         Assert.assertTrue(jgitBefore instanceof JGITCompilerBeforeDecorator);
     }
 
     @Test
-    public void kieAndLogAfterDecoratorTest(){
+    public void kieAndLogAfterDecoratorTest() {
         AFCompiler kieAfterDecorator = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
         Assert.assertTrue(kieAfterDecorator instanceof KieAfterDecorator);
-        AFCompiler outputLofAfterDecorator = ((KieAfterDecorator)kieAfterDecorator).getCompiler();
+        AFCompiler outputLofAfterDecorator = ((KieAfterDecorator) kieAfterDecorator).getCompiler();
         Assert.assertTrue(outputLofAfterDecorator instanceof OutputLogAfterDecorator);
-        AFCompiler baseMavenCompiler = ((OutputLogAfterDecorator)outputLofAfterDecorator).getCompiler();
+        AFCompiler baseMavenCompiler = ((OutputLogAfterDecorator) outputLofAfterDecorator).getCompiler();
         Assert.assertTrue(baseMavenCompiler instanceof BaseMavenCompiler);
     }
 
     @Test
-    public void jgitBeforeAndLogAfterDecoratorTest(){
+    public void jgitBeforeAndLogAfterDecoratorTest() {
         AFCompiler jgitBeforeAndLogAfter = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_LOG_AFTER);
         Assert.assertTrue(jgitBeforeAndLogAfter instanceof JGITCompilerBeforeDecorator);
-        AFCompiler outputLofAfterDecorator = ((JGITCompilerBeforeDecorator)jgitBeforeAndLogAfter).getCompiler();
+        AFCompiler outputLofAfterDecorator = ((JGITCompilerBeforeDecorator) jgitBeforeAndLogAfter).getCompiler();
         Assert.assertTrue(outputLofAfterDecorator instanceof OutputLogAfterDecorator);
-        AFCompiler baseMavenCompiler = ((OutputLogAfterDecorator)outputLofAfterDecorator).getCompiler();
+        AFCompiler baseMavenCompiler = ((OutputLogAfterDecorator) outputLofAfterDecorator).getCompiler();
         Assert.assertTrue(baseMavenCompiler instanceof BaseMavenCompiler);
     }
 
     @Test
-    public void jgitBeforeAndKieAfterDecoratorTest(){
+    public void jgitBeforeAndKieAfterDecoratorTest() {
         AFCompiler jgitBeforeAndLogAfter = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_KIE_AFTER);
         Assert.assertTrue(jgitBeforeAndLogAfter instanceof JGITCompilerBeforeDecorator);
-        AFCompiler kieAfterDecorator = ((JGITCompilerBeforeDecorator)jgitBeforeAndLogAfter).getCompiler();
+        AFCompiler kieAfterDecorator = ((JGITCompilerBeforeDecorator) jgitBeforeAndLogAfter).getCompiler();
         Assert.assertTrue(kieAfterDecorator instanceof KieAfterDecorator);
-        AFCompiler baseMavenCompiler = ((KieAfterDecorator)kieAfterDecorator).getCompiler();
+        AFCompiler baseMavenCompiler = ((KieAfterDecorator) kieAfterDecorator).getCompiler();
         Assert.assertTrue(baseMavenCompiler instanceof BaseMavenCompiler);
     }
 
     @Test
-    public void jgitBeforeAndKieAndLogAfterDecoratorTest(){
+    public void jgitBeforeAndKieAndLogAfterDecoratorTest() {
         AFCompiler jgitBeforeAndLogAfter = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_KIE_AND_LOG_AFTER);
         Assert.assertTrue(jgitBeforeAndLogAfter instanceof JGITCompilerBeforeDecorator);
-        AFCompiler kieAfterDecorator = ((JGITCompilerBeforeDecorator)jgitBeforeAndLogAfter).getCompiler();
+        AFCompiler kieAfterDecorator = ((JGITCompilerBeforeDecorator) jgitBeforeAndLogAfter).getCompiler();
         Assert.assertTrue(kieAfterDecorator instanceof KieAfterDecorator);
-        AFCompiler outputLofAfterDecorator = ((KieAfterDecorator)kieAfterDecorator).getCompiler();
+        AFCompiler outputLofAfterDecorator = ((KieAfterDecorator) kieAfterDecorator).getCompiler();
         Assert.assertTrue(outputLofAfterDecorator instanceof OutputLogAfterDecorator);
-        AFCompiler baseMavenCompiler = ((OutputLogAfterDecorator)outputLofAfterDecorator).getCompiler();
+        AFCompiler baseMavenCompiler = ((OutputLogAfterDecorator) outputLofAfterDecorator).getCompiler();
         Assert.assertTrue(baseMavenCompiler instanceof BaseMavenCompiler);
     }
-
 }

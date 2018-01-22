@@ -40,5 +40,4 @@ public class MavenUtilsTest {
         assertTrue(artifact.getType().equals("jar"));
         assertTrue(artifact.toString().equals("org.kie:kie-api:jar:6.5.0.Final"));
     }
-
 }

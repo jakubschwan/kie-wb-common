@@ -1277,41 +1277,41 @@ public class ReusableAFMavenCli {
         }
     }
 
-    public Boolean cleanInternals(){
-        if(reusableDispatcher != null){
+    public Boolean cleanInternals() {
+        if (reusableDispatcher != null) {
             reusableDispatcher = null;
         }
-        if(reusableConfigurationProcessors != null){
+        if (reusableConfigurationProcessors != null) {
             reusableConfigurationProcessors = null;
         }
-        if(reusableEventSpyDispatcher != null){
+        if (reusableEventSpyDispatcher != null) {
             reusableEventSpyDispatcher = null;
         }
-        if(reusableExtensions != null){
+        if (reusableExtensions != null) {
             reusableExtensions = null;
         }
-        if(reusableExecutionRequestPopulator != null){
+        if (reusableExecutionRequestPopulator != null) {
             reusableExecutionRequestPopulator = null;
         }
-        if(reusableEventSpyContext != null){
+        if (reusableEventSpyContext != null) {
             reusableEventSpyContext = null;
         }
-        if(reusableContainerCoreExtensions != null){
+        if (reusableContainerCoreExtensions != null) {
             reusableContainerCoreExtensions = null;
         }
-        if(reusableContainer != null){
+        if (reusableContainer != null) {
             reusableContainer = null;
         }
-        if(reusableMaven != null){
+        if (reusableMaven != null) {
             reusableMaven = null;
         }
-        if(reusableModelProcessor != null){
+        if (reusableModelProcessor != null) {
             reusableModelProcessor = null;
         }
-        if(reusableSlf4jLogger != null) {
+        if (reusableSlf4jLogger != null) {
             reusableSlf4jLogger = null;
         }
-        if(reusableToolchainsBuilder != null) {
+        if (reusableToolchainsBuilder != null) {
             reusableToolchainsBuilder = null;
         }
         return Boolean.TRUE;

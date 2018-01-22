@@ -27,7 +27,8 @@ import org.guvnor.common.services.project.backend.server.utils.configuration.Ord
 /**
  * Default implementation, this class can be extended to change the protected configuration Map
  */
-public class ConfigurationStaticStrategy implements ConfigurationStrategy, Order {
+public class ConfigurationStaticStrategy implements ConfigurationStrategy,
+                                                    Order {
 
     protected Map<ConfigurationKey, String> conf;
 
@@ -63,7 +64,7 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy, Order
                  "kie-takari-plugin");
 
         conf.put(ConfigurationKey.KIE_VERSION,
-                "7.6.0-SNAPSHOT");
+                 "7.6.0-SNAPSHOT");
 
         valid = Boolean.TRUE;
     }

@@ -34,10 +34,10 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCon
 import org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppender;
 import org.kie.workbench.common.services.backend.logback.appender.UUIDThreadNameDiscriminator;
 
-
 public class LogbackConfig extends ContextAwareBase implements Configurator {
 
-    public LogbackConfig(){}
+    public LogbackConfig() {
+    }
 
     @Override
     public void configure(LoggerContext loggerContext) {
@@ -76,7 +76,6 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
 
         StatusPrinter.print(loggerContext);
     }
-
 
     private UUIDThreadNameDiscriminator getDiscriminator() {
         UUIDThreadNameDiscriminator discriminator = new UUIDThreadNameDiscriminator();

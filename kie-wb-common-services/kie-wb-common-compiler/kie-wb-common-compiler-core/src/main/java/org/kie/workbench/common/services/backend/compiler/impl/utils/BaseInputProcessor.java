@@ -14,5 +14,4 @@ public abstract class BaseInputProcessor implements InputProcessor {
         msg.setText(text);
         return msg;
     }
-
 }

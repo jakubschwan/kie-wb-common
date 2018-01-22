@@ -74,7 +74,8 @@ public class CompilerClassloaderUtils {
     protected static String META_INF = "META-INF";
     protected static String UTF_8 = "UTF-8";
 
-    private CompilerClassloaderUtils() {}
+    private CompilerClassloaderUtils() {
+    }
 
     /**
      * Execute a maven run to create the classloaders with the dependencies in the Poms, transitive included
@@ -128,8 +129,8 @@ public class CompilerClassloaderUtils {
     }
 
     private static void searchCPFiles(final Path file,
-                                     final List<String> classPathFiles,
-                                     final String... extensions) {
+                                      final List<String> classPathFiles,
+                                      final String... extensions) {
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(file.toAbsolutePath())) {
             for (Path p : ds) {
                 if (Files.isDirectory(p)) {
@@ -144,8 +145,8 @@ public class CompilerClassloaderUtils {
     }
 
     private static void searchTargetFiles(Path file,
-                                         List<String> classPathFiles,
-                                         String... extensions) {
+                                          List<String> classPathFiles,
+                                          String... extensions) {
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(file.toAbsolutePath())) {
             for (Path p : ds) {
                 if (Files.isDirectory(p)) {
@@ -179,7 +180,7 @@ public class CompilerClassloaderUtils {
     }
 
     public static Optional<ClassLoader> getClassloaderFromProjectTargets(List<String> pomsPaths) {
-        List<URL> urls =  getTargetModulesURL(pomsPaths);
+        List<URL> urls = getTargetModulesURL(pomsPaths);
         return buildResult(urls);
     }
 
@@ -294,7 +295,7 @@ public class CompilerClassloaderUtils {
     }
 
     private static void close(String filePath,
-                             BufferedReader br) {
+                              BufferedReader br) {
         try {
             if (br != null) {
                 br.close();

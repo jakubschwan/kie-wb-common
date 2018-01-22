@@ -24,7 +24,6 @@ import java.util.Map;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
 
-
 /**
  * THis implementation first try to load configuration keys from environment variables then load properties with a files called IncrementalCompiler.properties then an hard coded configuration like the following example
  * <p>
@@ -39,7 +38,7 @@ import org.guvnor.common.services.project.backend.server.utils.configuration.Con
  * KIE_MAVEN_PLUGINS=org.kie
  * KIE_MAVEN_PLUGIN=kie-maven-plugin
  * KIE_TAKARI_PLUGIN=kie-takari-plugin
- *
+ * <p>
  * KIE_VERSION=7.6.0-SNAPSHOT
  */
 public class ConfigurationContextProvider implements ConfigurationProvider {

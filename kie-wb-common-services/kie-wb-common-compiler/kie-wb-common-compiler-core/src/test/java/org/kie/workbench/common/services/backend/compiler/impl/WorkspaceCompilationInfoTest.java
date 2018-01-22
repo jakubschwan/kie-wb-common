@@ -18,7 +18,6 @@ package org.kie.workbench.common.services.backend.compiler.impl;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kie.workbench.common.services.backend.compiler.ClassLoaderProviderTest;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,12 +48,11 @@ public class WorkspaceCompilationInfoTest {
     }
 
     @Test
-    public void testMethods(){
+    public void testMethods() {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmpRoot);
         Assert.assertFalse(info.isKiePluginPresent());
         info.lateAdditionKiePluginPresent(Boolean.TRUE);
         Assert.assertTrue(info.isKiePluginPresent());
         Assert.assertEquals(info.getPrjPath(), tmpRoot);
     }
-
 }

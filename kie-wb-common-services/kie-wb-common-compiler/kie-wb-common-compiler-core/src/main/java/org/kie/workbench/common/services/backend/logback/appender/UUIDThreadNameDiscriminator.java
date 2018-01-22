@@ -31,7 +31,7 @@ public class UUIDThreadNameDiscriminator extends MDCBasedDiscriminator {
         /**
          * We using the UUID of the compiler as a threadName and we change its name
          * in the AFMavenCli and in the ReusableAFMavenCli
-        * */
+         * */
         return Thread.currentThread().getName();
     }
 

@@ -71,5 +71,4 @@ public interface CompilationResponse {
      * Provides the list of all dependencies used by the project, included transitive
      */
     List<URL> getTargetContentAsURL();
-
 }

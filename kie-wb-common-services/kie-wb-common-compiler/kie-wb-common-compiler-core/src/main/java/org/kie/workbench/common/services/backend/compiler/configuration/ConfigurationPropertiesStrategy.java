@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
-        Order {
+                                                        Order {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationPropertiesStrategy.class);
 
@@ -76,7 +76,7 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
                      props.getProperty(ConfigurationKey.KIE_TAKARI_PLUGIN.name()));
 
             conf.put(ConfigurationKey.KIE_VERSION,
-                    props.getProperty(ConfigurationKey.KIE_VERSION.name()));
+                     props.getProperty(ConfigurationKey.KIE_VERSION.name()));
         }
     }
 

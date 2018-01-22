@@ -1,45 +1,38 @@
 package org.kie.workbench.common.services.backend.compiler.configuration;
 
-import java.lang.reflect.Field;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ConfigurationTest {
 
-
     @Test
-    public void loadConfig(){
+    public void loadConfig() {
         ConfigurationContextProvider provider = new ConfigurationContextProvider();
         Map<ConfigurationKey, String> conf = provider.loadConfiguration();
-        Assert.assertTrue(conf.keySet().size() ==  14);
+        Assert.assertTrue(conf.keySet().size() == 14);
     }
 
-
     @Test
-    public void loadStaticConfig(){
+    public void loadStaticConfig() {
         ConfigurationStrategy strategy = new ConfigurationStaticStrategy();
         Map<ConfigurationKey, String> conf = strategy.loadConfiguration();
-        Assert.assertTrue(conf.keySet().size() ==  14);
+        Assert.assertTrue(conf.keySet().size() == 14);
     }
 
-
     @Test
-    public void loadPropertiesConfig(){
+    public void loadPropertiesConfig() {
         ConfigurationStrategy strategy = new ConfigurationPropertiesStrategy();
         Map<ConfigurationKey, String> conf = strategy.loadConfiguration();
-        Assert.assertTrue(conf.keySet().size() ==  14);
+        Assert.assertTrue(conf.keySet().size() == 14);
     }
 
-
     @Test
-    public void loadEnvironmentConfig(){
+    public void loadEnvironmentConfig() {
         ConfigurationStrategy strategy = new ConfigurationEnvironmentStrategy();
         Map<ConfigurationKey, String> conf = strategy.loadConfiguration();
         Assert.assertTrue(conf.isEmpty());
@@ -47,10 +40,10 @@ public class ConfigurationTest {
         strategy = new ConfigurationEnvironmentStrategy(getMapForEnv());
         conf = strategy.loadConfiguration();
         Assert.assertFalse(conf.isEmpty());
-        Assert.assertTrue(conf.keySet().size() ==  14);
+        Assert.assertTrue(conf.keySet().size() == 14);
     }
 
-    private Map<String, String> getMapForEnv(){
+    private Map<String, String> getMapForEnv() {
         Map conf = new HashMap<>();
         conf.put(ConfigurationKey.COMPILER.name(), "jdt");
         conf.put(ConfigurationKey.SOURCE_VERSION.name(), "1.8");
@@ -66,10 +59,6 @@ public class ConfigurationTest {
         conf.put(ConfigurationKey.KIE_MAVEN_PLUGIN.name(), "kie-maven-plugin");
         conf.put(ConfigurationKey.KIE_TAKARI_PLUGIN.name(), "kie-takari-plugin");
         conf.put(ConfigurationKey.KIE_VERSION.name(), "7.6.0-SNAPSHOT");
-        return  conf;
+        return conf;
     }
-
-
-
-
 }

@@ -28,22 +28,22 @@ public class OutputSharedMap {
 
     private static Map<String, List<String>> map = new ConcurrentHashMap();
 
-    public static List<String> getLog(String key){
-        if(map.containsKey(key)) {
+    public static List<String> getLog(String key) {
+        if (map.containsKey(key)) {
             return map.get(key);
-        }else{
+        } else {
             return Collections.emptyList();
         }
     }
 
-    public static void removeLog(String key){
+    public static void removeLog(String key) {
         map.remove(key);
     }
 
-    public static void addMsgToLog(String key, String msg){
-        if(map.containsKey(key)){
+    public static void addMsgToLog(String key, String msg) {
+        if (map.containsKey(key)) {
             map.get(key).add(msg);
-        }else{
+        } else {
             map.put(key, new ArrayList<>());
             map.get(key).add(msg);
         }

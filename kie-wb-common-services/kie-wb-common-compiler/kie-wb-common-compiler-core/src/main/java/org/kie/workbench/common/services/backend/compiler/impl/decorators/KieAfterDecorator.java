@@ -62,7 +62,7 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
     }
 
     //for test
-    public C getCompiler(){
+    public C getCompiler() {
         return compiler;
     }
 
@@ -79,7 +79,7 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
 
     @Override
     public CompilationResponse compile(CompilationRequest req, Map override) {
-        T res = (T)compiler.compile(req, override);
+        T res = (T) compiler.compile(req, override);
         return handleAfter(req, res);
     }
 
@@ -89,7 +89,6 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
         }
         return (T) handleNormalBuild(req, res);
     }
-
 
     private KieCompilationResponse handleKieMavenPlugin(CompilationRequest req,
                                                         CompilationResponse res) {
