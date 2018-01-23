@@ -16,11 +16,13 @@
 package org.kie.workbench.common.services.backend.compiler.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.UUID;
 
 import org.eclipse.jgit.api.Git;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,6 +60,13 @@ public class JGitUtilsTest {
             }
         }
     }
+
+    @After
+    public void tearDown() throws IOException {
+        fileSystemTestingUtils.cleanup();
+        TestUtil.rm(new File("src/../.security/"));
+    }
+
 
     @Test
     public void tempCloneTest() throws Exception {
