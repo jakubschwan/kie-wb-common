@@ -22,14 +22,11 @@ class CompileInfo {
 
     private AFCompiler compiler;
     private WorkspaceCompilationInfo info;
-    private String mavenRepo;
 
     public CompileInfo(AFCompiler compiler,
-                       WorkspaceCompilationInfo info,
-                       String mavenRepo) {
+                       WorkspaceCompilationInfo info) {
         this.compiler = compiler;
         this.info = info;
-        this.mavenRepo = mavenRepo;
     }
 
     public AFCompiler getCompiler() {
@@ -42,13 +39,5 @@ class CompileInfo {
 
     public void setInfo(WorkspaceCompilationInfo info) {
         this.info = info;
-    }
-
-    public String getMavenRepo() {
-        return mavenRepo;
-    }
-
-    public void setMavenRepo(String mavenRepo) {
-        this.mavenRepo = mavenRepo;
     }
 }

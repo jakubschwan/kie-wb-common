@@ -42,34 +42,31 @@ public class DefaultLocalExecutor implements CompilerExecutor {
         };
     }
 
-    private AFCompiler getCompiler(Path projectPath, String mavenRepo) {
+    private AFCompiler getCompiler(Path projectPath) {
         CompileInfo info = compilerCacheForLocalInvocation.getEntry(projectPath);
         if (info != null && info.getCompiler() != null) {
             return info.getCompiler();
         } else {
-            return getNewCachedAFCompiler(projectPath, mavenRepo);
+            return getNewCachedAFCompiler(projectPath);
         }
     }
 
-    private AFCompiler getNewCachedAFCompiler(Path projectPath, String mavenRepo) {
-        CompileInfo info;
-        AFCompiler compiler;
-        info = setupCompileInfo(projectPath, mavenRepo);
+    private AFCompiler getNewCachedAFCompiler(Path projectPath) {
+        CompileInfo info = setupCompileInfo(projectPath);
         compilerCacheForLocalInvocation.setEntry(projectPath, info);
-        compiler = info.getCompiler();
-        return compiler;
+        return info.getCompiler();
     }
 
-    private CompileInfo setupCompileInfo(Path workingDir, String mavenRepo) {
+    private CompileInfo setupCompileInfo(Path workingDir) {
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_KIE_AND_LOG_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(workingDir);
-        return new CompileInfo(compiler, info, mavenRepo);
+        return new CompileInfo(compiler, info);
     }
 
     private CompletableFuture<KieCompilationResponse> internalBuild(Path projectPath, String mavenRepo,
                                                                     boolean skipProjectDepCreation, String goal) {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(projectPath);
-        AFCompiler compiler = getCompiler(projectPath, mavenRepo);
+        AFCompiler compiler = getCompiler(projectPath);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{goal},
@@ -80,7 +77,7 @@ public class DefaultLocalExecutor implements CompilerExecutor {
     private CompletableFuture<KieCompilationResponse> internalBuild(Path projectPath, String mavenRepo,
                                                                     boolean skipProjectDepCreation, String[] args) {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(projectPath);
-        AFCompiler compiler = getCompiler(projectPath, mavenRepo);
+        AFCompiler compiler = getCompiler(projectPath);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                args,
@@ -91,7 +88,7 @@ public class DefaultLocalExecutor implements CompilerExecutor {
     private CompletableFuture<KieCompilationResponse> internalBuild(Path projectPath, String mavenRepo,
                                                                     boolean skipProjectDepCreation, String goal, Map<Path, InputStream> override) {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(projectPath);
-        AFCompiler compiler = getCompiler(projectPath, mavenRepo);
+        AFCompiler compiler = getCompiler(projectPath);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{goal},
