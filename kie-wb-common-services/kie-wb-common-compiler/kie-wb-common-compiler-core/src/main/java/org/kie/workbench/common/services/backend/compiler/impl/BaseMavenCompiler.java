@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
+import org.uberfire.java.nio.file.StandardOpenOption;
 
 /**
  * Run maven with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
@@ -109,7 +110,11 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
             try {
                 boolean isChanged = Files.exists(path);
                 backup.add(new BackupItem(path, isChanged ? Files.readAllBytes(path) : null, isChanged));
-                Files.write(path, readAllBytes(input));
+                if(!Files.exists(path.getParent())){
+                    Files.createDirectories(path.getParent());
+                }
+                Files.write(path, readAllBytes(input), StandardOpenOption.CREATE,
+                            StandardOpenOption.TRUNCATE_EXISTING);
             } catch (IOException e) {
                 logger.error("Path not writed:" + entry.getKey() + "\n");
                 logger.error(e.getMessage());

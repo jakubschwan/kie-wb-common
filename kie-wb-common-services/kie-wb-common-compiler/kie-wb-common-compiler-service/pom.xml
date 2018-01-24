@@ -121,7 +121,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-<!--
+
   <build>
    <resources>
       <resource>
@@ -184,7 +184,7 @@
         </configuration>
       </plugin>
     </plugins>
-  </build>-->
+  </build>
   <!--<profiles>
     <profile>
       <id>arquillian-weld-ee-embedded</id>
