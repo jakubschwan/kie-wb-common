@@ -21,7 +21,6 @@ import java.io.ObjectOutputStream;
 import java.util.concurrent.CompletableFuture;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
