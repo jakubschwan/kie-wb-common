@@ -24,6 +24,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.container.AsyncResponse;
@@ -63,12 +64,11 @@ public class MavenRestHandler extends Application{
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public byte[] post(@HeaderParam("project") String projectRepo, @HeaderParam("mavenrepo") String mavenRepo) throws Exception {
         CompletableFuture<KieCompilationResponse> response = compilerService.build(Paths.get(projectRepo), mavenRepo);
-        return serialize(response);
+        return serialize(response.get());//@TODO remove this .get()
     }
 
-    @POST
+    @PUT
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    //@ManagedAsync
     public void postAsync(@Suspended AsyncResponse ar, @HeaderParam("project") String projectRepo, @HeaderParam("mavenrepo") String mavenRepo) throws Exception {
         CompletableFuture<KieCompilationResponse> response = compilerService.build(Paths.get(projectRepo), mavenRepo);
         ar.resume(Response.ok(serialize(response)).build());
