@@ -22,11 +22,16 @@ import java.io.NotSerializableException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 
+import org.jboss.resteasy.core.AsynchronousDispatcher;
 import org.jboss.resteasy.core.Dispatcher;
+import org.jboss.resteasy.core.SynchronousDispatcher;
+import org.jboss.resteasy.core.SynchronousExecutionContext;
 import org.jboss.resteasy.mock.MockDispatcherFactory;
 import org.jboss.resteasy.mock.MockHttpRequest;
 import org.jboss.resteasy.mock.MockHttpResponse;
+import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
 import org.jboss.resteasy.plugins.server.resourcefactory.POJOResourceFactory;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
@@ -75,19 +80,26 @@ public class MavenRestHandlerTest extends BaseCompilerTest {
         Assert.assertTrue(response.getContentAsString().equals("Apache Maven 3.3.9"));
     }
 
-
     @Test
     public void postTest() throws Exception{
-        Dispatcher dispatcher = MockDispatcherFactory.createDispatcher();
+        Dispatcher dispatcher = new AsynchronousDispatcher(new ResteasyProviderFactory());
+        ResteasyProviderFactory.setInstance(dispatcher.getProviderFactory());
+        RegisterBuiltin.register(dispatcher.getProviderFactory());
+
         POJOResourceFactory noDefaults = new POJOResourceFactory(MavenRestHandler.class);
         dispatcher.getRegistry().addResourceFactory(noDefaults);
+
         MockHttpRequest request = MockHttpRequest.create("POST", "maven/3.3.9/");
         request.header("project",tmpRoot.toAbsolutePath().toString()+"/dummy").header("mavenrepo", mavenRepo.toAbsolutePath().toString());
         MockHttpResponse response = new MockHttpResponse();
+
+        SynchronousExecutionContext synchronousExecutionContext = new SynchronousExecutionContext((SynchronousDispatcher)dispatcher, request, response );
+        request.setAsynchronousContext(synchronousExecutionContext);
+
         dispatcher.invoke(request, response);
         Assert.assertTrue(response.getStatus() == 200);
-        byte[] serializedCompileationResponse = response.getOutput();
-        HttpCompilationResponse res =readDefaultCompiletionResponseFromBytes(serializedCompileationResponse);
+        byte[] serializedCompilationResponse = response.getOutput();
+        HttpCompilationResponse res =readDefaultCompiletionResponseFromBytes(serializedCompilationResponse);
         Assert.assertNotNull(res);
         Assert.assertTrue(res.getDependencies().size() == 4);
         Assert.assertTrue(res.getTargetContent().size() == 3);

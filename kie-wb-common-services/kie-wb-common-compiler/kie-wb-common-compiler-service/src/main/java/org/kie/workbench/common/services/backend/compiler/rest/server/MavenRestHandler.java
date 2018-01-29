@@ -16,7 +16,6 @@
 package org.kie.workbench.common.services.backend.compiler.rest.server;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.concurrent.CompletableFuture;
 
@@ -24,7 +23,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.container.AsyncResponse;
@@ -63,20 +61,21 @@ public class MavenRestHandler extends Application{
 
     @POST
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public byte[] post(@HeaderParam("project") String projectRepo, @HeaderParam("mavenrepo") String mavenRepo) throws Exception {
-        CompletableFuture<KieCompilationResponse> response = compilerService.build(Paths.get(projectRepo), mavenRepo);
-        return serialize(new DefaultHttpCompilationResponse(response.get()));//@TODO remove this .get()
-    }
-
-    @PUT
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public void postAsync(@Suspended AsyncResponse ar, @HeaderParam("project") String projectRepo, @HeaderParam("mavenrepo") String mavenRepo) throws Exception {
         CompletableFuture<KieCompilationResponse> response = compilerService.build(Paths.get(projectRepo), mavenRepo);
-        ar.resume(Response.ok(serialize(response)).build());
+        response.whenCompleteAsync((kieCompilationResponse, throwable) -> {
+                if(throwable != null){
+                    logger.error(throwable.getMessage());
+                    ar.resume(Response.serverError().build());
+                }else{
+                    byte[] bytes = serialize(new DefaultHttpCompilationResponse(kieCompilationResponse));
+                    ar.resume(Response.ok(bytes).build());
+                }
+        });
     }
 
 
-    public static byte[] serialize(Object obj) throws IOException {
+    public static byte[] serialize(Object obj){
         byte[] returnArray = null;
         try(ByteArrayOutputStream b = new ByteArrayOutputStream()){
             try(ObjectOutputStream o = new ObjectOutputStream(b)){
