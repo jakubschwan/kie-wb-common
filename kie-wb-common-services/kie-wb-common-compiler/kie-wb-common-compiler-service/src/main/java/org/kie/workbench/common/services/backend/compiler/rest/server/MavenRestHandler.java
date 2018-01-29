@@ -33,6 +33,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.kie.workbench.common.services.backend.compiler.impl.DefaultHttpCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.service.AFCompilerService;
 import org.kie.workbench.common.services.backend.compiler.service.DefaultKieCompilerService;
@@ -64,7 +65,7 @@ public class MavenRestHandler extends Application{
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public byte[] post(@HeaderParam("project") String projectRepo, @HeaderParam("mavenrepo") String mavenRepo) throws Exception {
         CompletableFuture<KieCompilationResponse> response = compilerService.build(Paths.get(projectRepo), mavenRepo);
-        return serialize(response.get());//@TODO remove this .get()
+        return serialize(new DefaultHttpCompilationResponse(response.get()));//@TODO remove this .get()
     }
 
     @PUT

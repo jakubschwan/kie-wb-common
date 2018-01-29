@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 
 import org.jboss.resteasy.core.Dispatcher;
 import org.jboss.resteasy.mock.MockDispatcherFactory;
@@ -31,10 +29,11 @@ import org.jboss.resteasy.mock.MockHttpResponse;
 import org.jboss.resteasy.plugins.server.resourcefactory.POJOResourceFactory;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
+
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
-import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.HttpCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.impl.DefaultHttpCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +76,7 @@ public class MavenRestHandlerTest extends BaseCompilerTest {
     }
 
 
-    @Test @Ignore
+    @Test
     public void postTest() throws Exception{
         Dispatcher dispatcher = MockDispatcherFactory.createDispatcher();
         POJOResourceFactory noDefaults = new POJOResourceFactory(MavenRestHandler.class);
@@ -88,13 +87,14 @@ public class MavenRestHandlerTest extends BaseCompilerTest {
         dispatcher.invoke(request, response);
         Assert.assertTrue(response.getStatus() == 200);
         byte[] serializedCompileationResponse = response.getOutput();
-        DefaultCompilationResponse res =readDefaultCompiletionResponseFromBytes(serializedCompileationResponse);
+        HttpCompilationResponse res =readDefaultCompiletionResponseFromBytes(serializedCompileationResponse);
         Assert.assertNotNull(res);
-        //@TODO fix the uberfire GeneralPathImpl constructor for a correct deserialization
+        Assert.assertTrue(res.getDependencies().size() == 4);
+        Assert.assertTrue(res.getTargetContent().size() == 3);
     }
 
 
-    public DefaultCompilationResponse readDefaultCompiletionResponseFromBytes(byte[] bytes) {
+    public HttpCompilationResponse readDefaultCompiletionResponseFromBytes(byte[] bytes) {
 
         ObjectInput in = null;
         ByteArrayOutputStream bos = null;
@@ -102,7 +102,7 @@ public class MavenRestHandlerTest extends BaseCompilerTest {
         try {
             in = new ObjectInputStream(new ByteArrayInputStream(bytes));
             Object newObj = in.readObject();
-            return (DefaultCompilationResponse) newObj;
+            return (HttpCompilationResponse) newObj;
         } catch (NotSerializableException nse) {
             nse.printStackTrace();
             StringBuilder sb = new StringBuilder("NotSerializableException:").append(nse.getMessage());
@@ -128,7 +128,7 @@ public class MavenRestHandlerTest extends BaseCompilerTest {
                 logger.error(ex.getMessage());
             }
         }
-        return new DefaultCompilationResponse(Boolean.FALSE);
+        return new DefaultHttpCompilationResponse(Boolean.FALSE);
     }
 
 }
