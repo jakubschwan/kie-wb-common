@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.compiler.rest;
+package org.kie.workbench.common.services.backend.compiler.rest.server;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,7 +39,6 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.HttpCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultHttpCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -69,7 +68,7 @@ public class MavenRestHandlerTest extends BaseCompilerTest {
     }
 
     @Test
-    public void getTest() throws Exception{
+    public void get() throws Exception{
         Dispatcher dispatcher = MockDispatcherFactory.createDispatcher();
         POJOResourceFactory noDefaults = new POJOResourceFactory(MavenRestHandler.class);
         dispatcher.getRegistry().addResourceFactory(noDefaults);
@@ -81,7 +80,7 @@ public class MavenRestHandlerTest extends BaseCompilerTest {
     }
 
     @Test
-    public void postTest() throws Exception{
+    public void post() throws Exception{
         Dispatcher dispatcher = new AsynchronousDispatcher(new ResteasyProviderFactory());
         ResteasyProviderFactory.setInstance(dispatcher.getProviderFactory());
         RegisterBuiltin.register(dispatcher.getProviderFactory());
@@ -99,14 +98,14 @@ public class MavenRestHandlerTest extends BaseCompilerTest {
         dispatcher.invoke(request, response);
         Assert.assertTrue(response.getStatus() == 200);
         byte[] serializedCompilationResponse = response.getOutput();
-        HttpCompilationResponse res =readDefaultCompiletionResponseFromBytes(serializedCompilationResponse);
+        HttpCompilationResponse res = readDefaultCompilationResponseFromBytes(serializedCompilationResponse);
         Assert.assertNotNull(res);
         Assert.assertTrue(res.getDependencies().size() == 4);
         Assert.assertTrue(res.getTargetContent().size() == 3);
     }
 
 
-    public HttpCompilationResponse readDefaultCompiletionResponseFromBytes(byte[] bytes) {
+    public HttpCompilationResponse readDefaultCompilationResponseFromBytes(byte[] bytes) {
 
         ObjectInput in = null;
         ByteArrayOutputStream bos = null;

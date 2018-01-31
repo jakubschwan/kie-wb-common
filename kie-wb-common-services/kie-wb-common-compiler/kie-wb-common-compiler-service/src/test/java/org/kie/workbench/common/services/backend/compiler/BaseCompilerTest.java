@@ -16,6 +16,7 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import java.io.File;
+import java.io.Serializable;
 
 import org.junit.AfterClass;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
@@ -25,7 +26,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-public class BaseCompilerTest {
+public class BaseCompilerTest implements Serializable{
 
     protected static Path tmpRoot;
     protected Path mavenRepo;
@@ -57,6 +58,8 @@ public class BaseCompilerTest {
 
     @AfterClass
     public static void tearDown() {
-        TestUtil.rm(tmpRoot.toFile());
+        if(tmpRoot != null) {
+            TestUtil.rm(tmpRoot.toFile());
+        }
     }
 }

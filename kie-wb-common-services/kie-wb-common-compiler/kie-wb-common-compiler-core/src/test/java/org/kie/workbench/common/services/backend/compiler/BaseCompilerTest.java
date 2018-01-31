@@ -94,6 +94,8 @@ public class BaseCompilerTest {
 
     @AfterClass
     public static void tearDown() {
-        TestUtil.rm(tmpRoot.toFile());
+        if(tmpRoot!= null) {
+            TestUtil.rm(tmpRoot.toFile());
+        }
     }
 }
