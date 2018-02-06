@@ -1,12 +1,16 @@
 package org.kie.workbench.common.services.backend.compiler.rest.client;
 
+import java.io.File;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
@@ -17,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 @RunWith(Arquillian.class)
 public class MavenRestClientTest extends BaseCompilerTest {
@@ -40,16 +45,27 @@ public class MavenRestClientTest extends BaseCompilerTest {
             }
         }
     }
+
     @Deployment
-    public static WebArchive createDeployment() {
-        WebArchive war = ShrinkWrap.create(WebArchive.class, "compiler.war")
-                .addClasses(MavenRestHandler.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+    public static Archive getDeployment() {
+        final WebArchive war = ShrinkWrap.create(WebArchive.class, "compiler.war");
+        war.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        war.addClasses(MavenRestHandler.class);
+        war.addPackages(true, "org.kie.workbench.common.services.backend.compiler");
+        final File[] files = Maven.configureResolver().
+                fromFile("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-service/src/test/settings.xml").
+                loadPomFromFile("./pom.xml")
+                .resolve("org.kie.workbench.services:kie-wb-common-compiler-core:?",
+                         "org.jboss.errai:errai-bus:?", "org.uberfire:uberfire-nio2-api:?").withTransitivity()
+                .asFile();
+        for (final File file : files) {
+            war.addAsLibrary(file);
+        }
         System.out.println(war.toString(true));
         return war;
     }
 
-    @Test
+    @Test @Ignore
     public void get() {
         Assert.assertTrue(true);
         /*Client client = ClientBuilder.newClient();
