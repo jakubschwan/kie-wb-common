@@ -31,6 +31,9 @@ import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilatio
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
 import org.uberfire.java.nio.file.Path;
 
+/**
+ * Implementation for a local build requested by a local execution (Contains NIO Objects)
+ */
 public class DefaultLocalExecutor implements CompilerExecutor {
 
     private ExecutorService executor;

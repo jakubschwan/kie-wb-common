@@ -18,6 +18,9 @@ package org.kie.workbench.common.services.backend.compiler.service.executors;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 
+/**
+ * Used to store in a cache related objects
+ */
 class CompileInfo {
 
     private AFCompiler compiler;

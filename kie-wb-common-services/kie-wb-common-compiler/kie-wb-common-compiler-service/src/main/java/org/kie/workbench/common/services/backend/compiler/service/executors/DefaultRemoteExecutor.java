@@ -33,7 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
-
+/**
+ * Implementation for a local build requested by a remote execution
+ */
 public class DefaultRemoteExecutor implements RemoteExecutor {
 
     private ExecutorService executor ;

@@ -25,6 +25,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 
+/**
+ * Async Client code to ask a build onto a remote machine
+ */
 public class MavenRestClient {
 
     public CompletableFuture<KieCompilationResponse> call(String projectPath, String mavenRepo, String url){

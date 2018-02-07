@@ -22,6 +22,9 @@ import java.util.concurrent.CompletableFuture;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.uberfire.java.nio.file.Path;
 
+/**
+ * Define the Behaviour of a AppFormer Compiler Service
+ */
 public interface AFCompilerService {
 
     /************************************ Suitable for the Local Builds ***********************************************/

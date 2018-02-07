@@ -39,6 +39,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Paths;
 
+/**
+ * Rest endpoint to ask a remote compilation
+ */
 @Path("/maven/3.3.9/")
 @RequestScoped
 public class MavenRestHandler extends Application{
