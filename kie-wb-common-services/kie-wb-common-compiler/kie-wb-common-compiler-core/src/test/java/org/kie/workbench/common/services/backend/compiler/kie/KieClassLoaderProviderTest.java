@@ -69,15 +69,16 @@ public class KieClassLoaderProviderTest {
         TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_classloader"),
                           tmp);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
-
         Path uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
+
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
+
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieClassLoaderProviderTest.loadProjectClassloaderTest");
@@ -116,19 +117,18 @@ public class KieClassLoaderProviderTest {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_classloader"),
-                          tmp);
-
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(
-                KieDecorator.NONE);
+        TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_classloader"), tmp);
 
         Path uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
+
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
+
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
@@ -168,10 +168,9 @@ public class KieClassLoaderProviderTest {
                                                      "dummy"));
         TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_classloader"),
                           tmp);
+        Path uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
-
-        Path uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,

@@ -77,7 +77,6 @@ public class BaseCompilerTest {
             TestUtil.copyTree(Paths.get(prjName), tmp);
             info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
             compiler = KieMavenCompilerFactory.getCompiler(decorator);
-
             CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                    info,
                                                                    new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},

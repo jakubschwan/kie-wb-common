@@ -17,6 +17,9 @@ package org.kie.workbench.common.services.backend.compiler.impl.utils;
 
 import org.guvnor.common.services.shared.builder.model.BuildMessage;
 
+/**
+ * Used to format the content of the Maven Output into a different representation
+ */
 public abstract class BaseInputProcessor implements InputProcessor {
 
     protected BuildMessage getBuildMessage(final BuildMessage origin,

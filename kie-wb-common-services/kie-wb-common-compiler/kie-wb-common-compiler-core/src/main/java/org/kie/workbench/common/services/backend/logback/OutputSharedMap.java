@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /***
- * Map for the outputs of the compilations
+ * Map to hold the outputs of the compilations using the UUID key to retrieve and store
  */
 public class OutputSharedMap {
 

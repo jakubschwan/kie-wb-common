@@ -21,6 +21,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.pomprocessor.Proc
 
 /**
  * Process the pom files before the compilation
+ * to enable the takari plugin
  */
 public interface IncrementalCompilerEnabler {
 

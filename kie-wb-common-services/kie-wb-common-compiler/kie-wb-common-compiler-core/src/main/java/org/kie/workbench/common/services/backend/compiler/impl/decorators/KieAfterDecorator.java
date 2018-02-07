@@ -46,7 +46,7 @@ import static org.kie.workbench.common.services.backend.compiler.impl.classloade
 import static org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils.getStringsFromAllDependencies;
 
 /***
- * After decorator that reads and store the Object created by the Kie takari plugin and placed in the CompilationResponse
+ * After decorator that reads and store the Objects created by the Kie takari plugin and placed the3se Objects in the CompilationResponse
  */
 public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompiler<T>> implements CompilerDecorator {
 

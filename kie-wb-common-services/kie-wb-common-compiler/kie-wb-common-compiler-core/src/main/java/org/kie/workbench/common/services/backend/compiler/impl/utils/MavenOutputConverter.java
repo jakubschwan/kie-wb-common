@@ -31,7 +31,7 @@ import org.uberfire.java.nio.file.Path;
 import static org.uberfire.backend.server.util.Paths.convert;
 
 /**
- * Maven output converter
+ * Maven output converter it reads the List<String> of the MavenOutput and converts the items into different formatted Objects
  */
 public class MavenOutputConverter {
 

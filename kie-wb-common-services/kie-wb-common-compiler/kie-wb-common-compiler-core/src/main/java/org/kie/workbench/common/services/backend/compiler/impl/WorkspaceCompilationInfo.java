@@ -19,6 +19,7 @@ import org.uberfire.java.nio.file.Path;
 
 /***
  * Holds informations shared with Kie compilers and the Compilation Request/Response
+ * between builds
  */
 public class WorkspaceCompilationInfo {
 

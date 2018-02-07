@@ -31,8 +31,7 @@ import org.uberfire.java.nio.file.Path;
  * it contains a boolean flag as a result of the build, an optional String error message,
  * and an optional List of String with the maven output
  */
-public class DefaultCompilationResponse implements CompilationResponse,
-                                                   Serializable {
+public class DefaultCompilationResponse implements CompilationResponse, Serializable {
 
     private Boolean successful;
     private List<String> mavenOutput;
@@ -45,16 +44,6 @@ public class DefaultCompilationResponse implements CompilationResponse,
     private List<String> targetContent;
     private List<URI> targetContentAsURI;
     private List<URL> targetContentAsURL;
-
-    public DefaultCompilationResponse(Boolean successful) {
-        this.successful = successful;
-    }
-
-    public DefaultCompilationResponse(final Boolean successful,
-                                      final List<String> mavenOutput) {
-        this.successful = successful;
-        this.mavenOutput = mavenOutput;
-    }
 
     public DefaultCompilationResponse(final Boolean successful,
                                       final List<String> mavenOutput,

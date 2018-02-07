@@ -78,7 +78,6 @@ public class DefaultIncrementalCompilerEnablerTest {
                                          StandardCharsets.UTF_8);
         assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
-
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},

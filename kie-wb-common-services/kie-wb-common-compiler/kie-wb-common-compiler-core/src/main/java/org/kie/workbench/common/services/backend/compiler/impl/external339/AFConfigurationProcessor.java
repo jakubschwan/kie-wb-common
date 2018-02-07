@@ -15,6 +15,9 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.external339;
 
+/***
+ * Adapter to use the AppFormer CliRequest in the Maven classes
+ */
 public interface AFConfigurationProcessor {
 
     void process(AFCliRequest request) throws Exception;

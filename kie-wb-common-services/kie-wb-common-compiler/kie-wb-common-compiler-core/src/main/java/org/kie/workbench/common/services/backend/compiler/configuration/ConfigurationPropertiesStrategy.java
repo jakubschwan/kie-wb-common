@@ -28,7 +28,9 @@ import org.guvnor.common.services.project.backend.server.utils.configuration.Con
 import org.guvnor.common.services.project.backend.server.utils.configuration.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+/**
+ * Strategy implementation to create the Configuration from properties file
+ */
 public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
                                                         Order {
 

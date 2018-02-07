@@ -15,6 +15,9 @@
  */
 package org.kie.workbench.common.services.backend.compiler.configuration;
 
+/**
+ * Common params used by Maven
+ */
 public class MavenConfig {
 
     public static final String DEPS_BUILD_CLASSPATH = "dependency:build-classpath";

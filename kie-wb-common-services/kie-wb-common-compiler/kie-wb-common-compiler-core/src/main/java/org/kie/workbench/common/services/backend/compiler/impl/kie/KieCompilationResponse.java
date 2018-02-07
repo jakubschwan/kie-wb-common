@@ -24,7 +24,7 @@ import org.kie.api.builder.KieModule;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 
 /**
- * Compilation response with benefits of Kie
+ * Compilation response with benefits of Kie objects
  */
 public interface KieCompilationResponse extends CompilationResponse {
 

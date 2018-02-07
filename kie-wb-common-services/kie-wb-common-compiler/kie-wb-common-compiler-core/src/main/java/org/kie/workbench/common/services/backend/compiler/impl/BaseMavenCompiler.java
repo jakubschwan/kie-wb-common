@@ -47,7 +47,7 @@ import org.uberfire.java.nio.file.StandardOpenOption;
  * MavenCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
  * <p>
  * WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
- * CompilationRequest req = new DefaultCompilationRequest(mavenRepo, info,new String[]{MavenArgs.COMPILE},new HashMap<>(), Boolean.TRUE );
+ * CompilationRequest req = new DefaultCompilationRequest(mavenRepo, info,new String[]{MavenArgs.COMPILE}, Boolean.TRUE );
  * CompilationResponse res = compiler.compileSync(req);
  */
 public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompiler<T> {

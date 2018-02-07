@@ -24,6 +24,9 @@ import java.util.Properties;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsSource;
 
+/**
+ * Adapted class to use in our impl instead the original package private
+ */
 public class AFSettingsBuildingRequest implements SettingsBuildingRequest {
 
     private Path globalSettingsFile;

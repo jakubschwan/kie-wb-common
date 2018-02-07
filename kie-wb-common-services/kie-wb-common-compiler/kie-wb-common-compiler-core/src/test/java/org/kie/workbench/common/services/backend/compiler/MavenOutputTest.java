@@ -54,13 +54,13 @@ public class MavenOutputTest {
         Path tmp = Paths.get(tmpNio.toAbsolutePath().toString());
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
-
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
+
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpNio, res.getMavenOutput(),
                                                       "MavenOutputTest.testOutputWithTakari");

@@ -20,7 +20,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 /**
- * Wrapper of the result of a compilation adapted for the http protocol and without NIO objects
+ * Wrapper of the result of a compilation adapted for the http protocol (without NIO objects)
  */
 public interface HttpCompilationResponse {
     Boolean isSuccessful();

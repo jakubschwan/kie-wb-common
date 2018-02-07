@@ -446,7 +446,7 @@ public class AFMavenCli {
 
         if (cliRequest.getClassWorld() == null) {
             /**
-             The classworld is now Created in the NioMavenCompiler and in the InternalNioDefaultMaven compielr for this reasons:
+             The classworld is now Created in the NioMavenCompiler and in the InternalNioDefaultMaven compiler for this reasons:
              problem: https://stackoverflow.com/questions/22410706/error-when-execute-mavencli-in-the-loop-maven-embedder
              problem:https://stackoverflow.com/questions/40587683/invocation-of-mavencli-fails-within-a-maven-plugin
              solution:https://dev.eclipse.org/mhonarc/lists/sisu-users/msg00063.html

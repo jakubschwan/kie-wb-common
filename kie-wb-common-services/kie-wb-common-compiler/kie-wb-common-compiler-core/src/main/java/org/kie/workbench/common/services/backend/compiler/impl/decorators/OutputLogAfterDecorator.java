@@ -25,7 +25,7 @@ import org.kie.workbench.common.services.backend.logback.OutputSharedMap;
 import org.slf4j.MDC;
 
 /***
- * After decorator to read and store the maven output into a List<String> in the CompilationResponse
+ * After decorator to read and store the maven output as a List<String> in the CompilationResponse
  */
 public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AFCompiler<T>> implements CompilerDecorator {
 

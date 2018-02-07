@@ -25,7 +25,8 @@ import org.guvnor.common.services.project.backend.server.utils.configuration.Con
 import org.guvnor.common.services.project.backend.server.utils.configuration.Order;
 
 /**
- * Default implementation, this class can be extended to change the protected configuration Map
+ * Strategy implementation to create the Configuration from hard coded values, this must be the fallback impl
+ * if the other strategies fails
  */
 public class ConfigurationStaticStrategy implements ConfigurationStrategy,
                                                     Order {
@@ -64,7 +65,7 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy,
                  "kie-takari-plugin");
 
         conf.put(ConfigurationKey.KIE_VERSION,
-                 "7.6.0-SNAPSHOT");
+                 "7.7.0-SNAPSHOT");
 
         valid = Boolean.TRUE;
     }

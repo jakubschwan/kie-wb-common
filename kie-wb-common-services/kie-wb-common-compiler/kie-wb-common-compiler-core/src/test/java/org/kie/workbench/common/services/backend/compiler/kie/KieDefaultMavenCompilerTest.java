@@ -128,21 +128,22 @@ public class KieDefaultMavenCompilerTest {
         assertNotNull(cloned);
 
         //Compile the repo
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(
-                KieDecorator.LOG_OUTPUT_AFTER);
+
         Path prjFolder = Paths.get(gitClonedFolder + "/dummy/");
         byte[] encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
         Assert.assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
 
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
-
         CompilationResponse res = compiler.compile(req);
+
+
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildWithCloneTest");
@@ -205,8 +206,6 @@ public class KieDefaultMavenCompilerTest {
         assertTrue(rbResult.getStatus().isSuccessful());
 
         //Compile the repo
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
-
         byte[] encoded = Files.readAllBytes(Paths.get(tmpCloned + "/dummy/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
@@ -214,13 +213,14 @@ public class KieDefaultMavenCompilerTest {
 
         Path prjFolder = Paths.get(tmpCloned + "/dummy/");
 
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
-
         CompilationResponse res = compiler.compile(req);
+
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildWithPullRebaseUberfireTest");
@@ -241,9 +241,6 @@ public class KieDefaultMavenCompilerTest {
 
     @Test
     public void buildWithJGitDecoratorTest() throws Exception {
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(
-                KieDecorator.JGIT_BEFORE);
-
         String MASTER_BRANCH = "master";
 
         //Setup origin in memory
@@ -277,12 +274,15 @@ public class KieDefaultMavenCompilerTest {
 
         assertNotNull(lastCommit);
 
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("/dummy/"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
+
+
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/dummy/"), res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildWithJGitDecoratorTest");
@@ -310,8 +310,6 @@ public class KieDefaultMavenCompilerTest {
     @Test
     public void buildWithAllDecoratorsTest() throws Exception {
         String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_LOG_AFTER);
-
         String MASTER_BRANCH = "master";
 
         //Setup origin in memory
@@ -351,12 +349,14 @@ public class KieDefaultMavenCompilerTest {
 
         assertNotNull(cloned);
 
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_LOG_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
+
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildWithAllDecoratorsTest");
@@ -389,19 +389,12 @@ public class KieDefaultMavenCompilerTest {
     public void buildCompileWithOverrideOnRegularFSTest() throws Exception {
 
         String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
-
         Path tmpRoot = Files.createTempDirectory("repo");
         //NIO creation and copy content
         Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
         TestUtil.copyTree(Paths.get("src/test/projects/dummy"), temp);
         //end NIO
 
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                               info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
-                                                               Boolean.TRUE);
 
         byte[] pomOverride = Files.readAllBytes(Paths.get("src/test/projects/dummy_override/pom.xml"));
         Files.write(Paths.get(temp.toString(), "pom.xml"), pomOverride);
@@ -413,6 +406,13 @@ public class KieDefaultMavenCompilerTest {
         assertFalse(dummyAsAstring.contains("public Dummy(Integer age) {\n" +
                                                     "        this.age = age;\n" +
                                                     "    }"));
+
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               Boolean.TRUE);
 
         CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
@@ -452,7 +452,6 @@ public class KieDefaultMavenCompilerTest {
     @Test
     public void buildCompileWithOverrideOnGitVFS() throws Exception {
         final String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_LOG_AFTER);
 
         final URI originRepo = URI.create("git://buildCompileWithOverrideOnGitVFS");
         final JGitFileSystem origin = (JGitFileSystem) ioService.newFileSystem(originRepo,
@@ -475,10 +474,7 @@ public class KieDefaultMavenCompilerTest {
 
         ioService.endBatch();
 
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                               new WorkspaceCompilationInfo(origin.getPath("master", "/dummy/")),// git://buildCompileWithOverrideOnGitVFS/dummy/
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
-                                                               Boolean.TRUE);
+
 
         byte[] encoded = ioService.readAllBytes(origin.getPath("master", "/dummy/src/main/java/dummy/Dummy.java"));
 
@@ -488,7 +484,14 @@ public class KieDefaultMavenCompilerTest {
                                                     "        this.age = age;\n" +
                                                     "    }"));
 
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_LOG_AFTER);
+        WorkspaceCompilationInfo info =   new WorkspaceCompilationInfo(origin.getPath("master", "/dummy/"));// git://buildCompileWithOverrideOnGitVFS/dummy/
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
+
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(res.getWorkingDir().get(),
                                                       res.getMavenOutput(),

@@ -172,8 +172,8 @@ public class ConcurrentBuildTest {
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
 
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
         final WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         final CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
@@ -183,6 +183,7 @@ public class ConcurrentBuildTest {
                                                                      },
                                                                      Boolean.FALSE);
         final KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
+
         logger.info("\nFinished " + res.isSuccessful() + " Single metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
         if (!res.isSuccessful()) {
             try {
@@ -206,8 +207,8 @@ public class ConcurrentBuildTest {
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
 
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
         final WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         final CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
@@ -217,6 +218,7 @@ public class ConcurrentBuildTest {
                                                                      },
                                                                      Boolean.FALSE);
         final KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
+
         logger.info("\nFinished " + res.isSuccessful() + " all Metadata tmp:" + tmp + " UUID:" + req.getRequestUUID() + " res.getMavenOutput().isEmpty():" + res.getMavenOutput().isEmpty());
         if (!res.isSuccessful()) {
             try {

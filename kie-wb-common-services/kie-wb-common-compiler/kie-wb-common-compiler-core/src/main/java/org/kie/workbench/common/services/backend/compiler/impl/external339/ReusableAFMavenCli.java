@@ -106,6 +106,7 @@ import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 
 /**
+ * Implementation with reuse of the internal objects to avoid waste of time and resources at every build
  * Modified from Maven to permit builds without installations and var envs.
  * original version https://maven.apache.org/ref/3.3.9/maven-embedder/xref/org/apache/maven/cli/MavenCli.html
  * IMPORTANT: Preserve the structure for an easy update when the maven version will be updated
@@ -472,7 +473,7 @@ public class ReusableAFMavenCli {
                                                             ClassWorld classWorld) throws Exception {
         if (cliRequest.getClassWorld() == null) {
             /**
-             The classworld is now Created in the NioMavenCompiler and in the InternalNioDefaultMaven compielr for this reasons:
+             The classworld is now Created in the NioMavenCompiler and in the InternalNioDefaultMaven compiler for this reasons:
              problem: https://stackoverflow.com/questions/22410706/error-when-execute-mavencli-in-the-loop-maven-embedder
              problem:https://stackoverflow.com/questions/40587683/invocation-of-mavencli-fails-within-a-maven-plugin
              solution:https://dev.eclipse.org/mhonarc/lists/sisu-users/msg00063.html

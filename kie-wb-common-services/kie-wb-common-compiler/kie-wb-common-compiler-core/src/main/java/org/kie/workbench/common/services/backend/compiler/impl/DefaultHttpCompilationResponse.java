@@ -26,6 +26,11 @@ import org.kie.workbench.common.services.backend.compiler.HttpCompilationRespons
 import org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 
+/***
+ * Default implementation of a basic (Non Kie) HttpCompilation response,
+ * it contains a boolean flag as a result of the build, an optional String error message,
+ * and an optional List of String with the maven output
+ */
 public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
                                                        Serializable {
 

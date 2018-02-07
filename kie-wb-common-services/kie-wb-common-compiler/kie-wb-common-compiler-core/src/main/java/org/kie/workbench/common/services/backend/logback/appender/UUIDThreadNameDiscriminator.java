@@ -20,7 +20,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 
 /***
- * Thias discriminator use the name of the Thread to choose the store of the messages
+ * This discriminator use the name of the Thread to choose the store of the messages
  */
 public class UUIDThreadNameDiscriminator extends MDCBasedDiscriminator {
 

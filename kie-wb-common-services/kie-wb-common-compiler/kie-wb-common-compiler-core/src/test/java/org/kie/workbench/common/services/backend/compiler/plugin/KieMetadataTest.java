@@ -86,9 +86,7 @@ public class KieMetadataTest {
                           temp);
         //end NIO
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(
-                KieDecorator.KIE_AND_LOG_AFTER);
-
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
@@ -145,14 +143,10 @@ public class KieMetadataTest {
             Path tmpRoot = Files.createTempDirectory("repo");
             Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                          "dummy"));
-            TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"),
-                              tmp);
+            TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"), tmp);
 
-            AFCompiler compiler = KieMavenCompilerFactory.getCompiler(
-                    KieDecorator.KIE_AND_LOG_AFTER);
-
+            AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
             WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
-
             CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                    info,
                                                                    new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
@@ -207,13 +201,13 @@ public class KieMetadataTest {
                           tmp);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);
-
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
+
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");
@@ -245,7 +239,6 @@ public class KieMetadataTest {
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
                                                                         res.getDependenciesAsURI());
 
-        //KieModuleMetaData kieModuleMetaData = KieModuleMetaData.Factory.newKieModuleMetaData(kModule); // broken
         Assert.assertNotNull(kieModuleMetaData);
 
         //comment if you want read the log file after the test run

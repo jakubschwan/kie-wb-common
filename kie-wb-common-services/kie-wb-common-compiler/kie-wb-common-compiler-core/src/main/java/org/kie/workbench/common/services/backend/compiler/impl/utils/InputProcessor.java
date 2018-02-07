@@ -20,6 +20,9 @@ import java.util.List;
 import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.uberfire.java.nio.file.Path;
 
+/***
+ * Used in the conversion between Maven Output and other objects used into different representation
+ */
 public interface InputProcessor {
 
     boolean accept(final Path rootPath,

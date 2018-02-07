@@ -67,9 +67,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
                           temp);
         //end NIO
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(
-                KieDecorator.NONE);
-
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
@@ -95,9 +93,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
                           temp);
         //end NIO
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(
-                KieDecorator.NONE);
-
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,

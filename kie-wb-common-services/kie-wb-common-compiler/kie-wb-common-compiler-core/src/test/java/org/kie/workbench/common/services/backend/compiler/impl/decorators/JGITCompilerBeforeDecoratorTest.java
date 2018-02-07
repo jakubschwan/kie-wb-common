@@ -119,13 +119,12 @@ public class JGITCompilerBeforeDecoratorTest  {
 
         Path prjFolder = Paths.get(gitClonedFolder + "/dummy/");
 
+        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler());
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
-
-        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler());
         CompilationResponse res = compiler.compile(req);
 
         if (!res.isSuccessful()) {

@@ -51,12 +51,6 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
              null);
     }
 
-    public DefaultKieCompilationResponse(Boolean successful, List<String> mavenOutput) {
-        this(successful,
-             mavenOutput,
-             null);
-    }
-
     public DefaultKieCompilationResponse(Boolean successful,
                                          List<String> mavenOutput,
                                          Path workingDir) {
@@ -89,23 +83,6 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
         this.eventsTypeClasses = eventTypesClasses;
     }
 
-    public DefaultKieCompilationResponse(Boolean successful,
-                                         KieModuleMetaInfo kieModuleMetaInfo,
-                                         KieModule kieModule,
-                                         Map<String, byte[]> projectClassloaderStore,
-                                         List<String> targetContent,
-                                         List<String> projectDependencies,
-                                         Path workingDir) {
-
-        this.defaultResponse = new DefaultCompilationResponse(successful,
-                                                              Collections.emptyList(),
-                                                              workingDir,
-                                                              targetContent,
-                                                              projectDependencies);
-        this.kieModuleMetaInfo = kieModuleMetaInfo;
-        this.projectClassLoaderStore = projectClassloaderStore;
-        this.kieModule = kieModule;
-    }
 
     public DefaultKieCompilationResponse(Boolean successful,
                                          KieModuleMetaInfo kieModuleMetaInfo,

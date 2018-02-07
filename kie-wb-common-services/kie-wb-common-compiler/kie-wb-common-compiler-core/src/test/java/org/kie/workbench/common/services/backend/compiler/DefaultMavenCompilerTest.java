@@ -119,13 +119,14 @@ public class DefaultMavenCompilerTest {
         assertNotNull(cloned);
 
         //Compile the repo
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
+
         Path prjFolder = Paths.get(gitClonedFolder + "/dummy/");
         byte[] encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
         Assert.assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
 
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
@@ -133,6 +134,8 @@ public class DefaultMavenCompilerTest {
                                                                Boolean.TRUE);
 
         CompilationResponse res = compiler.compile(req);
+
+
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithCloneTest");

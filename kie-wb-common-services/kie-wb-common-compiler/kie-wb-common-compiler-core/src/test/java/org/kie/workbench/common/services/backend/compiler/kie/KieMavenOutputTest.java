@@ -59,7 +59,6 @@ public class KieMavenOutputTest {
         Path tmp = Paths.get(tmpNio.toAbsolutePath().toString());
 
         final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
-
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,

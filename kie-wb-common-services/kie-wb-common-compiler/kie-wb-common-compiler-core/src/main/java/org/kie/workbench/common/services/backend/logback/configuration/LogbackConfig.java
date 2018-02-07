@@ -34,6 +34,10 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCon
 import org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppender;
 import org.kie.workbench.common.services.backend.logback.appender.UUIDThreadNameDiscriminator;
 
+/**
+ * Class to configure programmatically Logback with the ch.qos.logback.classic.spi.Configurator into
+ * the META-INF/services, it works when logabck.xml and logback-test.xml aren't present in the classpath
+ */
 public class LogbackConfig extends ContextAwareBase implements Configurator {
 
     public LogbackConfig() { }
