@@ -104,6 +104,7 @@ public class MavenRestClientTest {
         WebTarget target = client.target(deploymentUrl.toString() +"rest/maven/3.3.9/");
         Invocation invocation = target.request().buildGet();
         Response response = invocation.invoke();
+        Assert.assertEquals(response.getStatusInfo().getStatusCode(), 200);
         Assert.assertEquals("Apache Maven 3.3.9", response.readEntity(String.class));
     }
 
