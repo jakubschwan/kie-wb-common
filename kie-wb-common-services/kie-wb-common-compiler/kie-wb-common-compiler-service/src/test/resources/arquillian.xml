@@ -10,6 +10,9 @@
       <property name="jbossHome">${jbossHome:kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-service/target/wildfly-10.1.0.Final}</property>
       <property name="org.uberfire.nio.git.daemon.enabled">false</property>
       <property name="org.uberfire.nio.git.ssh.enabled">false</property>
+      <!-- enable for remote debug
+        <property name="javaVmArguments">-Xmx1024m -XX:MaxPermSize=512m -Xnoagent -Djava.compiler=NONE -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005</property>
+      -->
     </configuration>
     <protocol type="Servlet 3.0">
       <property name="host">localhost</property>

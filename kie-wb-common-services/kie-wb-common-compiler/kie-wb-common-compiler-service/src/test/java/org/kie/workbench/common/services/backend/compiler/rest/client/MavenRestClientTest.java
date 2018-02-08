@@ -8,9 +8,10 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
@@ -33,7 +34,7 @@ import javax.ws.rs.core.Response;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 @RunWith(Arquillian.class)
-public class MavenRestClientTest /*extends BaseCompilerTest*/ {
+public class MavenRestClientTest {
 
     protected static Logger logger = LoggerFactory.getLogger(MavenRestHandlerTest.class);
     protected static Path tmpRoot;
@@ -50,8 +51,8 @@ public class MavenRestClientTest /*extends BaseCompilerTest*/ {
         info = new WorkspaceCompilationInfo(org.uberfire.java.nio.file.Paths.get(tmp.toUri()));
     }
 
-    @AfterClass
-    public static void tearDown()  {
+    @After
+    public void tearDown()  {
         TestUtil.rm(new File("src/../.security/"));
     }
 
@@ -90,9 +91,8 @@ public class MavenRestClientTest /*extends BaseCompilerTest*/ {
         return war;
     }
 
-    @Test
+    @Test @Ignore
     public void get() {
-        System.out.println("TEST GET !!!!!!!!!!!!!!!!");
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target("http://127.0.0.1:8080/compiler/maven/3.3.9/");
         Invocation invocation = target.request().buildGet();
