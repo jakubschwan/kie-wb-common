@@ -1,61 +1,57 @@
 package org.kie.workbench.common.services.backend.compiler.rest.client;
 
 import java.io.File;
-import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
+import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
+import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandler;
 import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandlerTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uberfire.java.nio.file.Files;
-import org.uberfire.java.nio.file.Path;
-import org.uberfire.java.nio.file.Paths;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.uberfire.mocks.FileSystemTestingUtils;
 
 @RunWith(Arquillian.class)
-public class MavenRestClientTest extends BaseCompilerTest {
+public class MavenRestClientTest /*extends BaseCompilerTest*/ {
 
-    public MavenRestClientTest(){
-        super("target/test-classes/kjar-2-single-resources");
-    }
-
-    protected static Path mavenRepo;
     protected static Logger logger = LoggerFactory.getLogger(MavenRestHandlerTest.class);
-    private static FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
+    protected static Path tmpRoot;
+    protected String alternateSettingsAbsPath;
+    protected WorkspaceCompilationInfo info;
+    protected AFCompiler compiler;
 
-    @BeforeClass
-    public static void setup() throws Exception{
-        fileSystemTestingUtils.setup();
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            logger.info("Creating a m2_repo into " + mavenRepo);
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
-        }
+    @Before
+    public  void setup() throws Exception{
+        tmpRoot = Files.createTempDirectory("repo");
+        alternateSettingsAbsPath = new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-service/target/test-classes/settings.xml").getAbsolutePath();
+        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
+        FileUtils.copyDirectory(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-service/target/test-classes/kjar-2-single-resources"), tmp.toFile());
+        info = new WorkspaceCompilationInfo(org.uberfire.java.nio.file.Paths.get(tmp.toUri()));
     }
 
     @AfterClass
     public static void tearDown()  {
-        fileSystemTestingUtils.cleanup();
         TestUtil.rm(new File("src/../.security/"));
     }
 
@@ -76,11 +72,15 @@ public class MavenRestClientTest extends BaseCompilerTest {
                 loadPomFromFile("./pom.xml")
                 .resolve("org.kie.workbench.services:kie-wb-common-compiler-core:?",
                          "org.jboss.errai:errai-bus:?",
+                         "org.jboss.errai:errai-jboss-as-support:?",
                          "org.jboss.errai:errai-marshalling:?",
                          "org.uberfire:uberfire-nio2-api:?",
+                         "org.uberfire:uberfire-nio2-model:?",
                          "org.uberfire:uberfire-nio2-jgit:?",
                          "org.uberfire:uberfire-nio2-fs:?",
-                         "org.uberfire:uberfire-servlet-security:?").withTransitivity()
+                         "org.uberfire:uberfire-servlet-security:?",
+                         "org.uberfire:uberfire-testing-utils:?",
+                         "org.eclipse.jgit:org.eclipse.jgit:?").withTransitivity()
                 .asFile();
 
         for (final File file : files) {
@@ -90,14 +90,14 @@ public class MavenRestClientTest extends BaseCompilerTest {
         return war;
     }
 
-    @Test @Ignore
+    @Test
     public void get() {
-        Assert.assertTrue(true);
-        /*Client client = ClientBuilder.newClient();
-        WebTarget target = client.target("http://127.0.0.1:8080/maven/3.3.9/");
+        System.out.println("TEST GET !!!!!!!!!!!!!!!!");
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target("http://127.0.0.1:8080/compiler/maven/3.3.9/");
         Invocation invocation = target.request().buildGet();
         Response response = invocation.invoke();
-        Assert.assertEquals("Apache Maven 3.3.9", response.readEntity(String.class));*/
+        Assert.assertEquals("Apache Maven 3.3.9", response.readEntity(String.class));
     }
 
 
