@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
   <context-param>
-    <param-name>resteasy.scan</param-name>
-    <param-value>true</param-value>
+    <param-name>resteasy.resources</param-name>
+    <param-value>org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandler</param-value>
   </context-param>
 
   <context-param>
@@ -27,13 +27,4 @@
     <servlet-name>Resteasy</servlet-name>
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
-
-  <welcome-file-list>
-    <welcome-file>login.jsp</welcome-file>
-  </welcome-file-list>
-
-  <listener>
-    <listener-class>org.uberfire.backend.server.io.DisposableShutdownService</listener-class>
-  </listener>
-
 </web-app>

@@ -106,7 +106,6 @@
       </exclusions>
     </dependency>
 
-
     <!-- test -->
     <dependency>
       <groupId>junit</groupId>
@@ -263,7 +262,6 @@
                   <version>10.1.0.Final</version>
                   <type>zip</type>
                   <overWrite>false</overWrite>
-                  <!--<outputDirectory>target</outputDirectory>-->-->
                   <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
               </artifactItems>

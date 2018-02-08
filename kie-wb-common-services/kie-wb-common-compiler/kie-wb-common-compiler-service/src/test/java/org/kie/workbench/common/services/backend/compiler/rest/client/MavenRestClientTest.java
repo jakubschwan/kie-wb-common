@@ -5,13 +5,13 @@ import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
@@ -21,6 +21,8 @@ import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestH
 import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandlerTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,6 +43,9 @@ public class MavenRestClientTest {
     protected String alternateSettingsAbsPath;
     protected WorkspaceCompilationInfo info;
     protected AFCompiler compiler;
+
+    @ArquillianResource
+    private URL deploymentUrl;
 
     @Before
     public  void setup() throws Exception{
@@ -81,7 +86,9 @@ public class MavenRestClientTest {
                          "org.uberfire:uberfire-nio2-fs:?",
                          "org.uberfire:uberfire-servlet-security:?",
                          "org.uberfire:uberfire-testing-utils:?",
-                         "org.eclipse.jgit:org.eclipse.jgit:?").withTransitivity()
+                         "org.eclipse.jgit:org.eclipse.jgit:?",
+                         "org.jboss.resteasy:resteasy-jaxrs:?",
+                         "org.jboss.resteasy:resteasy-multipart-provider:?").withTransitivity()
                 .asFile();
 
         for (final File file : files) {
@@ -91,10 +98,10 @@ public class MavenRestClientTest {
         return war;
     }
 
-    @Test @Ignore
+    @Test
     public void get() {
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target("http://127.0.0.1:8080/compiler/maven/3.3.9/");
+        WebTarget target = client.target(deploymentUrl.toString() +"rest/maven/3.3.9/");
         Invocation invocation = target.request().buildGet();
         Response response = invocation.invoke();
         Assert.assertEquals("Apache Maven 3.3.9", response.readEntity(String.class));
