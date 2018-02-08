@@ -49,6 +49,11 @@
         <artifactId>shrinkwrap-resolver-spi-maven-archive</artifactId>
         <version>3.1.2</version>
       </dependency>
+      <dependency>
+        <groupId>org.jboss.errai</groupId>
+        <artifactId>errai-jboss-as-support</artifactId>
+        <version>4.1.2.Final</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -118,6 +123,13 @@
       <artifactId>uberfire-nio2-fs</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-servlet-security</artifactId>
+     <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.jboss.weld.se</groupId>
       <artifactId>weld-se-core</artifactId>
@@ -181,6 +193,12 @@
       <type>pom</type>
       <scope>test</scope>
       <!--There is a problem with Aether https://issues.jboss.org/browse/SHRINKRES-174 -->
+    </dependency>
+
+    <!-- errai -->
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-jboss-as-support</artifactId>
     </dependency>
   </dependencies>
 

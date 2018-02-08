@@ -49,15 +49,24 @@ public class MavenRestClientTest extends BaseCompilerTest {
     @Deployment
     public static Archive getDeployment() {
         final WebArchive war = ShrinkWrap.create(WebArchive.class, "compiler.war");
-        war.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        war.addAsResource(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-service/target/test-classes/IncrementalCompiler.properties"));
         war.addClasses(MavenRestHandler.class);
         war.addPackages(true, "org.kie.workbench.common.services.backend.compiler");
+        war.setWebXML(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-service/target/test-classes/web.xml"));
+        final File[] metaInfFilesFiles = new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-service/target/test-classes/META-INF").listFiles();
+        for (final File file : metaInfFilesFiles) {
+            war.addAsManifestResource(file);
+        }
+
         final File[] files = Maven.configureResolver().
                 fromFile("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-service/src/test/settings.xml").
                 loadPomFromFile("./pom.xml")
                 .resolve("org.kie.workbench.services:kie-wb-common-compiler-core:?",
-                         "org.jboss.errai:errai-bus:?", "org.uberfire:uberfire-nio2-api:?").withTransitivity()
+                         "org.jboss.errai:errai-bus:?", "org.uberfire:uberfire-nio2-api:?",
+                         "org.uberfire:uberfire-nio2-jgit:?","org.uberfire:uberfire-nio2-fs:?",
+                         "org.uberfire:uberfire-servlet-security:?").withTransitivity()
                 .asFile();
+
         for (final File file : files) {
             war.addAsLibrary(file);
         }

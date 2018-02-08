@@ -13,4 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-org.kie.workbench.common.services.backend.logback.configuration.LogbackConfig
+
+org.uberfire.java.nio.fs.jgit.JGitFileSystemProvider
+org.uberfire.java.nio.fs.file.SimpleFileSystemProvider
