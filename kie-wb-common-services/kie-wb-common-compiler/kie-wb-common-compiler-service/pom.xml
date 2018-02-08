@@ -54,6 +54,11 @@
         <artifactId>errai-jboss-as-support</artifactId>
         <version>4.1.2.Final</version>
       </dependency>
+      <dependency>
+        <groupId>org.jboss.errai</groupId>
+        <artifactId>errai-marshalling</artifactId>
+        <version>4.1.2.Final</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -200,6 +205,15 @@
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-jboss-as-support</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-marshalling</artifactId>
+    </dependency>
+    <!--<dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-data-binding</artifactId>
+    </dependency>-->
+
   </dependencies>
 
   <build>
@@ -228,9 +242,10 @@
         <configuration>
           <systemPropertyVariables>
             <apple.awt.UIElement>true</apple.awt.UIElement>
-            <org.uberfire.nio.git.daemon.enabled>true</org.uberfire.nio.git.daemon.enabled>
+            <!--<org.uberfire.nio.git.daemon.enabled>false</org.uberfire.nio.git.daemon.enabled>
+            <org.uberfire.nio.git.ssh.enabled>false</org.uberfire.nio.git.ssh.enabled>
             <JBOSS_HOME>${project.basedir}/target/wildfly-10.1.0.Final/</JBOSS_HOME>
-            <jbossHome>${project.basedir}/target/wildfly-10.1.0.Final/</jbossHome>
+            <jbossHome>${project.basedir}/target/wildfly-10.1.0.Final/</jbossHome>-->
           </systemPropertyVariables>
         </configuration>
       </plugin>
@@ -253,19 +268,14 @@
                   <version>10.1.0.Final</version>
                   <type>zip</type>
                   <overWrite>false</overWrite>
-                  <outputDirectory>target</outputDirectory>-->
-                  <!--<outputDirectory>${project.build.directory}</outputDirectory>-->
+                  <!--<outputDirectory>target</outputDirectory>-->-->
+                  <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
             </configuration>
           </execution>
         </executions>
       </plugin>
-     <!-- <plugin>
-        <groupId>org.wildfly.plugins</groupId>
-        <artifactId>wildfly-maven-plugin</artifactId>
-        <version>1.2.1.Final</version>
-      </plugin>-->
     </plugins>
   </build>
 
@@ -275,13 +285,6 @@
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-     <!-- <dependencies>
-        <dependency>
-          <groupId>org.wildfly</groupId>
-          <artifactId>wildfly-arquillian-container-managed</artifactId>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>-->
       <build>
         <testResources>
           <testResource>

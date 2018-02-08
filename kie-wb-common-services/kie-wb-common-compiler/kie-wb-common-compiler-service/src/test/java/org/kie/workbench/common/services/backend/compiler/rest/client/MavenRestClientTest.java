@@ -1,6 +1,7 @@
 package org.kie.workbench.common.services.backend.compiler.rest.client;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -8,12 +9,15 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
+import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandler;
 import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandlerTest;
 import org.slf4j.Logger;
@@ -22,6 +26,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.uberfire.mocks.FileSystemTestingUtils;
 
 @RunWith(Arquillian.class)
 public class MavenRestClientTest extends BaseCompilerTest {
@@ -32,9 +37,11 @@ public class MavenRestClientTest extends BaseCompilerTest {
 
     protected static Path mavenRepo;
     protected static Logger logger = LoggerFactory.getLogger(MavenRestHandlerTest.class);
+    private static FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
 
     @BeforeClass
     public static void setup() throws Exception{
+        fileSystemTestingUtils.setup();
         mavenRepo = Paths.get(System.getProperty("user.home"),
                               "/.m2/repository");
 
@@ -44,6 +51,12 @@ public class MavenRestClientTest extends BaseCompilerTest {
                 throw new Exception("Folder not writable in the project");
             }
         }
+    }
+
+    @AfterClass
+    public static void tearDown()  {
+        fileSystemTestingUtils.cleanup();
+        TestUtil.rm(new File("src/../.security/"));
     }
 
     @Deployment
@@ -62,8 +75,11 @@ public class MavenRestClientTest extends BaseCompilerTest {
                 fromFile("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-service/src/test/settings.xml").
                 loadPomFromFile("./pom.xml")
                 .resolve("org.kie.workbench.services:kie-wb-common-compiler-core:?",
-                         "org.jboss.errai:errai-bus:?", "org.uberfire:uberfire-nio2-api:?",
-                         "org.uberfire:uberfire-nio2-jgit:?","org.uberfire:uberfire-nio2-fs:?",
+                         "org.jboss.errai:errai-bus:?",
+                         "org.jboss.errai:errai-marshalling:?",
+                         "org.uberfire:uberfire-nio2-api:?",
+                         "org.uberfire:uberfire-nio2-jgit:?",
+                         "org.uberfire:uberfire-nio2-fs:?",
                          "org.uberfire:uberfire-servlet-security:?").withTransitivity()
                 .asFile();
 
@@ -83,5 +99,7 @@ public class MavenRestClientTest extends BaseCompilerTest {
         Response response = invocation.invoke();
         Assert.assertEquals("Apache Maven 3.3.9", response.readEntity(String.class));*/
     }
+
+
 
 }
