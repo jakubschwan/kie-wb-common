@@ -1,8 +1,24 @@
+/*
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kie.workbench.common.services.backend.compiler.rest.client;
 
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -12,25 +28,29 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.services.backend.compiler.AFCompiler;
+import org.kie.workbench.common.services.backend.compiler.HttpCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
-import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
+import org.kie.workbench.common.services.backend.compiler.rest.RestUtils;
 import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandler;
-import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandlerTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.Future;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
@@ -38,11 +58,8 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 @RunWith(Arquillian.class)
 public class MavenRestClientTest {
 
-    protected static Logger logger = LoggerFactory.getLogger(MavenRestHandlerTest.class);
-    protected static Path tmpRoot;
-    protected String alternateSettingsAbsPath;
-    protected WorkspaceCompilationInfo info;
-    protected AFCompiler compiler;
+    private  Path tmpRoot;
+    private  Path mavenRepo;
 
     @ArquillianResource
     private URL deploymentUrl;
@@ -50,10 +67,9 @@ public class MavenRestClientTest {
     @Before
     public  void setup() throws Exception{
         tmpRoot = Files.createTempDirectory("repo");
-        alternateSettingsAbsPath = new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-service/target/test-classes/settings.xml").getAbsolutePath();
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
         FileUtils.copyDirectory(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-service/target/test-classes/kjar-2-single-resources"), tmp.toFile());
-        info = new WorkspaceCompilationInfo(org.uberfire.java.nio.file.Paths.get(tmp.toUri()));
+        mavenRepo =   Paths.get(System.getProperty("user.home"), "/.m2/repository");
     }
 
     @After
@@ -109,5 +125,21 @@ public class MavenRestClientTest {
     }
 
 
-
+    @Test
+    public void post() throws Exception{
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target(deploymentUrl.toString() +"rest/maven/3.3.9/");
+        MultivaluedMap headersMap = new MultivaluedHashMap();
+        headersMap.add("project", tmpRoot.toAbsolutePath().toString()+"/dummy");
+        headersMap.add("mavenrepo", mavenRepo.toAbsolutePath().toString());
+        Future<Response>  responseFuture = target.request().headers(headersMap).async().post(Entity.entity(String.class, MediaType.TEXT_PLAIN));
+        Response response = responseFuture.get();
+        Assert.assertEquals(response.getStatusInfo().getStatusCode(), 200);
+        InputStream is = response.readEntity(InputStream.class);
+        byte[] serializedCompilationResponse = IOUtils.toByteArray(is);;
+        HttpCompilationResponse res = RestUtils.readDefaultCompilationResponseFromBytes(serializedCompilationResponse);
+        Assert.assertNotNull(res);
+        Assert.assertTrue(res.getDependencies().size() == 4);
+        Assert.assertTrue(res.getTargetContent().size() == 3);
+    }
 }

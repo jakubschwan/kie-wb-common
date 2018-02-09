@@ -15,8 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.rest.server;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
 import java.util.concurrent.CompletableFuture;
 
 import javax.enterprise.context.RequestScoped;
@@ -33,6 +31,7 @@ import javax.ws.rs.core.Response;
 
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultHttpCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.rest.RestUtils;
 import org.kie.workbench.common.services.backend.compiler.service.AFCompilerService;
 import org.kie.workbench.common.services.backend.compiler.service.DefaultKieCompilerService;
 import org.slf4j.Logger;
@@ -40,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Paths;
 
 /**
- * Rest endpoint to ask a remote compilation
+ * Rest endpoint to ask an async remote compilation
  */
 @Path("/maven/3.3.9/")
 @RequestScoped
@@ -56,12 +55,20 @@ public class MavenRestHandler extends Application{
         compilerService = new DefaultKieCompilerService();
     }
 
+    /**
+     * Endpoint to know the version of the available Maven
+     * */
     @GET
     @Produces("text/plain")
     public String get() {
         return mvn;
     }
 
+
+    /**
+     * Endpoint to ask an async build
+     *
+     * */
     @POST
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public void postAsync(@Suspended AsyncResponse ar, @HeaderParam("project") String projectRepo, @HeaderParam("mavenrepo") String mavenRepo) throws Exception {
@@ -71,24 +78,10 @@ public class MavenRestHandler extends Application{
                     logger.error(throwable.getMessage());
                     ar.resume(Response.serverError().build());
                 }else{
-                    byte[] bytes = serialize(new DefaultHttpCompilationResponse(kieCompilationResponse));
+                    byte[] bytes = RestUtils.serialize(new DefaultHttpCompilationResponse(kieCompilationResponse));
                     ar.resume(Response.ok(bytes).build());
                 }
         });
-    }
-
-
-    public static byte[] serialize(Object obj){
-        byte[] returnArray = null;
-        try(ByteArrayOutputStream b = new ByteArrayOutputStream()){
-            try(ObjectOutputStream o = new ObjectOutputStream(b)){
-                o.writeObject(obj);
-            }
-            returnArray = b.toByteArray();
-        }catch (Exception e){
-            logger.error(e.getLocalizedMessage());
-        }
-        return  returnArray;
     }
 
 }

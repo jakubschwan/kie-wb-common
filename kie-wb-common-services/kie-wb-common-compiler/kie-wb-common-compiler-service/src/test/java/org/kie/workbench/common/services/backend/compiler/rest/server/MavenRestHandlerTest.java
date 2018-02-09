@@ -15,13 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.rest.server;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-
 import org.jboss.resteasy.core.AsynchronousDispatcher;
 import org.jboss.resteasy.core.Dispatcher;
 import org.jboss.resteasy.core.SynchronousDispatcher;
@@ -38,7 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.HttpCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.DefaultHttpCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.rest.RestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -98,48 +91,13 @@ public class MavenRestHandlerTest extends BaseCompilerTest {
         dispatcher.invoke(request, response);
         Assert.assertTrue(response.getStatus() == 200);
         byte[] serializedCompilationResponse = response.getOutput();
-        HttpCompilationResponse res = readDefaultCompilationResponseFromBytes(serializedCompilationResponse);
+        HttpCompilationResponse res = RestUtils.readDefaultCompilationResponseFromBytes(serializedCompilationResponse);
         Assert.assertNotNull(res);
         Assert.assertTrue(res.getDependencies().size() == 4);
         Assert.assertTrue(res.getTargetContent().size() == 3);
     }
 
 
-    public HttpCompilationResponse readDefaultCompilationResponseFromBytes(byte[] bytes) {
 
-        ObjectInput in = null;
-        ByteArrayOutputStream bos = null;
-
-        try {
-            in = new ObjectInputStream(new ByteArrayInputStream(bytes));
-            Object newObj = in.readObject();
-            return (HttpCompilationResponse) newObj;
-        } catch (NotSerializableException nse) {
-            nse.printStackTrace();
-            StringBuilder sb = new StringBuilder("NotSerializableException:").append(nse.getMessage());
-            logger.error(sb.toString());
-        } catch (IOException ioe) {
-            StringBuilder sb = new StringBuilder("IOException:").append(ioe.getMessage());
-            logger.error(sb.toString());
-        } catch (ClassNotFoundException cnfe) {
-            StringBuilder sb = new StringBuilder("ClassNotFoundException:").append(cnfe.getMessage());
-            logger.error(sb.toString());
-        } catch (Exception e) {
-            StringBuilder sb = new StringBuilder("Exception:").append(e.getMessage());
-            logger.error(sb.toString());
-        } finally {
-            try {
-                if (bos != null) {
-                    bos.close();
-                }
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ex) {
-                logger.error(ex.getMessage());
-            }
-        }
-        return new DefaultHttpCompilationResponse(Boolean.FALSE);
-    }
 
 }

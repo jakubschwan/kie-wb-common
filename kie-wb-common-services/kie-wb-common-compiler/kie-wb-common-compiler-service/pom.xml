@@ -274,7 +274,7 @@
 
   <profiles>
     <profile>
-      <id>arq-wildfly-managed</id>
+      <id>widlfly-managed</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
