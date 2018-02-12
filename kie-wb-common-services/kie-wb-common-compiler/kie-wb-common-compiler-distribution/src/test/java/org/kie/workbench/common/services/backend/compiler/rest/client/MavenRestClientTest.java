@@ -29,6 +29,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.backend.compiler.HttpCompilationResponse;
@@ -64,12 +65,33 @@ public class MavenRestClientTest {
     @ArquillianResource
     private URL deploymentUrl;
 
+    /**
+     * Maven use as current dir the current module, arquillian w/junit the top level module kie-wb-common
+     * */
+    private static Boolean runIntoMavenCLI = null;
+
     @Before
     public  void setup() throws Exception{
+        setRunIntoMavenCLI();
         tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
-        FileUtils.copyDirectory(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/kjar-2-single-resources"), tmp.toFile());
+        if(runIntoMavenCLI){
+            FileUtils.copyDirectory(new File("target/test-classes/kjar-2-single-resources"), tmp.toFile());
+        }else {
+            FileUtils.copyDirectory(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/kjar-2-single-resources"), tmp.toFile());
+        }
         mavenRepo =   Paths.get(System.getProperty("user.home"), "/.m2/repository");
+    }
+
+    private static void setRunIntoMavenCLI() {
+        if(runIntoMavenCLI == null) {
+            File currentDir = new File(".");
+            if (currentDir.getAbsolutePath().endsWith("kie-wb-common-compiler-distribution/.")) {
+                runIntoMavenCLI = Boolean.TRUE; // Run into MavenCLI
+            } else {
+                runIntoMavenCLI = Boolean.FALSE; //RUn into IDE
+            }
+        }
     }
 
     @After
@@ -79,18 +101,29 @@ public class MavenRestClientTest {
 
     @Deployment
     public static Archive getDeployment() {
+        setRunIntoMavenCLI();
         final WebArchive war = ShrinkWrap.create(WebArchive.class, "compiler.war");
-        war.addAsResource(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/IncrementalCompiler.properties"));
+        final File[] metaInfFilesFiles;
+        if(runIntoMavenCLI){
+            war.addAsResource(new File("src/test/resources/IncrementalCompiler.properties"));
+            war.setWebXML(new File("target/test-classes/web.xml"));
+            metaInfFilesFiles = new File("target/test-classes/META-INF").listFiles();
+        }else{
+            war.addAsResource(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/IncrementalCompiler.properties"));
+            war.setWebXML(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/web.xml"));
+            metaInfFilesFiles = new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/META-INF").listFiles();
+        }
+
         war.addClasses(MavenRestHandler.class);
         war.addPackages(true, "org.kie.workbench.common.services.backend.compiler");
-        war.setWebXML(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/web.xml"));
-        final File[] metaInfFilesFiles = new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/META-INF").listFiles();
         for (final File file : metaInfFilesFiles) {
             war.addAsManifestResource(file);
         }
 
+        String settings = runIntoMavenCLI ? "src/test/settings.xml" : "kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/src/test/settings.xml";
+
         final File[] files = Maven.configureResolver().
-                fromFile("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/src/test/settings.xml").
+                fromFile(settings).
                 loadPomFromFile("./pom.xml")
                 .resolve("org.kie.workbench.services:kie-wb-common-compiler-core:?",
                          "org.jboss.errai:errai-bus:?",
@@ -116,6 +149,7 @@ public class MavenRestClientTest {
 
     @Test
     public void get() {
+
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(deploymentUrl.toString() +"rest/maven/3.3.9/");
         Invocation invocation = target.request().buildGet();

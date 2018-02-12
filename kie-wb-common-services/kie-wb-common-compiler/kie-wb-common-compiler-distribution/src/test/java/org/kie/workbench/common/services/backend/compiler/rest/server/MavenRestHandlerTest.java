@@ -28,6 +28,7 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.HttpCompilationResponse;
@@ -49,8 +50,7 @@ public class MavenRestHandlerTest extends BaseCompilerTest {
 
     @BeforeClass
     public static void setup() throws Exception{
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
+        mavenRepo = Paths.get(System.getProperty("user.home"), "/.m2/repository");
 
         if (!Files.exists(mavenRepo)) {
             logger.info("Creating a m2_repo into " + mavenRepo);
@@ -96,8 +96,5 @@ public class MavenRestHandlerTest extends BaseCompilerTest {
         Assert.assertTrue(res.getDependencies().size() == 4);
         Assert.assertTrue(res.getTargetContent().size() == 3);
     }
-
-
-
 
 }

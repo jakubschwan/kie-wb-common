@@ -69,6 +69,12 @@
         <artifactId>errai-marshalling</artifactId>
         <version>4.1.2.Final</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.wildfly.arquillian</groupId>
+        <artifactId>wildfly-arquillian-container-managed</artifactId>
+        <version>2.1.0.Final</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -213,6 +219,13 @@
       <!--There is a problem with Aether https://issues.jboss.org/browse/SHRINKRES-174 -->
     </dependency>
 
+    <!-- Wildlfy arquillian -->
+
+    <dependency>
+      <groupId>org.wildfly.arquillian</groupId>
+      <artifactId>wildfly-arquillian-container-managed</artifactId>
+    </dependency>
+
     <!-- errai -->
     <dependency>
       <groupId>org.jboss.errai</groupId>
@@ -250,10 +263,7 @@
         <configuration>
           <systemPropertyVariables>
             <apple.awt.UIElement>true</apple.awt.UIElement>
-            <!--<org.uberfire.nio.git.daemon.enabled>false</org.uberfire.nio.git.daemon.enabled>
-            <org.uberfire.nio.git.ssh.enabled>false</org.uberfire.nio.git.ssh.enabled>
-            <JBOSS_HOME>${project.basedir}/target/wildfly-10.1.0.Final/</JBOSS_HOME>
-            <jbossHome>${project.basedir}/target/wildfly-10.1.0.Final/</jbossHome>-->
+            <org.uberfire.nio.git.daemon.enabled>false</org.uberfire.nio.git.daemon.enabled>
           </systemPropertyVariables>
         </configuration>
       </plugin>
@@ -285,6 +295,62 @@
       </plugin>
     </plugins>
   </build>
+<!--
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <packagingExcludes>**/*.symbolMap</packagingExcludes>
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}</directory>
+              <includes>
+                <include>src/main/webapp/WEB-INF/classes/</include>
+                <include>src/main/webapp/WEB-INF/lib/</include>
+                <include>.niogit/**</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.wildfly</groupId>
+                  <artifactId>wildfly-dist</artifactId>
+                  <version>10.1.0.Final</version>
+                  <type>zip</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>-->
 
   <profiles>
     <profile>
