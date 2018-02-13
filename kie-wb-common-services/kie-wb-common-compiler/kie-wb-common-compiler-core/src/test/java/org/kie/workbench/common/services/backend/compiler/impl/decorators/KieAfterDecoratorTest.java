@@ -20,9 +20,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import org.assertj.core.api.SoftAssertions;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
@@ -48,10 +47,12 @@ public class KieAfterDecoratorTest extends BaseCompilerTest {
 
         KieAfterDecorator decorator = new KieAfterDecorator(new BaseMavenCompiler());
         KieCompilationResponse kieRes = (KieCompilationResponse) decorator.compile(req);
-        Assert.assertTrue(kieRes.isSuccessful());
-        Assert.assertTrue(kieRes.getMavenOutput().size() == 0);
-        Assert.assertNotNull(kieRes.getKieModule());
-        Assert.assertNotNull(kieRes.getKieModuleMetaInfo());
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(kieRes.isSuccessful()).isTrue();
+            softly.assertThat(kieRes.getMavenOutput()).isEmpty();
+            softly.assertThat(kieRes.getKieModule()).isNotNull();
+            softly.assertThat(kieRes.getKieModuleMetaInfo()).isNotNull();
+        });
     }
 
     @Test
@@ -69,9 +70,11 @@ public class KieAfterDecoratorTest extends BaseCompilerTest {
 
         KieAfterDecorator decorator = new KieAfterDecorator(new BaseMavenCompiler());
         KieCompilationResponse kieRes = (KieCompilationResponse) decorator.compile(req, override);
-        Assert.assertTrue(kieRes.isSuccessful());
-        Assert.assertTrue(kieRes.getMavenOutput().size() == 0);
-        Assert.assertNotNull(kieRes.getKieModule());
-        Assert.assertNotNull(kieRes.getKieModuleMetaInfo());
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(kieRes.isSuccessful()).isTrue();
+            softly.assertThat(kieRes.getMavenOutput()).isEmpty();
+            softly.assertThat(kieRes.getKieModule()).isNotNull();
+            softly.assertThat(kieRes.getKieModuleMetaInfo()).isNotNull();
+        });
     }
 }

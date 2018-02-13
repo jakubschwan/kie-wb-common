@@ -18,8 +18,8 @@ package org.kie.workbench.common.services.backend.compiler.kie;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
@@ -78,7 +78,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "KieDefaultMavenIncrementalCompilerTest.testIsValidMavenHome");
         }
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         TestUtil.rm(tmpRoot.toFile());
     }
@@ -104,11 +104,11 @@ public class KieDefaultMavenIncrementalCompilerTest {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "KieDefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabled");
         }
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
                                                   "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_compile");
-        Assert.assertTrue(incrementalConfiguration.toFile().exists());
+        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
         TestUtil.rm(tmpRoot.toFile());
     }
@@ -135,17 +135,17 @@ public class KieDefaultMavenIncrementalCompilerTest {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "KieDefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabledThreeTime");
         }
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         res = compiler.compile(req);
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         res = compiler.compile(req);
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
                                                   "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_compile");
-        Assert.assertTrue(incrementalConfiguration.toFile().exists());
+        assertThat(incrementalConfiguration.toFile()).exists();
 
         TestUtil.rm(tmpRoot.toFile());
     }
@@ -176,7 +176,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         }
 
         //checks
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         List<String> fileNames = new ArrayList<>();
         //impl
@@ -185,7 +185,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
                 fileNames.add(path.toString());
             }
         }
-        Assert.assertTrue(fileNames.size() == 2);
+        assertThat(fileNames).hasSize(2);
         String dummyJava;
         if (fileNames.get(0).endsWith("Dummy.class")) {
             dummyJava = fileNames.get(0);
@@ -195,10 +195,9 @@ public class KieDefaultMavenIncrementalCompilerTest {
         long dummyJavaSize = Paths.get(dummyJava).toFile().length();
 
         List<String> output = res.getMavenOutput();
-        Assert.assertTrue(isPresent(output,
-                                    "Previous incremental build state does not exist, performing full build"));
-        Assert.assertTrue(isPresent(output,
-                                    "Compiled 2 out of 2 sources "));
+        assertThat(isPresent(output,"Previous incremental build state does not exist, performing full build")).isTrue();
+        assertThat(isPresent(output,
+                                    "Compiled 2 out of 2 sources ")).isTrue();
 
         Files.delete(Paths.get(temp + "/src/main/java/dummy/DummyA.java"));
         //overwrite the class with a new version with two additional methods and one int variable
@@ -213,7 +212,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         }
 
         //checks
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         fileNames = new ArrayList<>();
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(temp + "/target/classes/dummy"))) {
@@ -222,16 +221,16 @@ public class KieDefaultMavenIncrementalCompilerTest {
             }
         }
 
-        Assert.assertTrue(fileNames.size() == 1);
-        Assert.assertTrue(fileNames.get(0).endsWith("Dummy.class"));
+        assertThat(fileNames).hasSize(1);
+        assertThat(fileNames.get(0)).endsWith("Dummy.class");
         long dummyJavaSizeAfterChanges = Paths.get(dummyJava).toFile().length();
-        Assert.assertTrue(dummyJavaSize < dummyJavaSizeAfterChanges);
+        assertThat(dummyJavaSize).isLessThan(dummyJavaSizeAfterChanges);
 
         output = res.getMavenOutput();
-        Assert.assertTrue(isPresent(output,
-                                    "Performing incremental build"));
-        Assert.assertTrue(isPresent(output,
-                                    "Compiled 1 out of 1 sources "));
+        assertThat(isPresent(output,
+                "Performing incremental build")).isTrue();
+        assertThat(isPresent(output,
+                "Compiled 1 out of 1 sources ")).isTrue();
 
         TestUtil.rm(tmpRoot.toFile());
     }

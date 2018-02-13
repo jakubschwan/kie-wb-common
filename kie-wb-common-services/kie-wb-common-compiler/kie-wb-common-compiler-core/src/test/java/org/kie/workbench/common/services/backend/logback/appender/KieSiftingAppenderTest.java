@@ -22,7 +22,7 @@ import java.util.Map;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
-import org.junit.Assert;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.logback.OutputSharedMap;
@@ -51,9 +51,9 @@ public class KieSiftingAppenderTest {
         appender.appendTest(event);
 
         List<String> msgs = OutputSharedMap.getLog(compilationID);
-        Assert.assertTrue(msgs.size() == 1);
+        assertThat(msgs).hasSize(1);
         String msg = msgs.get(0);
-        Assert.assertTrue(msg.equals("I'm a beatiful test message :)"));
+        assertThat(msg).isEqualTo("I'm a beatiful test message :)");
     }
 
     public class KieSiftingAppenderProxy extends KieSiftingAppender{

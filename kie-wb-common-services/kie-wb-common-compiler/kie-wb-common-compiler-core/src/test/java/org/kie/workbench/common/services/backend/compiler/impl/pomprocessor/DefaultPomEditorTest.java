@@ -16,9 +16,9 @@
 package org.kie.workbench.common.services.backend.compiler.impl.pomprocessor;
 
 import java.util.HashSet;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.assertj.core.api.SoftAssertions;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
@@ -37,26 +37,28 @@ public class DefaultPomEditorTest extends BaseCompilerTest {
     public void readSingleTest() {
         ConfigurationContextProvider provider = new ConfigurationContextProvider();
         DefaultPomEditor editor = new DefaultPomEditor(new HashSet<PomPlaceHolder>(), provider);
-        Assert.assertTrue(editor.getHistory().size() == 0);
+        assertThat(editor.getHistory()).isEmpty();
         PomPlaceHolder placeholder = editor.readSingle(Paths.get(tmpRoot.toAbsolutePath() + "/dummy/pom.xml"));
-        Assert.assertTrue(placeholder.isValid());
-        Assert.assertEquals(placeholder.getVersion(), "1.0.0.Final");
-        Assert.assertEquals(placeholder.getPackaging(), "kjar");
-        Assert.assertEquals(placeholder.getGroupID(), "org.kie");
-        Assert.assertEquals(placeholder.getArtifactID(), "kie-maven-plugin-test-kjar-2");
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(placeholder.isValid()).isTrue();
+            softly.assertThat(placeholder.getVersion()).isEqualTo("1.0.0.Final");
+            softly.assertThat(placeholder.getPackaging()).isEqualTo(("kjar"));
+            softly.assertThat(placeholder.getGroupID()).isEqualTo("org.kie");
+            softly.assertThat(placeholder.getArtifactID()).isEqualTo("kie-maven-plugin-test-kjar-2");
+        });
     }
 
     @Test
     public void writeTest() {
         ConfigurationContextProvider provider = new ConfigurationContextProvider();
         DefaultPomEditor editor = new DefaultPomEditor(new HashSet<PomPlaceHolder>(), provider);
-        Assert.assertTrue(editor.getHistory().size() == 0);
+        assertThat(editor.getHistory()).isEmpty();
 
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
 
-        Assert.assertTrue(editor.write(Paths.get(tmpRoot.toAbsolutePath() + "/dummy/pom.xml"), req));
+        assertThat(editor.write(Paths.get(tmpRoot.toAbsolutePath() + "/dummy/pom.xml"), req)).isTrue();
     }
 }

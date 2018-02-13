@@ -20,9 +20,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import org.assertj.core.api.SoftAssertions;
 
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
@@ -53,8 +53,10 @@ public class OutputLogAfterDecoratorTest extends BaseCompilerTest {
 
         OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler());
         CompilationResponse res = decorator.compile(req);
-        Assert.assertTrue(res.isSuccessful());
-        Assert.assertTrue(res.getMavenOutput().size() > 0);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(res.isSuccessful()).isTrue();
+            softly.assertThat(res.getMavenOutput().size()).isGreaterThan(0);
+        });
     }
 
     @Test
@@ -72,7 +74,9 @@ public class OutputLogAfterDecoratorTest extends BaseCompilerTest {
 
         OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler());
         CompilationResponse res = decorator.compile(req, override);
-        Assert.assertTrue(res.isSuccessful());
-        Assert.assertTrue(res.getMavenOutput().size() > 0);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(res.isSuccessful()).isTrue();
+            softly.assertThat(res.getMavenOutput().size()).isGreaterThan(0);
+        });
     }
 }

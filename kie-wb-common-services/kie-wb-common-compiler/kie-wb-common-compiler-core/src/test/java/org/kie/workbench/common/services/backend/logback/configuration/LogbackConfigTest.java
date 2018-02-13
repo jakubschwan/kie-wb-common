@@ -21,7 +21,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.encoder.Encoder;
-import org.junit.Assert;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppender;
@@ -39,17 +39,17 @@ public class LogbackConfigTest {
         config.configure(loggerContext);
         root.info("test appender");
         Appender<ILoggingEvent> kieSift =  root.getAppender("KieSift");
-        Assert.assertNotNull(kieSift);
+        assertThat(kieSift).isNotNull();
         KieSiftingAppender kieSiftAppender = (KieSiftingAppender) kieSift;
-        Assert.assertNotNull(kieSiftAppender);
-        Assert.assertNotNull(kieSiftAppender.getDiscriminator());
-        Assert.assertEquals(kieSiftAppender.getDiscriminatorKey(),MavenConfig.COMPILATION_ID);
+        assertThat(kieSiftAppender).isNotNull();
+        assertThat(kieSiftAppender.getDiscriminator()).isNotNull();
+        assertThat(MavenConfig.COMPILATION_ID).isEqualTo(kieSiftAppender.getDiscriminatorKey());
         Appender<ILoggingEvent> consoleAppenderGeneric = root.getAppender("consoleAppender");
         ConsoleAppender consoleAppender = (ConsoleAppender) consoleAppenderGeneric;
-        Assert.assertNotNull(consoleAppender);
+        assertThat(consoleAppender).isNotNull();
         Encoder enc = consoleAppender.getEncoder();
         PatternLayoutEncoder encoder = (PatternLayoutEncoder) enc;
-        Assert.assertEquals(encoder.getPattern(),"%d [%thread] %level %logger{35} - %msg%n");
+        assertThat(encoder.getPattern()).isEqualTo("%d [%thread] %level %logger{35} - %msg%n");
     }
 
 }

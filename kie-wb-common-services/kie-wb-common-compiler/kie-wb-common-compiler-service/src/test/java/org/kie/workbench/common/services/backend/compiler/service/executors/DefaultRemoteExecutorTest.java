@@ -18,8 +18,8 @@ package org.kie.workbench.common.services.backend.compiler.service.executors;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -41,7 +41,7 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
         CompletableFuture<KieCompilationResponse> futureRes = executor.build(tmpRoot.toAbsolutePath().toString(),
                                                                              mavenRepo.toString());
         KieCompilationResponse res = futureRes.get();
-        Assert.assertFalse(res.isSuccessful());
+        assertThat(res.isSuccessful()).isFalse();
     }
 
     @Test
@@ -51,8 +51,8 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
                                                                              mavenRepo.toString(),
                                                                              Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
-        Assert.assertFalse(res.isSuccessful());
-        Assert.assertTrue(res.getDependencies().size() == 0);
+        assertThat(res.isSuccessful()).isFalse();
+        assertThat(res.getDependencies()).isEmpty();
     }
 
     @Test
@@ -60,7 +60,7 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
         DefaultRemoteExecutor executor = new DefaultRemoteExecutor(executorService);
         CompletableFuture<KieCompilationResponse> futureRes = executor.buildAndInstall(tmpRoot.toAbsolutePath().toString(), mavenRepo.toString());
         KieCompilationResponse res = futureRes.get();
-        Assert.assertFalse(res.isSuccessful());
+        assertThat(res.isSuccessful()).isFalse();
     }
 
     @Test
@@ -70,8 +70,8 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
                                                                                        mavenRepo.toString(),
                                                                                        Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
-        Assert.assertFalse(res.isSuccessful());
-        Assert.assertTrue(res.getDependencies().size() == 0);
+        assertThat(res.isSuccessful()).isFalse();
+        assertThat(res.getDependencies()).isEmpty();
     }
 
     @Test
@@ -80,7 +80,7 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
         CompletableFuture<KieCompilationResponse> futureRes = executor.build(Paths.get(tmpRoot.toAbsolutePath()+"/dummy").toAbsolutePath().toString(),
                                                                              mavenRepo.toString());
         KieCompilationResponse res = futureRes.get();
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
     }
 
 
@@ -91,8 +91,8 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
         CompletableFuture<KieCompilationResponse> futureRes = executor.buildAndInstall(Paths.get(tmpRoot.toAbsolutePath()+"/dummy").toAbsolutePath().toString(),
                                                                                        mavenRepo.toString());
         KieCompilationResponse res = futureRes.get();
-        Assert.assertTrue(res.isSuccessful());
-        Assert.assertTrue(res.getDependencies().size() > 0);
+        assertThat(res.isSuccessful()).isTrue();
+        assertThat(res.getDependencies().size()).isGreaterThan(0);
     }
 
     @Test
@@ -102,8 +102,8 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
                                                                                        mavenRepo.toString(),
                                                                                        Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
-        Assert.assertTrue(res.isSuccessful());
-        Assert.assertTrue(res.getDependencies().size() == 0);
+        assertThat(res.isSuccessful()).isTrue();
+        assertThat(res.getDependencies()).isEmpty();
     }
 
     @Test
@@ -113,7 +113,7 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
                                                                                         mavenRepo.toString(),
                                                                                         new String[]{MavenCLIArgs.COMPILE});
         KieCompilationResponse res = futureRes.get();
-        Assert.assertFalse(res.isSuccessful());
+        assertThat(res.isSuccessful()).isFalse();
     }
 
     @Test
@@ -124,7 +124,7 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
                                                                                         new String[]{MavenCLIArgs.COMPILE},
                                                                                         Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
     }
 
     @Test
@@ -135,7 +135,7 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
                                                                                         new String[]{MavenCLIArgs.COMPILE},
                                                                                         Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
-        Assert.assertFalse(res.isSuccessful());
+        assertThat(res.isSuccessful()).isFalse();
     }
 
 }

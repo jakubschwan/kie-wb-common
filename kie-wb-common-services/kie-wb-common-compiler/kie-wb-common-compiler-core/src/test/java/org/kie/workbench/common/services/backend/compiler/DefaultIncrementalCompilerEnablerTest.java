@@ -17,8 +17,8 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import java.nio.charset.StandardCharsets;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -33,8 +33,6 @@ import org.uberfire.java.nio.file.Paths;
 import org.uberfire.java.nio.file.api.FileSystemProviders;
 import org.uberfire.java.nio.file.spi.FileSystemProvider;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 public class DefaultIncrementalCompilerEnablerTest {
 
@@ -76,21 +74,21 @@ public class DefaultIncrementalCompilerEnablerTest {
                                                       "pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        assertThat(pomAsAstring).doesNotContain("<artifactId>takari-lifecycle-plugin</artifactId>");
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
-        Assert.assertTrue(enabler.process(req).getResult());
+        assertThat(enabler.process(req).getResult()).isTrue();
 
         encoded = Files.readAllBytes(Paths.get(mainPom.toString()));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        Assert.assertTrue(pomAsAstring.contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>"));
+        assertThat(pomAsAstring).contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>");
 
-        assertFalse(pomAsAstring.contains("kie-takari-plugin"));
+        assertThat(pomAsAstring.contains("kie-takari-plugin")).isFalse();
         TestUtil.rm(tmpRoot.toFile());
     }
 
@@ -117,10 +115,10 @@ public class DefaultIncrementalCompilerEnablerTest {
                                                       "pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
-        Assert.assertFalse(pomAsAstring.contains("<groupId>org.eclipse.tycho</groupId>"));
-        Assert.assertFalse(pomAsAstring.contains("<artifactId>tycho-compiler-jdt</artifactId>"));
-        Assert.assertFalse(pomAsAstring.contains("<version>0.22.0</version>"));
+        assertThat(pomAsAstring).doesNotContain("<artifactId>takari-lifecycle-plugin</artifactId>");
+        assertThat(pomAsAstring).doesNotContain("<groupId>org.eclipse.tycho</groupId>");
+        assertThat(pomAsAstring).doesNotContain("<artifactId>tycho-compiler-jdt</artifactId>");
+        assertThat(pomAsAstring).doesNotContain("<version>0.22.0</version>");
 
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
@@ -130,14 +128,14 @@ public class DefaultIncrementalCompilerEnablerTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
-        Assert.assertTrue(enabler.process(req).getResult());
+        assertThat(enabler.process(req).getResult()).isTrue();
 
         encoded = Files.readAllBytes(Paths.get(mainPom.toString()));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        Assert.assertTrue(pomAsAstring.contains("<groupId>org.eclipse.tycho</groupId>"));
-        Assert.assertTrue(pomAsAstring.contains("<artifactId>tycho-compiler-jdt</artifactId>"));
-        Assert.assertTrue(pomAsAstring.contains("<version>0.22.0</version>"));
+        assertThat(pomAsAstring).contains("<groupId>org.eclipse.tycho</groupId>");
+        assertThat(pomAsAstring).contains("<artifactId>tycho-compiler-jdt</artifactId>");
+        assertThat(pomAsAstring).contains("<version>0.22.0</version>");
 
         TestUtil.rm(tmpRoot.toFile());
     }*/
@@ -162,15 +160,15 @@ public class DefaultIncrementalCompilerEnablerTest {
                                                       "pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
-        assertFalse(pomAsAstring.contains("<packaging>kjar</packaging>"));
+        assertThat(pomAsAstring).doesNotContain("<artifactId>takari-lifecycle-plugin</artifactId>");
+        assertThat(pomAsAstring).doesNotContain("<packaging>kjar</packaging>");
 
         byte[] encodedDummyB = Files.readAllBytes(Paths.get(tmp.toAbsolutePath().toString(),
                                                             "/dummyB/pom.xml"));
 
         String pomAsAstringDummyB = new String(encodedDummyB,
                                                StandardCharsets.UTF_8);
-        assertTrue(pomAsAstringDummyB.contains("<packaging>kjar</packaging>"));
+        assertThat(pomAsAstringDummyB).contains("<packaging>kjar</packaging>");
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
@@ -178,15 +176,15 @@ public class DefaultIncrementalCompilerEnablerTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, "-X"},
                                                                Boolean.FALSE);
         DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
-        assertTrue(enabler.process(req).getResult());
+        assertThat(enabler.process(req).getResult()).isTrue();
 
-        assertTrue(info.isKiePluginPresent());
+        assertThat(info.isKiePluginPresent()).isTrue();
 
         encoded = Files.readAllBytes(Paths.get(mainPom.toString()));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
 
-        assertTrue(pomAsAstring.contains("kie-takari-plugin"));
+        assertThat(pomAsAstring).contains("kie-takari-plugin");
 
         TestUtil.rm(tmpRoot.toFile());
     }

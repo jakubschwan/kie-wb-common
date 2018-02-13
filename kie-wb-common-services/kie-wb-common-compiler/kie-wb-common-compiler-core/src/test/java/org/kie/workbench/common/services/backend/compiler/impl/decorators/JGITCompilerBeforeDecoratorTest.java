@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.eclipse.jgit.api.Git;
 import org.junit.After;
@@ -43,9 +44,6 @@ import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 import org.uberfire.mocks.FileSystemTestingUtils;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class JGITCompilerBeforeDecoratorTest  {
 
@@ -113,7 +111,7 @@ public class JGITCompilerBeforeDecoratorTest  {
 
         final Git cloned = Git.cloneRepository().setURI(fs.getGit().getRepository().getDirectory().toURI().toString()).setBare(false).setDirectory(gitClonedFolder).call();
 
-        assertNotNull(cloned);
+        assertThat(cloned).isNotNull();
 
         //Compile the repo
 
@@ -131,10 +129,10 @@ public class JGITCompilerBeforeDecoratorTest  {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithCloneTest");
         }
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile");
-        assertTrue(incrementalConfiguration.toFile().exists());
+        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
 
         TestUtil.rm(tmpRootCloned.toFile());
@@ -176,7 +174,7 @@ public class JGITCompilerBeforeDecoratorTest  {
 
         final Git cloned = Git.cloneRepository().setURI(fs.getGit().getRepository().getDirectory().toURI().toString()).setBare(false).setDirectory(gitClonedFolder).call();
 
-        assertNotNull(cloned);
+        assertThat(cloned).isNotNull();
 
         //Compile the repo
 
@@ -201,10 +199,10 @@ public class JGITCompilerBeforeDecoratorTest  {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "JGITCompilerBeforeDecoratorTest.compileWithOverrideTest");
         }
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile");
-        assertTrue(incrementalConfiguration.toFile().exists());
+        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
 
         TestUtil.rm(tmpRootCloned.toFile());

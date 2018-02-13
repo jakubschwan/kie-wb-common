@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.drools.compiler.kie.builder.impl.InternalKieModule;
 import org.drools.core.rule.KieModuleMetaInfo;
 import org.drools.core.rule.TypeMetaInfo;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.api.builder.KieModule;
@@ -106,29 +106,27 @@ public class KieMetadataTest {
             }
         }
 
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
-        Assert.assertTrue(metaDataOptional.isPresent());
+        assertThat(metaDataOptional.isPresent()).isTrue();
         KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
-        Assert.assertNotNull(kieModuleMetaInfo);
+        assertThat(kieModuleMetaInfo).isNotNull();
 
         Map<String, Set<String>> rulesBP = kieModuleMetaInfo.getRulesByPackage();
-        Assert.assertEquals(rulesBP.size(),
-                            8);
+        assertThat(rulesBP).hasSize(8);
         Map<String, TypeMetaInfo> typesMI = kieModuleMetaInfo.getTypeMetaInfos();
-        Assert.assertEquals(typesMI.size(),
-                            35);
+        assertThat(typesMI).hasSize(35);
 
         Optional<KieModule> kieModuleOptional = res.getKieModule();
-        Assert.assertTrue(kieModuleOptional.isPresent());
+        assertThat(kieModuleOptional.isPresent()).isTrue();
 
-        Assert.assertTrue(res.getDependenciesAsURI().size() == 5);
+        assertThat(res.getDependenciesAsURI()).hasSize(5);
         KieModule kModule = kieModuleOptional.get();
 
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
                                                                         res.getDependenciesAsURI());
-        Assert.assertNotNull(kieModuleMetaData);
+        assertThat(kieModuleMetaData).isNotNull();
         //comment if you want read the log file after the test run
         TestUtil.rm(tmpRoot.toFile());
     }
@@ -165,21 +163,20 @@ public class KieMetadataTest {
                 }
             }
 
-            Assert.assertTrue(res.isSuccessful());
+            assertThat(res.isSuccessful()).isTrue();
 
             Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
-            Assert.assertTrue(metaDataOptional.isPresent());
+            assertThat(metaDataOptional.isPresent()).isTrue();
             KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
-            Assert.assertNotNull(kieModuleMetaInfo);
+            assertThat(kieModuleMetaInfo).isNotNull();
 
             Map<String, Set<String>> rulesBP = kieModuleMetaInfo.getRulesByPackage();
-            Assert.assertEquals(rulesBP.size(),
-                                1);
+            assertThat(rulesBP).hasSize(1);
 
             Optional<KieModule> kieModuleOptional = res.getKieModule();
-            Assert.assertTrue(kieModuleOptional.isPresent());
+            assertThat(kieModuleOptional.isPresent()).isTrue();
 
-            Assert.assertTrue(res.getDependenciesAsURI().size() == 5);
+            assertThat(res.getDependenciesAsURI()).hasSize(5);
 
             //comment if you want read the log file after the test run
             TestUtil.rm(tmpRoot.toFile());
@@ -219,27 +216,26 @@ public class KieMetadataTest {
             }
         }
 
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
-        Assert.assertTrue(metaDataOptional.isPresent());
+        assertThat(metaDataOptional.isPresent()).isTrue();
         KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
-        Assert.assertNotNull(kieModuleMetaInfo);
+        assertThat(kieModuleMetaInfo).isNotNull();
 
         Map<String, Set<String>> rulesBP = kieModuleMetaInfo.getRulesByPackage();
-        Assert.assertEquals(rulesBP.size(),
-                            1);
+        assertThat(rulesBP).hasSize(1);
 
         Optional<KieModule> kieModuleOptional = res.getKieModule();
-        Assert.assertTrue(kieModuleOptional.isPresent());
+        assertThat(kieModuleOptional.isPresent()).isTrue();
         KieModule kModule = kieModuleOptional.get();
 
-        Assert.assertTrue(res.getDependenciesAsURI().size() == 5);
+        assertThat(res.getDependenciesAsURI()).hasSize(5);
 
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
                                                                         res.getDependenciesAsURI());
 
-        Assert.assertNotNull(kieModuleMetaData);
+        assertThat(kieModuleMetaData).isNotNull();
 
         //comment if you want read the log file after the test run
         TestUtil.rm(tmpRoot.toFile());

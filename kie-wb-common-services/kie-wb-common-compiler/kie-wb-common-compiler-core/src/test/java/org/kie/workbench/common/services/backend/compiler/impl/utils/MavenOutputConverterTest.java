@@ -30,7 +30,7 @@ import org.uberfire.java.nio.file.FileSystem;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.mocks.FileSystemTestingUtils;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.uberfire.backend.server.util.Paths.convert;
 
 /**
@@ -348,44 +348,44 @@ public class MavenOutputConverterTest {
             System.out.println(buildMessage.getText());
         }
 
-        assertEquals(13, results.getErrorMessages().size());
-        assertEquals(" [ERROR] xxxxx cannot be resolved to a type", results.getErrorMessages().get(0).getText());
+        assertThat(results.getErrorMessages()).hasSize(13);
+        assertThat(results.getErrorMessages().get(0).getText()).isEqualTo(" [ERROR] xxxxx cannot be resolved to a type");
 
         final BuildMessage buildMessage = results.getErrorMessages().get(0);
-        assertEquals(convert(path.resolve("src/main/java/mortgages/mortgages/Applicant.java")), buildMessage.getPath());
-        assertEquals(15, buildMessage.getColumn());
-        assertEquals(21, buildMessage.getLine());
-        assertEquals(Level.ERROR, buildMessage.getLevel());
+        assertThat(buildMessage.getPath()).isEqualTo(convert(path.resolve("src/main/java/mortgages/mortgages/Applicant.java")));
+        assertThat(buildMessage.getColumn()).isEqualTo(15);
+        assertThat(buildMessage.getLine()).isEqualTo(21);
+        assertThat(buildMessage.getLevel()).isEqualTo(Level.ERROR);
 
-        assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(1).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/No bad credit checks.rdrl")), results.getErrorMessages().get(1).getPath());
-        assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(2).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/No bad credit checks.rdrl")), results.getErrorMessages().get(2).getPath());
+        assertThat(results.getErrorMessages().get(1).getText()).isEqualTo("Unable to resolve ObjectType 'Applicant'");
+        assertThat(results.getErrorMessages().get(1).getPath()).isEqualTo(convert(path.resolve("src/main/resources/mortgages/mortgages/No bad credit checks.rdrl")));
+        assertThat(results.getErrorMessages().get(2).getText()).isEqualTo("Unable to resolve ObjectType 'Applicant'");
+        assertThat(results.getErrorMessages().get(2).getPath()).isEqualTo(convert(path.resolve("src/main/resources/mortgages/mortgages/No bad credit checks.rdrl")));
 
-        assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(3).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/Underage.rdrl")), results.getErrorMessages().get(3).getPath());
+        assertThat(results.getErrorMessages().get(3).getText()).isEqualTo("Unable to resolve ObjectType 'Applicant'");
+        assertThat(results.getErrorMessages().get(3).getPath()).isEqualTo(convert(path.resolve("src/main/resources/mortgages/mortgages/Underage.rdrl")));
 
-        assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(4).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(4).getPath());
+        assertThat(results.getErrorMessages().get(4).getText()).isEqualTo("Unable to resolve ObjectType 'Applicant'");
+        assertThat(results.getErrorMessages().get(4).getPath()).isEqualTo(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")));
 
-        assertEquals("Unable to Analyse Expression applicant.setApproved(true);:", results.getErrorMessages().get(5).getText());
-        assertEquals("[Error: unable to resolve method using strict-mode: org.drools.core.spi.KnowledgeHelper.applicant()]", results.getErrorMessages().get(6).getText());
-        assertEquals("[Near : {... applicant.setApproved(true); ....}]", results.getErrorMessages().get(7).getText());
-        assertEquals("             ^", results.getErrorMessages().get(8).getText());
-        assertEquals("[Line: 5, Column: 0]", results.getErrorMessages().get(9).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(5).getPath());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(6).getPath());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(7).getPath());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(8).getPath());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(9).getPath());
+        assertThat(results.getErrorMessages().get(5).getText()).isEqualTo("Unable to Analyse Expression applicant.setApproved(true);:");
+        assertThat(results.getErrorMessages().get(6).getText()).isEqualTo("[Error: unable to resolve method using strict-mode: org.drools.core.spi.KnowledgeHelper.applicant()]");
+        assertThat(results.getErrorMessages().get(7).getText()).isEqualTo("[Near : {... applicant.setApproved(true); ....}]");
+        assertThat(results.getErrorMessages().get(8).getText()).isEqualTo("             ^");
+        assertThat(results.getErrorMessages().get(9).getText()).isEqualTo("[Line: 5, Column: 0]");
+        assertThat(results.getErrorMessages().get(5).getPath()).isEqualTo(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")));
+        assertThat(results.getErrorMessages().get(6).getPath()).isEqualTo(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")));
+        assertThat(results.getErrorMessages().get(7).getPath()).isEqualTo(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")));
+        assertThat(results.getErrorMessages().get(8).getPath()).isEqualTo(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")));
+        assertThat(results.getErrorMessages().get(9).getPath()).isEqualTo(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")));
 
-        assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(10).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/RegexDslRule.rdslr")), results.getErrorMessages().get(10).getPath());
+        assertThat(results.getErrorMessages().get(10).getText()).isEqualTo("Unable to resolve ObjectType 'Applicant'");
+        assertThat(results.getErrorMessages().get(10).getPath()).isEqualTo(convert(path.resolve("src/main/resources/mortgages/mortgages/RegexDslRule.rdslr")));
 
-        assertEquals("Rule Compilation error Only a type can be imported. mortgages.mortgages.Applicant resolves to a package", results.getErrorMessages().get(11).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/Dummy rule.drl")), results.getErrorMessages().get(11).getPath());
+        assertThat(results.getErrorMessages().get(11).getText()).isEqualTo("Rule Compilation error Only a type can be imported. mortgages.mortgages.Applicant resolves to a package");
+        assertThat(results.getErrorMessages().get(11).getPath()).isEqualTo(convert(path.resolve("src/main/resources/mortgages/mortgages/Dummy rule.drl")));
 
-        assertEquals("Error importing : 'mortgages.mortgages.Applicant'", results.getErrorMessages().get(12).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/No bad credit checks.rdrl")), results.getErrorMessages().get(12).getPath());
+        assertThat(results.getErrorMessages().get(12).getText()).isEqualTo("Error importing : 'mortgages.mortgages.Applicant'");
+        assertThat(results.getErrorMessages().get(12).getPath()).isEqualTo(convert(path.resolve("src/main/resources/mortgages/mortgages/No bad credit checks.rdrl")));
     }
 }

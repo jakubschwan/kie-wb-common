@@ -20,10 +20,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.UUID;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.assertj.core.api.SoftAssertions;
 
 import org.eclipse.jgit.api.Git;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.DefaultMavenCompilerTest;
@@ -98,10 +99,10 @@ public class JGitUtilsTest {
         String uuid = UUID.randomUUID().toString();
         Git git = JGitUtils.tempClone(fs, uuid);
 
-        Assert.assertNotNull(git);
-        Assert.assertTrue(git.getRepository().getBranch().equals("master"));
-        Assert.assertTrue(git.getRepository().getFullBranch().equals("refs/heads/master"));
-        Assert.assertTrue(git.getRepository().getDirectory().exists());
+        assertThat(git).isNotNull();
+        assertThat(git.getRepository().getBranch()).isEqualTo("master");
+        assertThat(git.getRepository().getFullBranch()).isEqualTo("refs/heads/master");
+        assertThat(git.getRepository().getDirectory()).exists();
         TestUtil.rm(git.getRepository().getDirectory());
     }
 
@@ -136,12 +137,12 @@ public class JGitUtilsTest {
         String uuid = UUID.randomUUID().toString();
         Git git = JGitUtils.tempClone(origin, uuid);
 
-        Assert.assertNotNull(git);
-        Assert.assertTrue(git.getRepository().getBranch().equals("master"));
-        Assert.assertTrue(git.getRepository().getFullBranch().equals("refs/heads/master"));
-        Assert.assertTrue(git.getRepository().getDirectory().exists());
+        assertThat(git).isNotNull();
+        assertThat(git.getRepository().getBranch()).isEqualTo("master");
+        assertThat(git.getRepository().getFullBranch()).isEqualTo("refs/heads/master");
+        assertThat(git.getRepository().getDirectory()).exists();
 
-        Assert.assertTrue(JGitUtils.pullAndRebase(git));
+        assertThat(JGitUtils.pullAndRebase(git)).isTrue();
 
         TestUtil.rm(origin.getGit().getRepository().getDirectory());
     }

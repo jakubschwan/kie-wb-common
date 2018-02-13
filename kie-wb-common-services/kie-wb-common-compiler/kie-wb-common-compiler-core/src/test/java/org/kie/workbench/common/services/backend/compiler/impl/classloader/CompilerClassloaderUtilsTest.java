@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
@@ -39,13 +39,13 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
     @Test
     public void getStringFromTargets() {
         List<String> resources = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
-        Assert.assertTrue(resources.size() == 3);
+        assertThat(resources).hasSize(3);
     }
 
     @Test
     public void getStringsFromAllDependencies() {
         List<String> resources = CompilerClassloaderUtils.getStringsFromAllDependencies(tmpRoot);
-        Assert.assertTrue(resources.size() == 1);
+        assertThat(resources).hasSize(1);
     }
 
     @Test
@@ -56,16 +56,16 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         targets.add("/target/classes/com/acme/test/D.class");
 
         List<String> orgKie = CompilerClassloaderUtils.filterClassesByPackage(targets, "org.kie");
-        Assert.assertTrue(orgKie.size() == 1);
+        assertThat(orgKie).hasSize(1);
 
         List<String> akkaTest = CompilerClassloaderUtils.filterClassesByPackage(targets, "akka.test");
-        Assert.assertTrue(akkaTest.size() == 1);
+        assertThat(akkaTest).hasSize(1);
 
         List<String> com = CompilerClassloaderUtils.filterClassesByPackage(targets, "com");
-        Assert.assertTrue(com.size() == 1);
+        assertThat(com).hasSize(1);
 
         List<String> it = CompilerClassloaderUtils.filterClassesByPackage(targets, "it");
-        Assert.assertTrue(it.size() == 0);
+        assertThat(it).isEmpty();
     }
 
     @Test
@@ -79,34 +79,34 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         targets.add(mavenRepo.toAbsolutePath().toString() + "/junit/junit/4.12/junit-4.12.jar");
 
         Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets, mavenRepo.toString());
-        Assert.assertTrue(orgKie.size() == 4);
+        assertThat(orgKie.size() == 4).isTrue();
     }
 
     @Test
     public void loadDependenciesClassloaderFromProject() {
         Optional<ClassLoader> classloader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(tmpRoot.toString(), mavenRepo.toString());
-        Assert.assertTrue(classloader.isPresent());
+        assertThat(classloader.isPresent()).isTrue();
     }
 
     @Test
     public void loadDependenciesClassloaderFromProjectWithPomList() {
         List<String> pomList = MavenUtils.searchPoms(tmpRoot);
-        Assert.assertTrue(pomList.size() == 1);
+        assertThat(pomList).hasSize(1);
         Optional<ClassLoader> classloader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(pomList, mavenRepo.toString());
-        Assert.assertTrue(classloader.isPresent());
+        assertThat(classloader.isPresent()).isTrue();
     }
 
     @Test
     public void getClassloaderFromProjectTargets() {
         List<String> pomList = MavenUtils.searchPoms(tmpRoot);
         Optional<ClassLoader> classLoader = CompilerClassloaderUtils.getClassloaderFromProjectTargets(pomList);
-        Assert.assertTrue(classLoader.isPresent());
+        assertThat(classLoader.isPresent()).isTrue();
     }
 
     @Test
     public void getClassloaderFromAllDependencies() {
         Optional<ClassLoader> classLoader = CompilerClassloaderUtils.getClassloaderFromAllDependencies(tmpRoot.toString() + "/dummy", mavenRepo.toString());
-        Assert.assertTrue(classLoader.isPresent());
+        assertThat(classLoader.isPresent()).isTrue();
     }
 
     @Test
@@ -117,7 +117,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
                                                                Boolean.FALSE);
         compiler.compile(req);
         Optional<ClassLoader> classLoader = CompilerClassloaderUtils.createClassloaderFromCpFiles(tmpRoot.toString() + "/dummy/");
-        Assert.assertTrue(classLoader.isPresent());
+        assertThat(classLoader.isPresent()).isTrue();
     }
 
     @Test
@@ -130,6 +130,6 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         List<String> classpathFiles = new ArrayList<>();
         classpathFiles.add(tmpRoot + "/dummy/module.cpath");
         List<URI> uris = CompilerClassloaderUtils.processScannedFilesAsURIs(classpathFiles);
-        Assert.assertTrue(uris.size() == 4);
+        assertThat(uris).hasSize(4);
     }
 }

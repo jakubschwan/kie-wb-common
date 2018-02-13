@@ -15,7 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl;
 
-import org.junit.Assert;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
@@ -50,9 +50,9 @@ public class WorkspaceCompilationInfoTest {
     @Test
     public void testMethods() {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmpRoot);
-        Assert.assertFalse(info.isKiePluginPresent());
+        assertThat(info.isKiePluginPresent()).isFalse();
         info.lateAdditionKiePluginPresent(Boolean.TRUE);
-        Assert.assertTrue(info.isKiePluginPresent());
-        Assert.assertEquals(info.getPrjPath(), tmpRoot);
+        assertThat(info.isKiePluginPresent()).isTrue();
+        assertThat(info.getPrjPath().toUri()).isEqualTo(tmpRoot.toUri());
     }
 }
