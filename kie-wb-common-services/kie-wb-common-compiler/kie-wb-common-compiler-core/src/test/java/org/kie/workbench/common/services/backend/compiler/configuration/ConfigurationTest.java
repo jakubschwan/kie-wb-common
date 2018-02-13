@@ -17,10 +17,10 @@ package org.kie.workbench.common.services.backend.compiler.configuration;
 
 import java.util.HashMap;
 import java.util.Map;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class ConfigurationTest {
@@ -29,33 +29,33 @@ public class ConfigurationTest {
     public void loadConfig() {
         ConfigurationContextProvider provider = new ConfigurationContextProvider();
         Map<ConfigurationKey, String> conf = provider.loadConfiguration();
-        Assert.assertTrue(conf.keySet().size() == 14);
+        assertThat(conf.keySet()).hasSize(14);
     }
 
     @Test
     public void loadStaticConfig() {
         ConfigurationStrategy strategy = new ConfigurationStaticStrategy();
         Map<ConfigurationKey, String> conf = strategy.loadConfiguration();
-        Assert.assertTrue(conf.keySet().size() == 14);
+        assertThat(conf.keySet()).hasSize(14);
     }
 
     @Test
     public void loadPropertiesConfig() {
         ConfigurationStrategy strategy = new ConfigurationPropertiesStrategy();
         Map<ConfigurationKey, String> conf = strategy.loadConfiguration();
-        Assert.assertTrue(conf.keySet().size() == 14);
+        assertThat(conf.keySet()).hasSize(14);
     }
 
     @Test
     public void loadEnvironmentConfig() {
         ConfigurationStrategy strategy = new ConfigurationEnvironmentStrategy();
         Map<ConfigurationKey, String> conf = strategy.loadConfiguration();
-        Assert.assertTrue(conf.isEmpty());
+        assertThat(conf).isEmpty();
 
         strategy = new ConfigurationEnvironmentStrategy(getMapForEnv());
         conf = strategy.loadConfiguration();
-        Assert.assertFalse(conf.isEmpty());
-        Assert.assertTrue(conf.keySet().size() == 14);
+        assertThat(conf.isEmpty()).isFalse();
+        assertThat(conf.keySet()).hasSize(14);
     }
 
     private Map<String, String> getMapForEnv() {

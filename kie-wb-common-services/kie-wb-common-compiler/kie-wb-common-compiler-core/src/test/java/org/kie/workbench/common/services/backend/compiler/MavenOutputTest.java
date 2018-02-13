@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,8 +66,8 @@ public class MavenOutputTest {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpNio, res.getMavenOutput(),
                                                       "MavenOutputTest.testOutputWithTakari");
         }
-        Assert.assertTrue(res.isSuccessful());
-        Assert.assertTrue(res.getMavenOutput().size() > 0);
+        assertThat(res.isSuccessful()).isTrue();
+        assertThat(res.getMavenOutput().size()).isGreaterThan(0);
 
         TestUtil.rm(tmpRoot.toFile());
     }

@@ -20,7 +20,7 @@ import java.util.Map;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.LoggingEvent;
-import org.junit.Assert;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.slf4j.Logger;
@@ -45,12 +45,12 @@ public class UUIDThreadNameDiscriminatorTest {
 
         UUIDThreadNameDiscriminator discriminator = new UUIDThreadNameDiscriminator();
         discriminator.start();
-        Assert.assertTrue(discriminator.isStarted());
-        Assert.assertTrue(discriminator.getKey().equals(MavenConfig.COMPILATION_ID));
+        assertThat(discriminator.isStarted()).isTrue();
+        assertThat(discriminator.getKey()).isEqualTo(MavenConfig.COMPILATION_ID);
         String threadName = Thread.currentThread().getName();
-        Assert.assertTrue(discriminator.getDiscriminatingValue(event).equals(threadName));
+        assertThat(discriminator.getDiscriminatingValue(event)).isEqualTo(threadName);
         discriminator.stop();
-        Assert.assertFalse(discriminator.isStarted());
+        assertThat(discriminator.isStarted()).isFalse();
     }
 
 }

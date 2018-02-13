@@ -19,25 +19,24 @@ package org.kie.workbench.common.services.backend.compiler;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
 import org.uberfire.java.nio.file.Paths;
-
-import static org.junit.Assert.assertTrue;
 
 public class MavenUtilsTest {
 
     @Test
     public void presenceOfDepInThePrj() throws Exception {
         List<String> pomList = MavenUtils.searchPoms(Paths.get("src/test/projects/dummy_kie_multimodule_untouched/"));
-        assertTrue(pomList.size() == 3);
+        assertThat(pomList).hasSize(3);
         List<Artifact> deps = MavenUtils.resolveDependenciesFromMultimodulePrj(pomList);
-        assertTrue(deps.size() == 1);
+        assertThat(deps).hasSize(1);
         Artifact artifact = deps.get(0);
-        assertTrue(artifact.getArtifactId().equals("kie-api"));
-        assertTrue(artifact.getGroupId().equals("org.kie"));
-        assertTrue(artifact.getVersion().equals("6.5.0.Final"));
-        assertTrue(artifact.getType().equals("jar"));
-        assertTrue(artifact.toString().equals("org.kie:kie-api:jar:6.5.0.Final"));
+        assertThat(artifact.getArtifactId()).isEqualTo("kie-api");
+        assertThat(artifact.getGroupId()).isEqualTo("org.kie");
+        assertThat(artifact.getVersion()).isEqualTo("6.5.0.Final");
+        assertThat(artifact.getType()).isEqualTo("jar");
+        assertThat(artifact.toString()).isEqualTo("org.kie:kie-api:jar:6.5.0.Final");
     }
 }

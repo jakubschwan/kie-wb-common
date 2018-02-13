@@ -39,10 +39,8 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class KieClassLoaderProviderTest {
 
@@ -83,29 +81,29 @@ public class KieClassLoaderProviderTest {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieClassLoaderProviderTest.loadProjectClassloaderTest");
         }
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         List<String> pomList = MavenUtils.searchPoms(Paths.get("src/test/projects/dummy_kie_multimodule_classloader/"));
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(pomList,
                                                                                                             mavenRepo.toAbsolutePath().toString());
-        assertNotNull(clazzLoader);
-        assertTrue(clazzLoader.isPresent());
+        assertThat(clazzLoader).isNotNull();
+        assertThat(clazzLoader.isPresent()).isTrue();
         ClassLoader prjClassloader = clazzLoader.get();
 
         //we try to load the only dep in the prj with a simple call method to see if is loaded or not
         Class clazz;
         try {
             clazz = prjClassloader.loadClass("org.slf4j.LoggerFactory");
-            assertFalse(clazz.isInterface());
+            assertThat(clazz.isInterface()).isFalse();
 
             Method m = clazz.getMethod("getLogger",
                                        String.class);
             Logger logger = (Logger) m.invoke(clazz,
                                               "Dummy");
-            assertTrue(logger.getName().equals("Dummy"));
+            assertThat(logger.getName().equals("Dummy")).isTrue();
             logger.info("dependency loaded from the prj classpath");
         } catch (ClassNotFoundException e) {
-            fail();
+            fail("Test fail due ClassNotFoundException.", e);
         }
 
         TestUtil.rm(tmpRoot.toFile());
@@ -133,28 +131,28 @@ public class KieClassLoaderProviderTest {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
         }
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(uberfireTmp.toAbsolutePath().toString(),
                                                                                                             mavenRepo.toAbsolutePath().toString());
-        assertNotNull(clazzLoader);
-        assertTrue(clazzLoader.isPresent());
+        assertThat(clazzLoader).isNotNull();
+        assertThat(clazzLoader.isPresent()).isTrue();
         ClassLoader prjClassloader = clazzLoader.get();
 
         //we try to load the only dep in the prj with a simple call method to see if is loaded or not
         Class clazz;
         try {
             clazz = prjClassloader.loadClass("org.slf4j.LoggerFactory");
-            assertFalse(clazz.isInterface());
+            assertThat(clazz.isInterface()).isFalse();
 
             Method m = clazz.getMethod("getLogger",
                                        String.class);
             Logger logger = (Logger) m.invoke(clazz,
                                               "Dummy");
-            assertTrue(logger.getName().equals("Dummy"));
+            assertThat(logger.getName().equals("Dummy")).isTrue();
             logger.info("dependency loaded from the prj classpath");
         } catch (ClassNotFoundException e) {
-            fail();
+            fail("Test fail due ClassNotFoundException.", e);
         }
 
         TestUtil.rm(tmpRoot.toFile());
@@ -181,31 +179,31 @@ public class KieClassLoaderProviderTest {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieClassLoaderProviderTest.loadTargetFolderClassloaderTest");
         }
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         List<String> pomList = MavenUtils.searchPoms(uberfireTmp);
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.getClassloaderFromProjectTargets(pomList);
-        assertNotNull(clazzLoader);
-        assertTrue(clazzLoader.isPresent());
+        assertThat(clazzLoader).isNotNull();
+        assertThat(clazzLoader.isPresent()).isTrue();
         ClassLoader prjClassloader = clazzLoader.get();
 
         //we try to load the only dep in the prj with a simple call method to see if is loaded or not
         Class clazz;
         try {
             clazz = prjClassloader.loadClass("dummy.DummyB");
-            assertFalse(clazz.isInterface());
+            assertThat(clazz.isInterface()).isFalse();
             Object obj = clazz.newInstance();
 
-            assertTrue(obj.toString().startsWith("dummy.DummyB"));
+            assertThat(obj.toString()).startsWith("dummy.DummyB");
 
             Method m = clazz.getMethod("greetings",
                                        new Class[]{});
             Object greeting = m.invoke(obj,
                                        new Object[]{});
-            assertTrue(greeting.toString().equals("Hello World !"));
+            assertThat(greeting.toString()).isEqualTo("Hello World !");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            fail();
+            fail("Test fail due ClassNotFoundException.", e);
         }
 
         TestUtil.rm(tmpRoot.toFile());
@@ -216,10 +214,10 @@ public class KieClassLoaderProviderTest {
         Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_simple");
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
                                                                                                                mavenRepo.toAbsolutePath().toString());
-        assertTrue(classloaderOptional.isPresent());
+        assertThat(classloaderOptional.isPresent()).isTrue();
         ClassLoader classloader = classloaderOptional.get();
         URLClassLoader urlsc = (URLClassLoader) classloader;
-        assertTrue(urlsc.getURLs().length == 4);
+        assertThat(urlsc.getURLs()).hasSize(4);
     }
 
     @Test
@@ -227,9 +225,9 @@ public class KieClassLoaderProviderTest {
         Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_complex");
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
                                                                                                                mavenRepo.toAbsolutePath().toString());
-        assertTrue(classloaderOptional.isPresent());
+        assertThat(classloaderOptional.isPresent()).isTrue();
         ClassLoader classloader = classloaderOptional.get();
         URLClassLoader urlsc = (URLClassLoader) classloader;
-        assertTrue(urlsc.getURLs().length == 7);
+        assertThat(urlsc.getURLs()).hasSize(7);
     }
 }

@@ -30,7 +30,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
@@ -46,7 +45,7 @@ import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
-import static junit.framework.TestCase.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConcurrentBuildTest {
 
@@ -83,10 +82,10 @@ public class ConcurrentBuildTest {
         System.err.println(resThree.get());
         System.err.println(resFour.get());
 
-        assertTrue(resOne.get().isSuccessful());
-        assertTrue(resTwo.get().isSuccessful());
-        assertTrue(resThree.get().isSuccessful());
-        assertTrue(resFour.get().isSuccessful());
+        assertThat(resOne.get().isSuccessful()).isTrue();
+        assertThat(resTwo.get().isSuccessful()).isTrue();
+        assertThat(resThree.get().isSuccessful()).isTrue();
+        assertThat(resFour.get().isSuccessful()).isTrue();
     }
 
     @Test
@@ -105,12 +104,12 @@ public class ConcurrentBuildTest {
             latch.await();
 
             logger.info("\nFinished all threads ");
-            Assert.assertTrue(results.size() == 4);
+            assertThat(results).hasSize(4);
             for (Future<KieCompilationResponse> result : results) {
                 logger.info("Working dir:" + result.get().getWorkingDir().get() + " success:" + result.get().isSuccessful());
             }
             for (Future<KieCompilationResponse> result : results) {
-                Assert.assertTrue(result.get().isSuccessful());
+                assertThat(result.get().isSuccessful()).isTrue();
             }
         } catch (ExecutionException ee) {
             logger.error(ee.getMessage());
@@ -147,10 +146,10 @@ public class ConcurrentBuildTest {
             Future<Map<Integer, KieCompilationResponse>> future = executor.submit(task1);
             latch.await();
             Map<Integer, KieCompilationResponse> result = future.get();// blocking call
-            Assert.assertTrue(result.get(1).isSuccessful());
-            Assert.assertTrue(result.get(2).isSuccessful());
-            Assert.assertTrue(result.get(3).isSuccessful());
-            Assert.assertTrue(result.get(4).isSuccessful());
+            assertThat(result.get(1).isSuccessful()).isTrue();
+            assertThat(result.get(2).isSuccessful()).isTrue();
+            assertThat(result.get(3).isSuccessful()).isTrue();
+            assertThat(result.get(4).isSuccessful()).isTrue();
             logger.info("\nFinished all threads");
         } catch (InterruptedException e) {
             logger.error("tasks interrupted");

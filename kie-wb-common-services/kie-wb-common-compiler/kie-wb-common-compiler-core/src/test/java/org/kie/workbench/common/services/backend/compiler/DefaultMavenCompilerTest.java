@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullCommand;
@@ -29,7 +30,6 @@ import org.eclipse.jgit.api.RebaseCommand;
 import org.eclipse.jgit.api.RebaseResult;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
@@ -46,10 +46,6 @@ import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 import org.uberfire.mocks.FileSystemTestingUtils;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class DefaultMavenCompilerTest {
 
@@ -116,7 +112,7 @@ public class DefaultMavenCompilerTest {
 
         final Git cloned = Git.cloneRepository().setURI(fs.getGit().getRepository().getDirectory().toURI().toString()).setBare(false).setDirectory(gitClonedFolder).call();
 
-        assertNotNull(cloned);
+        assertThat(cloned).isNotNull();
 
         //Compile the repo
 
@@ -124,7 +120,7 @@ public class DefaultMavenCompilerTest {
         byte[] encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        Assert.assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        assertThat(pomAsAstring).doesNotContain("<artifactId>takari-lifecycle-plugin</artifactId>");
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
@@ -140,15 +136,15 @@ public class DefaultMavenCompilerTest {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithCloneTest");
         }
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile");
-        assertTrue(incrementalConfiguration.toFile().exists());
+        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        assertTrue(pomAsAstring.contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>"));
+        assertThat(pomAsAstring).contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>");
 
         TestUtil.rm(tmpRootCloned.toFile());
     }
@@ -188,15 +184,15 @@ public class DefaultMavenCompilerTest {
 
         final Git cloned = Git.cloneRepository().setURI("git://localhost:9418/repo").setBare(false).setDirectory(tmpCloned.toFile()).call();
 
-        assertNotNull(cloned);
+        assertThat(cloned).isNotNull();
 
         PullCommand pc = cloned.pull().setRemote("origin").setRebase(Boolean.TRUE);
         PullResult pullRes = pc.call();
-        assertTrue(pullRes.getRebaseResult().getStatus().equals(RebaseResult.Status.UP_TO_DATE));// nothing changed yet
+        assertThat(pullRes.getRebaseResult().getStatus()).isEqualTo(RebaseResult.Status.UP_TO_DATE);// nothing changed yet
 
         RebaseCommand rb = cloned.rebase().setUpstream("origin/master");
         RebaseResult rbResult = rb.setPreserveMerges(true).call();
-        assertTrue(rbResult.getStatus().isSuccessful());
+        assertThat(rbResult.getStatus().isSuccessful()).isTrue();
 
         //Compile the repo
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
@@ -204,7 +200,7 @@ public class DefaultMavenCompilerTest {
         byte[] encoded = Files.readAllBytes(Paths.get(tmpCloned + "/dummy/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        Assert.assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        assertThat(pomAsAstring).doesNotContain("<artifactId>takari-lifecycle-plugin</artifactId>");
 
         Path prjFolder = Paths.get(tmpCloned + "/dummy/");
 
@@ -220,15 +216,15 @@ public class DefaultMavenCompilerTest {
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithPullRebaseUberfireTest");
         }
 
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile");
-        assertTrue(incrementalConfiguration.toFile().exists());
+        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        assertTrue(pomAsAstring.contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>"));
+        assertThat(pomAsAstring).contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>");
 
         TestUtil.rm(tmpRootCloned.toFile());
     }
@@ -250,7 +246,7 @@ public class DefaultMavenCompilerTest {
                                                                                    put("listMode",
                                                                                        "ALL");
                                                                                }});
-        assertNotNull(origin);
+        assertThat(origin).isNotNull();
 
         ioService.startBatch(origin);
 
@@ -268,7 +264,7 @@ public class DefaultMavenCompilerTest {
 
         RevCommit lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
 
-        assertNotNull(lastCommit);
+        assertThat(lastCommit).isNotNull();
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("/dummy/"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
@@ -280,22 +276,22 @@ public class DefaultMavenCompilerTest {
             TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/dummy/"), res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
         }
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
-        ;
-        assertNotNull(lastCommit);
+
+        assertThat(lastCommit).isNotNull();
 
         ioService.write(origin.getPath("/dummy/dummyA/src/main/java/dummy/DummyA.java"),
                         new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/DummyA.java").toPath())));
 
         RevCommit commitBefore = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
-        assertNotNull(commitBefore);
-        assertFalse(lastCommit.getId().toString().equals(commitBefore.getId().toString()));
+        assertThat(commitBefore).isNotNull();
+        assertThat(lastCommit.getId().toString()).isNotEqualTo(commitBefore.getId().toString());
 
         //recompile
         res = compiler.compile(req);
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
     }
 
     //
@@ -316,7 +312,7 @@ public class DefaultMavenCompilerTest {
                                                                                    put("listMode",
                                                                                        "ALL");
                                                                                }});
-        assertNotNull(origin);
+        assertThat(origin).isNotNull();
 
         ioService.startBatch(origin);
 
@@ -331,7 +327,7 @@ public class DefaultMavenCompilerTest {
         ioService.endBatch();
 
         RevCommit lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
-        assertNotNull(lastCommit);
+        assertThat(lastCommit).isNotNull();
 
         // clone into a regularfs
         Path tmpRootCloned = Files.createTempDirectory("cloned");
@@ -340,7 +336,7 @@ public class DefaultMavenCompilerTest {
 
         final Git cloned = Git.cloneRepository().setURI("git://localhost:9418/repo").setBare(false).setDirectory(tmpCloned.toFile()).call();
 
-        assertNotNull(cloned);
+        assertThat(cloned).isNotNull();
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
@@ -352,18 +348,18 @@ public class DefaultMavenCompilerTest {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
         }
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
-        assertNotNull(lastCommit);
+        assertThat(lastCommit).isNotNull();
 
         //change one file and commit on the origin repo
         ioService.write(origin.getPath("/dummy/src/main/java/org/kie/maven/plugin/test/Person.java"),
                         new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/Person.java").toPath())));
 
         RevCommit commitBefore = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
-        assertNotNull(commitBefore);
-        assertFalse(lastCommit.getId().toString().equals(commitBefore.getId().toString()));
+        assertThat(commitBefore).isNotNull();
+        assertThat(lastCommit.getId().toString()).isNotEqualTo(commitBefore.getId().toString());
 
         //recompile
         res = compiler.compile(req);
@@ -371,7 +367,7 @@ public class DefaultMavenCompilerTest {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
         }
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         TestUtil.rm(tmpRootCloned.toFile());
     }
@@ -396,11 +392,11 @@ public class DefaultMavenCompilerTest {
                                                       "pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertFalse(pomAsAstring.contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>"));
-        assertFalse(pomAsAstring.contains("<packaging>kjar</packaging>"));
-        assertFalse(pomAsAstring.contains("<compilerId>jdt</compilerId>"));
-        assertFalse(pomAsAstring.contains("<source>1.8</source>"));
-        assertFalse(pomAsAstring.contains("<target>1.8</target>"));
+        assertThat(pomAsAstring).doesNotContain("<artifactId>kie-takari-lifecycle-plugin</artifactId>");
+        assertThat(pomAsAstring).doesNotContain("<packaging>kjar</packaging>");
+        assertThat(pomAsAstring).doesNotContain("<compilerId>jdt</compilerId>");
+        assertThat(pomAsAstring).doesNotContain("<source>1.8</source>");
+        assertThat(pomAsAstring).doesNotContain("<target>1.8</target>");
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
@@ -408,15 +404,15 @@ public class DefaultMavenCompilerTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, "-X"},
                                                                Boolean.FALSE);
         DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
-        assertTrue(enabler.process(req).getResult());
+        assertThat(enabler.process(req).getResult()).isTrue();
 
         encoded = Files.readAllBytes(Paths.get(mainPom.toString()));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
 
-        assertTrue(pomAsAstring.contains("<compilerId>jdt</compilerId>"));
-        assertTrue(pomAsAstring.contains("<source>1.8</source>"));
-        assertTrue(pomAsAstring.contains("<target>1.8</target>"));
+        assertThat(pomAsAstring).contains("<compilerId>jdt</compilerId>");
+        assertThat(pomAsAstring).contains("<source>1.8</source>");
+        assertThat(pomAsAstring).contains("<target>1.8</target>");
 
         TestUtil.rm(tmpRoot.toFile());
     }
@@ -438,7 +434,7 @@ public class DefaultMavenCompilerTest {
                                                                                    put("listMode",
                                                                                        "ALL");
                                                                                }});
-        assertNotNull(origin);
+        assertThat(origin).isNotNull();
 
         ioService.startBatch(origin);
 
@@ -456,7 +452,7 @@ public class DefaultMavenCompilerTest {
 
         RevCommit lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
 
-        assertNotNull(lastCommit);
+        assertThat(lastCommit).isNotNull();
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("/dummy/"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
@@ -468,24 +464,24 @@ public class DefaultMavenCompilerTest {
             TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/dummy/"), res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
         }
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
-        ;
-        assertNotNull(lastCommit);
+
+        assertThat(lastCommit).isNotNull();
 
         ioService.write(origin.getPath("/dummy/dummyA/src/main/java/dummy/DummyA.java"),
                         new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/DummyA.java").toPath())));
 
         RevCommit commitBefore = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
-        assertNotNull(commitBefore);
-        assertFalse(lastCommit.getId().toString().equals(commitBefore.getId().toString()));
+        assertThat(commitBefore).isNotNull();
+        assertThat(lastCommit.getId().toString()).isNotEqualTo(commitBefore.getId().toString());
 
-        Assert.assertTrue(compiler.cleanInternalCache());
+        assertThat(compiler.cleanInternalCache()).isTrue();
 
         // recompile
         res = compiler.compile(req);
         // assert commits
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
     }
 }

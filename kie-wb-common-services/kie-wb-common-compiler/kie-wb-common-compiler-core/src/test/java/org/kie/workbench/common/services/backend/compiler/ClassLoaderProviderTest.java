@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.drools.compiler.kie.builder.impl.InternalKieModule;
 import org.drools.core.rule.KieModuleMetaInfo;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.api.builder.KieModule;
@@ -46,10 +46,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.fail;
 
 public class ClassLoaderProviderTest {
 
@@ -92,29 +89,29 @@ public class ClassLoaderProviderTest {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadProjectClassloaderTest");
         }
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         List<String> pomList = MavenUtils.searchPoms(Paths.get("src/test/projects/dummy_kie_multimodule_classloader/"));
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(pomList,
                                                                                                             mavenRepo.toAbsolutePath().toString());
-        assertNotNull(clazzLoader);
-        assertTrue(clazzLoader.isPresent());
+        assertThat(clazzLoader).isNotNull();
+        assertThat(clazzLoader).isPresent();
         ClassLoader prjClassloader = clazzLoader.get();
 
         //we try to load the only dep in the prj with a simple call method to see if is loaded or not
         Class clazz;
         try {
             clazz = prjClassloader.loadClass("org.slf4j.LoggerFactory");
-            assertFalse(clazz.isInterface());
+            assertThat(clazz.isInterface()).isFalse();
 
             Method m = clazz.getMethod("getLogger",
                                        String.class);
             Logger logger = (Logger) m.invoke(clazz,
                                               "Dummy");
-            assertTrue(logger.getName().equals("Dummy"));
+            assertThat(logger.getName()).isEqualTo("Dummy");
             logger.info("dependency loaded from the prj classpath");
         } catch (ClassNotFoundException e) {
-            fail();
+            fail("Test fail due ClassNotFoundException.", e);
         }
 
         TestUtil.rm(tmpRoot.toFile());
@@ -142,28 +139,28 @@ public class ClassLoaderProviderTest {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
         }
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(uberfireTmp.toAbsolutePath().toString(),
                                                                                                             mavenRepo.toAbsolutePath().toString());
-        assertNotNull(clazzLoader);
-        assertTrue(clazzLoader.isPresent());
+        assertThat(clazzLoader).isNotNull();
+        assertThat(clazzLoader.isPresent()).isTrue();
         ClassLoader prjClassloader = clazzLoader.get();
 
         //we try to load the only dep in the prj with a simple call method to see if is loaded or not
         Class clazz;
         try {
             clazz = prjClassloader.loadClass("org.slf4j.LoggerFactory");
-            assertFalse(clazz.isInterface());
+            assertThat(clazz.isInterface()).isFalse();
 
             Method m = clazz.getMethod("getLogger",
                                        String.class);
             Logger logger = (Logger) m.invoke(clazz,
                                               "Dummy");
-            assertTrue(logger.getName().equals("Dummy"));
+            assertThat(logger.getName()).isEqualTo("Dummy");
             logger.info("dependency loaded from the prj classpath");
         } catch (ClassNotFoundException e) {
-            fail();
+            fail("Test fail due ClassNotFoundException.", e);
         }
 
         TestUtil.rm(tmpRoot.toFile());
@@ -191,31 +188,31 @@ public class ClassLoaderProviderTest {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadTargetFolderClassloaderTest");
         }
-        assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         List<String> pomList = MavenUtils.searchPoms(uberfireTmp);
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.getClassloaderFromProjectTargets(pomList);
-        assertNotNull(clazzLoader);
-        assertTrue(clazzLoader.isPresent());
+        assertThat(clazzLoader).isNotNull();
+        assertThat(clazzLoader.isPresent()).isTrue();
         ClassLoader prjClassloader = clazzLoader.get();
 
         //we try to load the only dep in the prj with a simple call method to see if is loaded or not
         Class clazz;
         try {
             clazz = prjClassloader.loadClass("dummy.DummyB");
-            assertFalse(clazz.isInterface());
+            assertThat(clazz.isInterface()).isFalse();
             Object obj = clazz.newInstance();
 
-            assertTrue(obj.toString().startsWith("dummy.DummyB"));
+            assertThat(obj.toString()).startsWith("dummy.DummyB");
 
             Method m = clazz.getMethod("greetings",
                                        new Class[]{});
             Object greeting = m.invoke(obj,
                                        new Object[]{});
-            assertTrue(greeting.toString().equals("Hello World !"));
+            assertThat(greeting.toString()).isEqualTo("Hello World !");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            fail();
+            fail("Test fail due ClassNotFoundException.", e);
         }
 
         TestUtil.rm(tmpRoot.toFile());
@@ -226,10 +223,10 @@ public class ClassLoaderProviderTest {
         Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_simple");
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
                                                                                                                mavenRepo.toAbsolutePath().toString());
-        assertTrue(classloaderOptional.isPresent());
+        assertThat(classloaderOptional.isPresent()).isTrue();
         ClassLoader classloader = classloaderOptional.get();
         URLClassLoader urlsc = (URLClassLoader) classloader;
-        assertTrue(urlsc.getURLs().length == 4);
+        assertThat(urlsc.getURLs()).hasSize(4);
     }
 
     @Test
@@ -237,10 +234,10 @@ public class ClassLoaderProviderTest {
         Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_complex");
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
                                                                                                                mavenRepo.toAbsolutePath().toString());
-        assertTrue(classloaderOptional.isPresent());
+        assertThat(classloaderOptional.isPresent()).isTrue();
         ClassLoader classloader = classloaderOptional.get();
         URLClassLoader urlsc = (URLClassLoader) classloader;
-        assertTrue(urlsc.getURLs().length == 7);
+        assertThat(urlsc.getURLs()).hasSize(7);
     }
 
     @Test
@@ -273,30 +270,29 @@ public class ClassLoaderProviderTest {
             }
         }
 
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
-        Assert.assertTrue(metaDataOptional.isPresent());
+        assertThat(metaDataOptional.isPresent()).isTrue();
         KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
-        Assert.assertNotNull(kieModuleMetaInfo);
+        assertThat(kieModuleMetaInfo).isNotNull();
 
         Map<String, Set<String>> rulesBP = kieModuleMetaInfo.getRulesByPackage();
-        Assert.assertEquals(rulesBP.size(),
-                            1);
+        assertThat(rulesBP).hasSize(1);
 
         Optional<KieModule> kieModuleOptional = res.getKieModule();
-        Assert.assertTrue(kieModuleOptional.isPresent());
+        assertThat(kieModuleOptional.isPresent()).isTrue();
         KieModule kModule = kieModuleOptional.get();
 
-        Assert.assertTrue(res.getDependenciesAsURI().size() == 5);
+        assertThat(res.getDependenciesAsURI()).hasSize(5);
 
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
                                                                         res.getDependenciesAsURI());
 
-        Assert.assertNotNull(kieModuleMetaData);
+        assertThat(kieModuleMetaData).isNotNull();
 
         List<String> resources = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
-        Assert.assertTrue(resources.size() == 3);
+        assertThat(resources).hasSize(3);
         TestUtil.rm(tmpRoot.toFile());
     }
 
@@ -330,22 +326,21 @@ public class ClassLoaderProviderTest {
             }
         }
 
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res.isSuccessful()).isTrue();
 
         Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
-        Assert.assertTrue(metaDataOptional.isPresent());
+        assertThat(metaDataOptional.isPresent()).isTrue();
         KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
-        Assert.assertNotNull(kieModuleMetaInfo);
+        assertThat(kieModuleMetaInfo).isNotNull();
 
         Map<String, Set<String>> rulesBP = kieModuleMetaInfo.getRulesByPackage();
-        Assert.assertEquals(rulesBP.size(),
-                            1);
+        assertThat(rulesBP).hasSize(1);
 
         Optional<KieModule> kieModuleOptional = res.getKieModule();
-        Assert.assertTrue(kieModuleOptional.isPresent());
+        assertThat(kieModuleOptional.isPresent()).isTrue();
 
         List<String> classloaderOptional = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
-        Assert.assertTrue(classloaderOptional.size() == 3);
+        assertThat(classloaderOptional).hasSize(3);
         TestUtil.rm(tmpRoot.toFile());
     }
 }

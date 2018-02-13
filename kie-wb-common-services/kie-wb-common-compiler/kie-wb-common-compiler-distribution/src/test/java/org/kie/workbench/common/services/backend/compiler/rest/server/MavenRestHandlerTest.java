@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.rest.server;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.jboss.resteasy.core.AsynchronousDispatcher;
 import org.jboss.resteasy.core.Dispatcher;
 import org.jboss.resteasy.core.SynchronousDispatcher;
@@ -25,7 +26,6 @@ import org.jboss.resteasy.mock.MockHttpResponse;
 import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
 import org.jboss.resteasy.plugins.server.resourcefactory.POJOResourceFactory;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 
 import org.junit.Test;
@@ -67,8 +67,8 @@ public class MavenRestHandlerTest extends BaseCompilerTest {
         MockHttpRequest request = MockHttpRequest.get("maven/3.3.9/");
         MockHttpResponse response = new MockHttpResponse();
         dispatcher.invoke(request, response);
-        Assert.assertTrue(response.getStatus() == 200);
-        Assert.assertTrue(response.getContentAsString().equals("Apache Maven 3.3.9"));
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.getContentAsString()).isEqualTo("Apache Maven 3.3.9");
     }
 
     @Test
@@ -88,12 +88,12 @@ public class MavenRestHandlerTest extends BaseCompilerTest {
         request.setAsynchronousContext(synchronousExecutionContext);
 
         dispatcher.invoke(request, response);
-        Assert.assertTrue(response.getStatus() == 200);
+        assertThat(response.getStatus()).isEqualTo(200);
         byte[] serializedCompilationResponse = response.getOutput();
         HttpCompilationResponse res = RestUtils.readDefaultCompilationResponseFromBytes(serializedCompilationResponse);
-        Assert.assertNotNull(res);
-        Assert.assertTrue(res.getDependencies().size() == 4);
-        Assert.assertTrue(res.getTargetContent().size() == 3);
+        assertThat(res).isNotNull();
+        assertThat(res.getDependencies()).hasSize(4);
+        assertThat(res.getTargetContent()).hasSize(3);
     }
 
 }

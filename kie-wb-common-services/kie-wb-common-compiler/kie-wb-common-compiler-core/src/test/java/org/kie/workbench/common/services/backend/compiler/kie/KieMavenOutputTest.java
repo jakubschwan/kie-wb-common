@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.kie;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
@@ -29,8 +30,6 @@ import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompi
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
-
-import static junit.framework.TestCase.assertTrue;
 
 public class KieMavenOutputTest {
 
@@ -69,8 +68,8 @@ public class KieMavenOutputTest {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieMavenOutputTest.testOutputWithTakari");
         }
-        assertTrue(res.isSuccessful());
-        assertTrue(res.getMavenOutput().size() > 0);
+        assertThat(res.isSuccessful()).isTrue();
+        assertThat(res.getMavenOutput().size()).isGreaterThan(0);
 
         TestUtil.rm(tmpRoot.toFile());
     }

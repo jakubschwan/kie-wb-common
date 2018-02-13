@@ -26,7 +26,6 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 
 import org.junit.Ignore;
@@ -53,6 +52,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
@@ -154,8 +154,8 @@ public class MavenRestClientTest {
         WebTarget target = client.target(deploymentUrl.toString() +"rest/maven/3.3.9/");
         Invocation invocation = target.request().buildGet();
         Response response = invocation.invoke();
-        Assert.assertEquals(response.getStatusInfo().getStatusCode(), 200);
-        Assert.assertEquals("Apache Maven 3.3.9", response.readEntity(String.class));
+        assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(200);
+        assertThat(response.readEntity(String.class)).isEqualTo("Apache Maven 3.3.9");
     }
 
 
@@ -168,12 +168,12 @@ public class MavenRestClientTest {
         headersMap.add("mavenrepo", mavenRepo.toAbsolutePath().toString());
         Future<Response>  responseFuture = target.request().headers(headersMap).async().post(Entity.entity(String.class, MediaType.TEXT_PLAIN));
         Response response = responseFuture.get();
-        Assert.assertEquals(response.getStatusInfo().getStatusCode(), 200);
+        assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(200);
         InputStream is = response.readEntity(InputStream.class);
         byte[] serializedCompilationResponse = IOUtils.toByteArray(is);;
         HttpCompilationResponse res = RestUtils.readDefaultCompilationResponseFromBytes(serializedCompilationResponse);
-        Assert.assertNotNull(res);
-        Assert.assertTrue(res.getDependencies().size() == 4);
-        Assert.assertTrue(res.getTargetContent().size() == 3);
+        assertThat(res).isNotNull();
+        assertThat(res.getDependencies()).hasSize(4);
+        assertThat(res.getTargetContent()).hasSize(3);
     }
 }

@@ -22,7 +22,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.maven.cli.CLIManager;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MavenParameterTest {
 
@@ -41,7 +41,7 @@ public class MavenParameterTest {
                 try {
                     final CommandLine commandLine = manager.parse(values);
                     System.out.println(commandLine.getArgList());
-                    assertEquals(2, commandLine.getArgs().length);
+                    assertThat(commandLine.getArgs().length).isEqualTo(2);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

@@ -16,9 +16,8 @@
 package org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler;
 
 import java.nio.charset.StandardCharsets;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
@@ -45,18 +44,18 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
         byte[] encoded = Files.readAllBytes(Paths.get(tmpRoot + "/dummy/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        Assert.assertFalse(pomAsAstring.contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>"));
+        assertThat(pomAsAstring).doesNotContain("<artifactId>kie-takari-lifecycle-plugin</artifactId>");
 
         IncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
         ProcessedPoms poms = enabler.process(req);
-        Assert.assertNotNull(poms);
-        Assert.assertTrue(poms.getResult());
-        Assert.assertTrue(poms.getProjectPoms().size() == 1);
+        assertThat(poms).isNotNull();
+        assertThat(poms.getResult()).isTrue();
+        assertThat(poms.getProjectPoms()).hasSize(1);
         String pom = poms.getProjectPoms().get(0);
-        Assert.assertTrue(pom.equals(tmpRoot.toString() + "/dummy/pom.xml"));
+        assertThat(pom).isEqualTo(tmpRoot.toString() + "/dummy/pom.xml");
         encoded = Files.readAllBytes(Paths.get(tmpRoot + "/dummy/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        Assert.assertTrue(pomAsAstring.contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>"));
+        assertThat(pomAsAstring).contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>");
     }
 }

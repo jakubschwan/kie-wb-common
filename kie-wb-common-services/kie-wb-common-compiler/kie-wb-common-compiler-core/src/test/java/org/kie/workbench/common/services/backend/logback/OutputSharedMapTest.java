@@ -15,10 +15,9 @@
  */
 package org.kie.workbench.common.services.backend.logback;
 
-import java.util.Collections;
 import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 public class OutputSharedMapTest {
@@ -28,51 +27,49 @@ public class OutputSharedMapTest {
     @Test
     public void addMessageTest(){
         List<String> msgs = OutputSharedMap.getLog(KEY);
-        Assert.assertTrue(msgs.equals(Collections.EMPTY_LIST));
+        assertThat(msgs).isEmpty();
         OutputSharedMap.addMsgToLog(KEY, "msg");
         OutputSharedMap.addMsgToLog(KEY, "msgOne");
         msgs =OutputSharedMap.getLog(KEY);
-        Assert.assertTrue(msgs.size()  == 2);
+        assertThat(msgs).hasSize(2);
         OutputSharedMap.purgeAll();
     }
 
     @Test
     public void getMessageTest(){
         List<String> msgs = OutputSharedMap.getLog(KEY);
-        Assert.assertTrue(msgs.equals(Collections.EMPTY_LIST));
+        assertThat(msgs).isEmpty();
         OutputSharedMap.addMsgToLog(KEY, "msg");
         msgs =OutputSharedMap.getLog(KEY);
-        Assert.assertTrue(msgs.size()  == 1);
-        Assert.assertTrue(msgs.get(0).equals("msg"));
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).isEqualTo("msg");
         OutputSharedMap.purgeAll();
     }
 
     @Test
     public void getRemoveMessageTest(){
         List<String> msgs = OutputSharedMap.getLog(KEY);
-        Assert.assertTrue(msgs.equals(Collections.EMPTY_LIST));
+        assertThat(msgs).isEmpty();
         OutputSharedMap.addMsgToLog(KEY, "msg");
         msgs =OutputSharedMap.getLog(KEY);
-        Assert.assertTrue(msgs.size()  == 1);
-        Assert.assertTrue(msgs.get(0).equals("msg"));
+        assertThat(msgs).hasSize(1);
+        assertThat(msgs.get(0)).isEqualTo("msg");
         OutputSharedMap.removeLog(KEY);
         msgs =OutputSharedMap.getLog(KEY);
-        Assert.assertTrue(msgs.equals(Collections.EMPTY_LIST));
-        Assert.assertTrue(msgs.size()  == 0);
+        assertThat(msgs).isEmpty();
         OutputSharedMap.purgeAll();
     }
 
     @Test
     public void getPurgeAllTest(){
         List<String> msgs = OutputSharedMap.getLog(KEY);
-        Assert.assertTrue(msgs.equals(Collections.EMPTY_LIST));
+        assertThat(msgs).isEmpty();
         OutputSharedMap.addMsgToLog(KEY, "msg");
         OutputSharedMap.addMsgToLog(KEY, "msgOne");
         msgs =OutputSharedMap.getLog(KEY);
-        Assert.assertTrue(msgs.size()  == 2);
+        assertThat(msgs).hasSize(2).contains("msg", "msgOne");
         OutputSharedMap.purgeAll();
         msgs =OutputSharedMap.getLog(KEY);
-        Assert.assertTrue(msgs.equals(Collections.EMPTY_LIST));
-        Assert.assertTrue(msgs.size()  == 0);
+        assertThat(msgs).isEmpty();
     }
 }
