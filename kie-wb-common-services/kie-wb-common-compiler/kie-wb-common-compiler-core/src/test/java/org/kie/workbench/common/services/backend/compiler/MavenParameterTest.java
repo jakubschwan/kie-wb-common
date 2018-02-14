@@ -25,7 +25,7 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MavenParameterTest {
-
+    //@TODO Alex
     @Test
     public void cliParameters() throws ParseException {
         for (int i = 0; i < 600; i++) {

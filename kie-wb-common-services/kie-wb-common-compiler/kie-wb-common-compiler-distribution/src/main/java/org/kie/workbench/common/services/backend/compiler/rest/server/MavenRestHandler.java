@@ -36,7 +36,6 @@ import org.kie.workbench.common.services.backend.compiler.service.AFCompilerServ
 import org.kie.workbench.common.services.backend.compiler.service.DefaultKieCompilerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uberfire.java.nio.file.Paths;
 
 /**
  * Rest endpoint to ask an async remote compilation
@@ -72,7 +71,7 @@ public class MavenRestHandler extends Application{
     @POST
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public void postAsync(@Suspended AsyncResponse ar, @HeaderParam("project") String projectRepo, @HeaderParam("mavenrepo") String mavenRepo) throws Exception {
-        CompletableFuture<KieCompilationResponse> response = compilerService.build(Paths.get(projectRepo), mavenRepo);
+        CompletableFuture<KieCompilationResponse> response = compilerService.build(projectRepo, mavenRepo);
         response.whenCompleteAsync((kieCompilationResponse, throwable) -> {
                 if(throwable != null){
                     logger.error(throwable.getMessage());

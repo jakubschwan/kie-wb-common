@@ -17,18 +17,16 @@ package org.kie.workbench.common.services.backend.compiler.rest.client;
 
 import java.io.File;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.eclipse.jgit.api.Git;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
-import org.junit.Before;
 
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.backend.compiler.HttpCompilationResponse;
@@ -37,10 +35,18 @@ import org.kie.workbench.common.services.backend.compiler.rest.RestUtils;
 import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandler;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.uberfire.io.IOService;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import java.util.HashMap;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.client.Client;
@@ -52,39 +58,32 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
+import org.uberfire.mocks.FileSystemTestingUtils;
 
 @RunWith(Arquillian.class)
 public class MavenRestClientTest {
 
-    private  Path tmpRoot;
-    private  Path mavenRepo;
+    private static Path tmpRoot;
+    private static Path mavenRepo;
+    private static FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
+    private static IOService ioService;
+    private Logger logger = LoggerFactory.getLogger(MavenRestClientTest.class);
 
     @ArquillianResource
     private URL deploymentUrl;
 
     /**
      * Maven use as current dir the current module, arquillian w/junit the top level module kie-wb-common
-     * */
+     */
     private static Boolean runIntoMavenCLI = null;
 
-    @Before
-    public  void setup() throws Exception{
-        setRunIntoMavenCLI();
-        tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
-        if(runIntoMavenCLI){
-            FileUtils.copyDirectory(new File("target/test-classes/kjar-2-single-resources"), tmp.toFile());
-        }else {
-            FileUtils.copyDirectory(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/kjar-2-single-resources"), tmp.toFile());
-        }
-        mavenRepo =   Paths.get(System.getProperty("user.home"), "/.m2/repository");
-    }
-
     private static void setRunIntoMavenCLI() {
-        if(runIntoMavenCLI == null) {
+        if (runIntoMavenCLI == null) {
             File currentDir = new File(".");
             if (currentDir.getAbsolutePath().endsWith("kie-wb-common-compiler-distribution/.")) {
                 runIntoMavenCLI = Boolean.TRUE; // Run into MavenCLI
@@ -94,21 +93,31 @@ public class MavenRestClientTest {
         }
     }
 
-    @After
-    public void tearDown()  {
-        TestUtil.rm(new File("src/../.security/"));
+    public static void setup() throws Exception {
+        setRunIntoMavenCLI();
+        fileSystemTestingUtils.setup();
+        ioService = fileSystemTestingUtils.getIoService();
+    }
+
+    public static void tearDown() {
+        fileSystemTestingUtils.cleanup();
+        File sec = new File("src/../.security/");
+        if (sec.exists()) {
+            TestUtil.rm(sec);
+        }
     }
 
     @Deployment
-    public static Archive getDeployment() {
+    public static Archive getDeployment() throws Exception {
+        setup();
         setRunIntoMavenCLI();
         final WebArchive war = ShrinkWrap.create(WebArchive.class, "compiler.war");
         final File[] metaInfFilesFiles;
-        if(runIntoMavenCLI){
+        if (runIntoMavenCLI) {
             war.addAsResource(new File("src/test/resources/IncrementalCompiler.properties"));
             war.setWebXML(new File("target/test-classes/web.xml"));
             metaInfFilesFiles = new File("target/test-classes/META-INF").listFiles();
-        }else{
+        } else {
             war.addAsResource(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/IncrementalCompiler.properties"));
             war.setWebXML(new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/web.xml"));
             metaInfFilesFiles = new File("kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/META-INF").listFiles();
@@ -125,19 +134,20 @@ public class MavenRestClientTest {
         final File[] files = Maven.configureResolver().
                 fromFile(settings).
                 loadPomFromFile("./pom.xml")
-                .resolve("org.kie.workbench.services:kie-wb-common-compiler-core:?",
-                         "org.jboss.errai:errai-bus:?",
-                         "org.jboss.errai:errai-jboss-as-support:?",
-                         "org.jboss.errai:errai-marshalling:?",
-                         "org.uberfire:uberfire-nio2-api:?",
-                         "org.uberfire:uberfire-nio2-model:?",
-                         "org.uberfire:uberfire-nio2-jgit:?",
-                         "org.uberfire:uberfire-nio2-fs:?",
-                         "org.uberfire:uberfire-servlet-security:?",
-                         "org.uberfire:uberfire-testing-utils:?",
-                         "org.eclipse.jgit:org.eclipse.jgit:?",
-                         "org.jboss.resteasy:resteasy-jaxrs:?",
-                         "org.jboss.resteasy:resteasy-multipart-provider:?").withTransitivity()
+                .resolve(
+                        "org.kie.workbench.services:kie-wb-common-compiler-core:?",
+                        "org.jboss.errai:errai-bus:?",
+                        "org.jboss.errai:errai-jboss-as-support:?",
+                        "org.jboss.errai:errai-marshalling:?",
+                        "org.uberfire:uberfire-nio2-api:?",
+                        "org.uberfire:uberfire-nio2-model:?",
+                        "org.uberfire:uberfire-nio2-jgit:?",
+                        "org.uberfire:uberfire-nio2-fs:?",
+                        "org.uberfire:uberfire-servlet-security:?",
+                        "org.uberfire:uberfire-testing-utils:?",
+                        "org.eclipse.jgit:org.eclipse.jgit:?",
+                        "org.jboss.resteasy:resteasy-jaxrs:?",
+                        "org.jboss.resteasy:resteasy-multipart-provider:?").withTransitivity()
                 .asFile();
 
         for (final File file : files) {
@@ -149,31 +159,90 @@ public class MavenRestClientTest {
 
     @Test
     public void get() {
-
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(deploymentUrl.toString() +"rest/maven/3.3.9/");
+        WebTarget target = client.target(deploymentUrl.toString() + "rest/maven/3.3.9/");
         Invocation invocation = target.request().buildGet();
         Response response = invocation.invoke();
-        assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(200);
-        assertThat(response.readEntity(String.class)).isEqualTo("Apache Maven 3.3.9");
+        Assert.assertEquals(response.getStatusInfo().getStatusCode(), 200);
+        Assert.assertEquals(response.readEntity(String.class), "Apache Maven 3.3.9");
+        //assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(200);
+        //assertThat(response.readEntity(String.class)).isEqualTo("Apache Maven 3.3.9");
+        tearDown();
     }
 
-
     @Test
-    public void post() throws Exception{
-        Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(deploymentUrl.toString() +"rest/maven/3.3.9/");
-        MultivaluedMap headersMap = new MultivaluedHashMap();
-        headersMap.add("project", tmpRoot.toAbsolutePath().toString()+"/dummy");
-        headersMap.add("mavenrepo", mavenRepo.toAbsolutePath().toString());
-        Future<Response>  responseFuture = target.request().headers(headersMap).async().post(Entity.entity(String.class, MediaType.TEXT_PLAIN));
-        Response response = responseFuture.get();
-        assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(200);
-        InputStream is = response.readEntity(InputStream.class);
-        byte[] serializedCompilationResponse = IOUtils.toByteArray(is);;
-        HttpCompilationResponse res = RestUtils.readDefaultCompilationResponseFromBytes(serializedCompilationResponse);
-        assertThat(res).isNotNull();
-        assertThat(res.getDependencies()).hasSize(4);
-        assertThat(res.getTargetContent()).hasSize(3);
+    public void post() {
+        try {
+            fileSystemTestingUtils.setup();
+            ioService = fileSystemTestingUtils.getIoService();
+
+            final String repoName = "myrepo";
+            final JGitFileSystem fs = (JGitFileSystem) ioService.newFileSystem(URI.create("git://" + repoName),
+                                                                               new HashMap<String, Object>() {{
+                                                                                   put("init",
+                                                                                       Boolean.TRUE);
+                                                                                   put("internal",
+                                                                                       Boolean.TRUE);
+                                                                               }});
+
+            ioService.startBatch(fs);
+            String pom = "target/test-classes/kjar-2-single-resources/pom.xml";
+            if (!runIntoMavenCLI) {
+                pom = "kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/kjar-2-single-resources/pom.xml";
+            }
+            ioService.write(fs.getPath("/kjar-2-single-resources/pom.xml"), new String(java.nio.file.Files.readAllBytes(new File(pom).toPath())));
+
+            String personDotJava = "target/test-classes/kjar-2-single-resources/src/main/java/org/kie/maven/plugin/test/Person.java";
+            if (!runIntoMavenCLI) {
+                personDotJava = "kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/kjar-2-single-resources/src/main/java/org/kie/maven/plugin/test/Person.java";
+            }
+            ioService.write(fs.getPath("/kjar-2-single-resources/src/main/java/org/kie/maven/plugin/test/Person.java"), new String(java.nio.file.Files.readAllBytes(new File(personDotJava).toPath())));
+
+            String simpleRulesDotDRL = "target/test-classes/kjar-2-single-resources/src/main/resources/AllResourcesTypes/simple-rules.drl";
+            if (!runIntoMavenCLI) {
+                simpleRulesDotDRL = "kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/kjar-2-single-resources/src/main/resources/AllResourceTypes/simple-rules.drl";
+            }
+            ioService.write(fs.getPath("/kjar-2-single-resources/src/main/resources/AllResourcesTypes/simple-rules.drl"), new String(java.nio.file.Files.readAllBytes(new File(simpleRulesDotDRL).toPath())));
+
+            String kmodule = "target/test-classes/kjar-2-single-resources/src/main/resources/META-INF/kmodule.xml";
+            if (!runIntoMavenCLI) {
+                kmodule = "kie-wb-common-services/kie-wb-common-compiler/kie-wb-common-compiler-distribution/target/test-classes/kjar-2-single-resources/src/main/resources/META-INF/kmodule.xml";
+            }
+            ioService.write(fs.getPath("/kjar-2-single-resources/src/main/resources/META-INF/kmodule.xml"), new String(java.nio.file.Files.readAllBytes(new File(kmodule).toPath())));
+
+            ioService.endBatch();
+
+            Path tmpRootCloned = Files.createTempDirectory("cloned");
+            Path tmpCloned = Files.createDirectories(Paths.get(tmpRootCloned.toString(), "dummy"));
+
+            final File gitClonedFolder = new File(tmpCloned.toFile(), ".clone.git");
+
+            final Git cloned = Git.cloneRepository().setURI(fs.getGit().getRepository().getDirectory().toURI().toString()).setBare(false).setDirectory(gitClonedFolder).call();
+
+            assertThat(cloned).isNotNull();
+            mavenRepo = Paths.get(System.getProperty("user.home"), "/.m2/repository");
+            tmpRoot = Paths.get(gitClonedFolder + "/dummy/");
+
+            Client client = ClientBuilder.newClient();
+            WebTarget target = client.target(deploymentUrl.toString() + "rest/maven/3.3.9/");
+            MultivaluedMap headersMap = new MultivaluedHashMap();
+            headersMap.add("project", tmpRoot.toAbsolutePath().toString() + "/dummy");
+            headersMap.add("mavenrepo", mavenRepo.toAbsolutePath().toString());
+            Future<Response> responseFuture = target.request().headers(headersMap).async().post(Entity.entity(String.class, MediaType.TEXT_PLAIN));
+            Response response = responseFuture.get();
+            assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(200);
+            InputStream is = response.readEntity(InputStream.class);
+            byte[] serializedCompilationResponse = IOUtils.toByteArray(is);
+
+            HttpCompilationResponse res = RestUtils.readDefaultCompilationResponseFromBytes(serializedCompilationResponse);
+            assertThat(res).isNotNull();
+            assertThat(res.getDependencies()).hasSize(4);
+            assertThat(res.getTargetContent()).hasSize(3);
+            tearDown();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        } finally {
+            fileSystemTestingUtils.cleanup();
+        }
     }
 }
