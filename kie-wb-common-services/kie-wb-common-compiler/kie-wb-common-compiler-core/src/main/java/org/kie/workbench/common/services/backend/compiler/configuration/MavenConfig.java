@@ -28,6 +28,8 @@ public class MavenConfig {
 
     public static String MAVEN_DEP_PLUGING_OUTPUT_FILE = "-Dmdep.outputFile=";
 
+    public static String MAVEN_DEP_PLUGING_LOCAL_REPOSITORY = "-Dmdep.localRepoProperty=";
+
     public static String MAVEN_DEP_ARG_CLASSPATH = MAVEN_DEP_PLUGING_OUTPUT_FILE + DEPS_FILENAME + CLASSPATH_EXT;
 
     public static String MAVEN_PLUGIN_CONFIGURATION = "configuration";

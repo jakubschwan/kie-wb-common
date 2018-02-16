@@ -260,10 +260,11 @@ public class DefaultPomEditor implements PomEditor {
         plugin.setExecutions(executions);
     }
 
-    private String[] addCreateClasspathMavenArgs(String[] args) {
-        String[] newArgs = Arrays.copyOf(args, args.length + 2);
+    private String[] addCreateClasspathMavenArgs(String[] args, CompilationRequest req) {
+        String[] newArgs = Arrays.copyOf(args, args.length + 3);
         newArgs[args.length] = MavenConfig.DEPS_BUILD_CLASSPATH;
         newArgs[args.length + 1] = MavenConfig.MAVEN_DEP_ARG_CLASSPATH;
+        newArgs[args.length + 2] = MavenConfig.MAVEN_DEP_PLUGING_LOCAL_REPOSITORY + req.getMavenRepo();
         return newArgs;
     }
 
@@ -306,7 +307,7 @@ public class DefaultPomEditor implements PomEditor {
                 request.getInfo().lateAdditionKiePluginPresent(plugs.isKiePluginPresent());
                 if (!request.skipPrjDependenciesCreationList()) {
                     // we add the mvn cli args to run the dependency:build-classpath
-                    String args[] = addCreateClasspathMavenArgs(request.getKieCliRequest().getArgs());
+                    String args[] = addCreateClasspathMavenArgs(request.getKieCliRequest().getArgs(), request);
                     request.getKieCliRequest().setArgs(args);
                 }
                 if (plugs.pomOverwriteRequired()) {
