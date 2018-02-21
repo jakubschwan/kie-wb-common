@@ -46,7 +46,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <systemPropertyVariables>
-            <apple.awt.UIElement>true</apple.awt.UIElement>
             <org.uberfire.nio.git.daemon.enabled>true</org.uberfire.nio.git.daemon.enabled>
           </systemPropertyVariables>
         </configuration>
@@ -97,6 +96,10 @@
   </dependencyManagement>
 
   <dependencies>
+    <dependency>
+      <groupId>org.eclipse.sisu</groupId>
+      <artifactId>org.eclipse.sisu.plexus</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
