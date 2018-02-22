@@ -268,6 +268,14 @@ public class DefaultPomEditor implements PomEditor {
         return newArgs;
     }
 
+    /*private String[] addCreateClasspathMavenArgs(String[] args, CompilationRequest req) {
+        String[] newArgs = Arrays.copyOf(args, args.length + 2);
+        newArgs[args.length] = MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH;
+        //newArgs[args.length + 1] = MavenConfig.MAVEN_DEP_ARG_CLASSPATH;
+        newArgs[args.length + 1] = MavenConfig.MAVEN_DEP_PLUGING_LOCAL_REPOSITORY + req.getMavenRepo();
+        return newArgs;
+    }*/
+
     public PomPlaceHolder readSingle(Path pom) {
         PomPlaceHolder holder = new PomPlaceHolder();
         try {

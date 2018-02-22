@@ -105,6 +105,26 @@ public class CompilerClassloaderUtils {
         }
         return Optional.empty();
     }
+/*
+    public static Optional<ClassLoader> getClassloaderFromAllDependencies(String prjPath,
+                                                                          String localRepo) {
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(URI.create(FILE_URI + prjPath)));
+        //final StringBuilder sb = new StringBuilder(MavenConfig.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenConfig.DEPS_FILENAME).append(MavenConfig.CLASSPATH_EXT);
+        CompilationRequest req = new DefaultCompilationRequest(localRepo,
+                                                               info,
+                                                               new String[]{MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH},
+                                                               Boolean.FALSE);
+        CompilationResponse res = compiler.compile(req);
+        if (res.isSuccessful()) {
+
+            Optional<ClassLoader> urlClassLoader = CompilerClassloaderUtils.createClassloaderFromCpFiles(prjPath);
+            if (urlClassLoader != null) {
+                return urlClassLoader;
+            }
+        }
+        return Optional.empty();
+    }*/
 
     /**
      * Used by the indexer

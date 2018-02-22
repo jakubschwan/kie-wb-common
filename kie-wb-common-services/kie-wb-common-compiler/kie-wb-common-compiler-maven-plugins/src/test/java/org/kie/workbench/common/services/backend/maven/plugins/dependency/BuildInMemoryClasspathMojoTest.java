@@ -28,7 +28,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.assertThat;
+//import static org.assertj.core.api.Assertions.assertThat;
 
 public class BuildInMemoryClasspathMojoTest {
 
@@ -71,7 +71,7 @@ public class BuildInMemoryClasspathMojoTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{"org.kie.workbench.services:kie-wb-common-compiler-maven-plugins:build-classpath", "-X"},
+                                                               new String[]{/*"org.kie.workbench.services:kie-wb-common-compiler-maven-plugins:build-classpath",*/ "-X"},
                                                                Boolean.FALSE);
 
         CompilationResponse res = compiler.compile(req);
@@ -88,7 +88,7 @@ public class BuildInMemoryClasspathMojoTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{"org.kie.workbench.services:kie-wb-common-compiler-maven-plugins:build-classpath",  "-X"},
+                                                               new String[]{/*"org.kie.workbench.services:kie-wb-common-compiler-maven-plugins:build-classpath",*/"-X"},
                                                                Boolean.FALSE);
 
         CompilationResponse res = compiler.compile(req);

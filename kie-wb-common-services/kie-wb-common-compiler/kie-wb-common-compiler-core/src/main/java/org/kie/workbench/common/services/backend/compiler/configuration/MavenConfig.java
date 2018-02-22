@@ -22,6 +22,8 @@ public class MavenConfig {
 
     public static final String DEPS_BUILD_CLASSPATH = "dependency:build-classpath";
 
+    public static final String DEPS_IN_MEMORY_BUILD_CLASSPATH ="org.kie.workbench.services:kie-wb-common-compiler-maven-plugins:build-classpath";
+
     public static String DEPS_FILENAME = "module";
 
     public static String CLASSPATH_EXT = ".cpath";
