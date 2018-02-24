@@ -421,7 +421,7 @@ public class ProjectBuildDataImpl implements ProjectBuildData {
 
     private ClassLoader getDependenciesClassLoader(final KieCompilationResponse res) {
         if ((dependenciesClassLoader == null || dependencies == null || dependencies.isEmpty() ||
-                (res.getDependencies().size() == dependencies.size() && res.getDependencies().containsAll(dependencies)))) {
+                (res.getDependencies().isPresent() && res.getDependencies().get().size() == dependencies.size() && res.getDependencies().get().containsAll(dependencies)))) {
             classLoader = null;
             dependencies = new HashSet<>(res.getDependencies());
             dependenciesClassLoader = new URLClassLoader(res.getDependenciesAsURL().toArray(new URL[res.getDependenciesAsURL().size()]));
