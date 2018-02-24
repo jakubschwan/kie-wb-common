@@ -53,7 +53,9 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
             this.workingDir = res.getWorkingDir().get().toAbsolutePath().toString();
         }
         this.targetContent = res.getTargetContent();
-        this.projectDependencies = res.getDependencies();
+        if(res.getDependencies().isPresent()){
+            this.projectDependencies = res.getDependencies().get();
+        }
     }
 
     public DefaultHttpCompilationResponse(Boolean successful) {
@@ -98,6 +100,10 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
         return Optional.ofNullable(workingDir);
     }
 
+    public Optional<List<String>> getProjectDependencies(){
+        return Optional.ofNullable(projectDependencies);
+    }
+
     @Override
     public List<String> getTargetContent() {
         return targetContent;
@@ -140,6 +146,7 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
         return projectDependenciesAsURL;
     }
 
+    //@TODO remove and create in a diffferent way
     private List<URL> getRawAsURLs(final List<String> content) {
         if (content != null && !content.isEmpty()) {
             return CompilerClassloaderUtils.processScannedFilesAsURLs(content);

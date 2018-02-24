@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -77,54 +79,31 @@ public class CompilerClassloaderUtils {
     protected static String META_INF = "META-INF";
     protected static String UTF_8 = "UTF-8";
 
-    private CompilerClassloaderUtils() {
-    }
+    private CompilerClassloaderUtils() { }
 
-    /**
-     * Execute a maven run to create the classloaders with the dependencies in the Poms, transitive included
-     */
     public static Optional<ClassLoader> getClassloaderFromAllDependencies(String prjPath,
                                                                           String localRepo) {
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(URI.create(FILE_URI + prjPath)));
-        final StringBuilder sb = new StringBuilder(MavenConfig.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenConfig.DEPS_FILENAME).append(MavenConfig.CLASSPATH_EXT);
-        CompilationRequest req = new DefaultCompilationRequest(localRepo,
-                                                               info,
-                                                               new String[]{MavenConfig.DEPS_BUILD_CLASSPATH, sb.toString()},
-                                                               Boolean.FALSE);
-        CompilationResponse res = compiler.compile(req);
-        if (res.isSuccessful()) {
-            /** Maven dependency plugin is not able to append the modules classpath using an absolute path in -Dmdep.outputFile,
-             it override each time and at the end only the last writted is present in  the file,
-             for this reason we use a relative path and then we read each file present in each module to build a unique classpath file
-             * */
-            Optional<ClassLoader> urlClassLoader = CompilerClassloaderUtils.createClassloaderFromCpFiles(prjPath);
-            if (urlClassLoader != null) {
-                return urlClassLoader;
-            }
-        }
-        return Optional.empty();
-    }
-/*
-    public static Optional<ClassLoader> getClassloaderFromAllDependencies(String prjPath,
-                                                                          String localRepo) {
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(URI.create(FILE_URI + prjPath)));
-        //final StringBuilder sb = new StringBuilder(MavenConfig.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenConfig.DEPS_FILENAME).append(MavenConfig.CLASSPATH_EXT);
         CompilationRequest req = new DefaultCompilationRequest(localRepo,
                                                                info,
                                                                new String[]{MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         if (res.isSuccessful()) {
-
-            Optional<ClassLoader> urlClassLoader = CompilerClassloaderUtils.createClassloaderFromCpFiles(prjPath);
-            if (urlClassLoader != null) {
-                return urlClassLoader;
+        /** Maven dependency plugin is not able to append the modules classpath using an absolute path in -Dmdep.outputFile,
+             it override each time and at the end only the last writted is present in  the file,
+             for this reason we use a relative path and then we read each file present in each module to build a unique classpath file
+             * */
+            if(res.getDependencies().isPresent()) {
+                Optional<ClassLoader> urlClassLoader =CompilerClassloaderUtils.createClassloaderFromStringDeps(res.getDependencies().get());
+                if (urlClassLoader != null) {
+                    return urlClassLoader;
+                }
             }
         }
         return Optional.empty();
-    }*/
+    }
 
     /**
      * Used by the indexer
@@ -263,9 +242,9 @@ public class CompilerClassloaderUtils {
         }
     }
 
-    public static Optional<ClassLoader> createClassloaderFromCpFiles(String prjPath) {
-        List<URL> deps = readAllCpFilesAsUrls(prjPath,
-                                              MavenConfig.CLASSPATH_EXT);
+    public static Optional<ClassLoader> createClassloaderFromStringDeps(List<String> depsProject) {
+        //@TODO
+        List<URL> deps = readAllDepsAsUrls(depsProject);
         if (deps.isEmpty()) {
             return Optional.empty();
         } else {
@@ -274,24 +253,38 @@ public class CompilerClassloaderUtils {
         }
     }
 
-    public static List<URL> readAllCpFilesAsUrls(String prjPath,
-                                                 String extension) {
-        List<String> classPathFiles = new ArrayList<>();
-        searchCPFiles(Paths.get(URI.create(FILE_URI + prjPath)),
-                      classPathFiles,
-                      extension);
-        if (!classPathFiles.isEmpty()) {
-            List<URL> deps = new ArrayList<>();
-            for (String file : classPathFiles) {
-                deps.addAll(readFileAsURL(file));
-            }
-            if (!deps.isEmpty()) {
-
-                return deps;
+    public static List<URL> readAllDepsAsUrls(List<String> prjDeps) {
+        List<URL> deps = new ArrayList<>();
+        for(String dep:prjDeps){
+            try {
+                deps.add(new URL(dep));
+            }catch (MalformedURLException e){
+                logger.error(e.getMessage());
             }
         }
-        return Collections.emptyList();
+        if(deps.size()>0) {
+            return  deps;
+        }else{
+            return Collections.emptyList();
+        }
     }
+
+    public static List<URI> readAllDepsAsUris(List<String> prjDeps) {
+        List<URI> deps = new ArrayList<>();
+        for(String dep:prjDeps){
+            try {
+                deps.add(new URI(dep));
+            }catch (URISyntaxException e){
+                logger.error(e.getMessage());
+            }
+        }
+        if(deps.size()>0) {
+            return  deps;
+        }else{
+            return Collections.emptyList();
+        }
+    }
+
 
     private static List<URI> readFileAsURI(String filePath) {
 
@@ -356,6 +349,21 @@ public class CompilerClassloaderUtils {
                   br);
         }
         return urls;
+    }
+
+
+    public static List<String> readItemsFromClasspathString(Set<String> depsModules) {
+
+        Set<String> items = new HashSet<>();
+        Iterator<String> iter = depsModules.iterator();
+        while(iter.hasNext()) {
+            StringTokenizer token = new StringTokenizer(iter.next(), ":");
+            while (token.hasMoreTokens()) {
+                StringBuilder sb = new StringBuilder(FILE_URI).append(token.nextToken());
+                items.add(sb.toString());
+            }
+        }
+        return new ArrayList<>(items);
     }
 
     private static List<String> readFileAsString(String filePath) {

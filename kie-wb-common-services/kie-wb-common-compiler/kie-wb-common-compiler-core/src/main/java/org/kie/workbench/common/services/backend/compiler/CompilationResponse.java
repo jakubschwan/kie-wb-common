@@ -44,7 +44,7 @@ public interface CompilationResponse {
      * Provides the List of project dependencies from target folders as List of String
      * @return
      */
-    List<String> getDependencies();
+    Optional<List<String>> getDependencies();
 
     /**
      * Provides the list of all dependencies used by the project, included transitive

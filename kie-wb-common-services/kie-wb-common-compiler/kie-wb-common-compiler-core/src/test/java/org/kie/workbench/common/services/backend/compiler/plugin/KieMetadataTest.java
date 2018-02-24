@@ -86,7 +86,7 @@ public class KieMetadataTest {
                           temp);
         //end NIO
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_LOG_AND_CLASSPATH_DEPS_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
@@ -121,7 +121,7 @@ public class KieMetadataTest {
         Optional<KieModule> kieModuleOptional = res.getKieModule();
         assertThat(kieModuleOptional.isPresent()).isTrue();
 
-        assertThat(res.getDependenciesAsURI()).hasSize(5);
+        assertThat(res.getDependenciesAsURI()).hasSize(4);
         KieModule kModule = kieModuleOptional.get();
 
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
@@ -143,7 +143,7 @@ public class KieMetadataTest {
                                                          "dummy"));
             TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"), tmp);
 
-            AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
+            AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_LOG_AND_CLASSPATH_DEPS_AFTER);
             WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
             CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                    info,
@@ -176,7 +176,7 @@ public class KieMetadataTest {
             Optional<KieModule> kieModuleOptional = res.getKieModule();
             assertThat(kieModuleOptional.isPresent()).isTrue();
 
-            assertThat(res.getDependenciesAsURI()).hasSize(5);
+            assertThat(res.getDependenciesAsURI()).hasSize(4);
 
             //comment if you want read the log file after the test run
             TestUtil.rm(tmpRoot.toFile());
@@ -197,7 +197,7 @@ public class KieMetadataTest {
         TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"),
                           tmp);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
@@ -230,7 +230,7 @@ public class KieMetadataTest {
         assertThat(kieModuleOptional.isPresent()).isTrue();
         KieModule kModule = kieModuleOptional.get();
 
-        assertThat(res.getDependenciesAsURI()).hasSize(5);
+        assertThat(res.getDependenciesAsURI()).hasSize(4);
 
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
                                                                         res.getDependenciesAsURI());

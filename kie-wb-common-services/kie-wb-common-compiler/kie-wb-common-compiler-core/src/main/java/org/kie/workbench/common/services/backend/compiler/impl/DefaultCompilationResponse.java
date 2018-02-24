@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl;
 
+
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
@@ -65,6 +66,16 @@ public class DefaultCompilationResponse implements CompilationResponse, Serializ
         this.projectDependencies = projectDependencies;
     }
 
+    public DefaultCompilationResponse(final Boolean successful,
+                                      final List<String> mavenOutput,
+                                      final Path workingDir,
+                                      final List<String> projectDependencies) {
+        this.successful = successful;
+        this.mavenOutput = mavenOutput;
+        this.workingDir = workingDir;
+        this.projectDependencies = projectDependencies;
+    }
+
     public Boolean isSuccessful() {
         return successful;
     }
@@ -99,8 +110,8 @@ public class DefaultCompilationResponse implements CompilationResponse, Serializ
     }
 
     @Override
-    public List<String> getDependencies() {
-        return projectDependencies;
+    public Optional<List<String>> getDependencies() {
+        return Optional.ofNullable(projectDependencies);
     }
 
     @Override
@@ -119,6 +130,7 @@ public class DefaultCompilationResponse implements CompilationResponse, Serializ
         return projectDependenciesAsURL;
     }
 
+    //@TODO remove and create in a different way
     private List<URL> getRawAsURLs(final List<String> content) {
         if (content != null && !content.isEmpty()) {
             return CompilerClassloaderUtils.processScannedFilesAsURLs(content);

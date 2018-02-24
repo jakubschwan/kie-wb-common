@@ -17,6 +17,7 @@ package org.kie.workbench.common.services.backend.maven.plugins.dependency;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -143,7 +144,7 @@ public class BuildInMemoryClasspathMojo
      * @param cpString the string to be written into the map.
      */
     private void storeClasspathFile(String cpString) {
-        if (container != null) {
+        if (container != null && cpString != null && cpString.length() > 0) {
             Optional<Map<String, Object>> optionalKieMap = getKieMap();
             if (optionalKieMap.isPresent()) {
                 String compilationID = getCompilationID(optionalKieMap);
@@ -185,7 +186,15 @@ public class BuildInMemoryClasspathMojo
         if (optionalKieMap.isPresent() && classpath != null) {
             /*Standard for the kieMap keys -> compilationID + dot + class name or name of the variable if is a String */
             StringBuilder stringClasspathKey = new StringBuilder(compilationID).append(".").append(STRING_CLASSPATH_KEY);
-            optionalKieMap.get().put(stringClasspathKey.toString(), classpath);
+            Object o = optionalKieMap.get().get(stringClasspathKey.toString());
+            if (o != null){
+                Set<String> depsModules = (Set<String>) o;
+                depsModules.add(classpath);
+            }else{
+                Set<String> depsModules = new HashSet<>();
+                depsModules.add(classpath);
+                optionalKieMap.get().put(stringClasspathKey.toString(), depsModules);
+            }
             getLog().info("String Classpath available in the map shared with the Maven Embedder with key:" + stringClasspathKey.toString());
         }else{
             getLog().info("No String Classpath to share in the map with the Maven Embedder with key");

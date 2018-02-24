@@ -15,16 +15,30 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.decorators;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.kie.internal.utils.ClassLoaderUtil;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils;
 import org.kie.workbench.common.services.backend.logback.OutputSharedMap;
 import org.slf4j.MDC;
 
+/***
+ * After decorator that reads the List<String> with the dependencies from the project's modules cretaed by the
+ * org.kie.workbench.common.services.backend.maven.plugins.dependency.BuildInMemoryClasspathMojo
+ * and store the values in the CompilationResponse
+ */
 public class ClasspathDepsAfterDecorator<T extends CompilationResponse, C extends AFCompiler<T>> implements CompilerDecorator {
+
+    /**
+     * Key used to share the string classpath in the kieMap
+     */
+    private final String STRING_CLASSPATH_KEY = "stringClasspathKey";
 
     private C compiler;
 
@@ -32,7 +46,6 @@ public class ClasspathDepsAfterDecorator<T extends CompilationResponse, C extend
         this.compiler = compiler;
     }
 
-    //for test
     public C getCompiler() {
         return compiler;
     }
@@ -55,11 +68,22 @@ public class ClasspathDepsAfterDecorator<T extends CompilationResponse, C extend
     }
 
     private T handleClasspath(CompilationRequest req, T res) {
-        T t = (T) new DefaultCompilationResponse(res.isSuccessful(),
-                                                 OutputSharedMap.getLog(req.getKieCliRequest().getRequestUUID()),
-                                                 req.getInfo().getPrjPath());
-        OutputSharedMap.removeLog(req.getKieCliRequest().getRequestUUID());
-        MDC.clear();
+        T t;
+        Map<String,Object> kieMap = req.getMap();
+        StringBuilder classpathKey = new StringBuilder(req.getRequestUUID()).append(".").append(STRING_CLASSPATH_KEY);
+        Object o = kieMap.get(classpathKey.toString());
+        if(o != null){
+            Set<String> depsModules = (Set<String>) o;
+            List<String> deps =CompilerClassloaderUtils.readItemsFromClasspathString(depsModules);
+            t = (T) new DefaultCompilationResponse(res.isSuccessful(),
+                                                   res.getMavenOutput(),
+                                                   res.getWorkingDir().isPresent() ? res.getWorkingDir().get() : null,
+                                                   deps);
+        }else{
+            t = (T) new DefaultCompilationResponse(res.isSuccessful(),
+                                                   res.getMavenOutput(),
+                                                   res.getWorkingDir().isPresent() ? res.getWorkingDir().get() : null);
+        }
         return t;
     }
 }

@@ -26,6 +26,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
+import org.kie.workbench.common.services.backend.compiler.impl.decorators.ClasspathDepsAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.KieAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.OutputLogAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
@@ -62,7 +63,7 @@ public class DefaultRemoteExecutor implements RemoteExecutor {
     }
 
     private CompileInfo setupCompileInfo(String workingDir) {
-        AFCompiler compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new BaseMavenCompiler()));
+        AFCompiler compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new ClasspathDepsAfterDecorator(new BaseMavenCompiler())));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(workingDir));
         return new CompileInfo(compiler, info);
     }

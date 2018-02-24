@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.decorators;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
@@ -55,7 +56,8 @@ public class OutputLogAfterDecorator<T extends CompilationResponse, C extends AF
     private T handleMavenOutput(CompilationRequest req, T res) {
         T t = (T) new DefaultCompilationResponse(res.isSuccessful(),
                                                  OutputSharedMap.getLog(req.getKieCliRequest().getRequestUUID()),
-                                                 req.getInfo().getPrjPath());
+                                                 req.getInfo().getPrjPath(),
+                                                 res.getDependencies().isPresent() ? res.getDependencies().get() : Collections.emptyList());
         OutputSharedMap.removeLog(req.getKieCliRequest().getRequestUUID());
         MDC.clear();
         return t;

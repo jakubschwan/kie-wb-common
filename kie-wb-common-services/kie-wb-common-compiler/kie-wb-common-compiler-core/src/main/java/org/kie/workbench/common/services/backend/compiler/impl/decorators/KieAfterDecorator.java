@@ -99,7 +99,7 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
 
         if (kieModuleMetaInfoTuple.getOptionalObject().isPresent() && kieModuleTuple.getOptionalObject().isPresent()) {
             final List<String> targetContent = getStringFromTargets(req.getInfo().getPrjPath());
-            final List<String> projectDependencies = readProjectDependencies(req);
+            //final List<String> projectDependencies = readProjectDependencies(req);
 
             final KieTuple kieProjectClassloaderStore = read(req, prjClassloaderStoreKey, "ProjectClassLoaderStore Map not present in the map");
             final KieTuple eventClasses = read(req, eventClassesKey, "EventClasses Set not present in the map");
@@ -112,7 +112,7 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
                                                      store,
                                                      mavenOutput,
                                                      targetContent,
-                                                     projectDependencies,
+                                                     res.getDependencies().isPresent() ? res.getDependencies().get() : Collections.emptyList(),
                                                      req.getInfo().getPrjPath(),
                                                      events);
         } else {
@@ -149,9 +149,9 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
 
         final List<String> mavenOutput = getMavenOutput(req, res);
         final List<String> targetContent = getStringFromTargets(req.getInfo().getPrjPath());
-        final List<String> projectDependencies = readProjectDependencies(req);
+        //final List<String> projectDependencies = readProjectDependencies(req);
         if (res.isSuccessful()) {
-            return new DefaultKieCompilationResponse(res.isSuccessful(), null, null, null, mavenOutput, targetContent, projectDependencies, req.getInfo().getPrjPath(), null);
+            return new DefaultKieCompilationResponse(res.isSuccessful(), null, null, null, mavenOutput, targetContent, res.getDependencies().isPresent() ? res.getDependencies().get():Collections.emptyList(), req.getInfo().getPrjPath(), null);
         } else {
             List<String> msgs = new ArrayList<>();
             msgs.addAll(mavenOutput);
@@ -159,8 +159,10 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
         }
     }
 
+    //BROKEN !!!
     private List<String> readProjectDependencies(CompilationRequest req) {
         if (!req.skipPrjDependenciesCreationList()) {
+
             return getStringsFromAllDependencies(req.getInfo().getPrjPath());
         }
         return Collections.emptyList();

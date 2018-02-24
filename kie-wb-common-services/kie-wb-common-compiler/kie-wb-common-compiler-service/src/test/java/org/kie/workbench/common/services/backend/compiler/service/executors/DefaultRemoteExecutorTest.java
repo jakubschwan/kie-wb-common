@@ -52,7 +52,8 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
                                                                              Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
-        assertThat(res.getDependencies()).isEmpty();
+        assertThat(res.getDependencies().isPresent()).isTrue();
+        assertThat(res.getDependencies().get().size()).isEqualTo(0);
     }
 
     @Test
@@ -71,7 +72,8 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
                                                                                        Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
-        assertThat(res.getDependencies()).isEmpty();
+        assertThat(res.getDependencies().isPresent()).isTrue();
+        assertThat(res.getDependencies().get().size()).isEqualTo(0);
     }
 
     @Test
@@ -92,7 +94,8 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
                                                                                        mavenRepo.toString());
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
-        assertThat(res.getDependencies().size()).isGreaterThan(0);
+        assertThat(res.getDependencies().isPresent()).isTrue();
+        assertThat(res.getDependencies().get().size()).isGreaterThan(0);
     }
 
     @Test
@@ -103,7 +106,8 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
                                                                                        Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
-        assertThat(res.getDependencies()).isEmpty();
+        assertThat(res.getDependencies().isPresent()).isTrue();
+        assertThat(res.getDependencies().get().size()).isEqualTo(0);
     }
 
     @Test

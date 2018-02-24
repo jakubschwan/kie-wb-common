@@ -61,7 +61,7 @@ public class DefaultLocalExecutor implements CompilerExecutor {
     }
 
     private CompileInfo setupCompileInfo(Path workingDir) {
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_KIE_AND_LOG_AFTER);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_KIE_AND_LOG_AND_CLASSPATH_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(workingDir);
         return new CompileInfo(compiler, info);
     }

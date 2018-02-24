@@ -15,10 +15,13 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.kie;
 
+
+
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
+import org.kie.workbench.common.services.backend.compiler.impl.decorators.ClasspathDepsAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.JGITCompilerBeforeDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.KieAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.OutputLogAfterDecorator;
@@ -47,8 +50,20 @@ public class KieMavenCompilerFactory {
                 compiler = new BaseMavenCompiler();
                 break;
 
+            case CLASSPATH_DEPS_AFTER_DECORATOR:
+                compiler = new ClasspathDepsAfterDecorator(new BaseMavenCompiler());
+                break;
+
             case KIE_AFTER:
                 compiler = new KieAfterDecorator(new BaseMavenCompiler());
+                break;
+
+            case KIE_AND_CLASSPATH_AFTER_DEPS:
+                compiler = new KieAfterDecorator(new ClasspathDepsAfterDecorator(new BaseMavenCompiler()));
+                break;
+
+            case KIE_LOG_AND_CLASSPATH_DEPS_AFTER:
+                compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new ClasspathDepsAfterDecorator(new BaseMavenCompiler())));
                 break;
 
             case KIE_AND_LOG_AFTER:
@@ -72,7 +87,18 @@ public class KieMavenCompilerFactory {
                 break;
 
             case JGIT_BEFORE_AND_KIE_AND_LOG_AFTER:
-                compiler = new JGITCompilerBeforeDecorator(new KieAfterDecorator(new OutputLogAfterDecorator(new BaseMavenCompiler())));
+                compiler = new JGITCompilerBeforeDecorator(
+                        new KieAfterDecorator(
+                                new OutputLogAfterDecorator(
+                                        new BaseMavenCompiler())));
+                break;
+
+            case JGIT_BEFORE_AND_KIE_AND_LOG_AND_CLASSPATH_AFTER:
+                compiler = new JGITCompilerBeforeDecorator(
+                        new KieAfterDecorator(
+                                new OutputLogAfterDecorator(
+                                        new ClasspathDepsAfterDecorator(
+                                                new BaseMavenCompiler()))));
                 break;
 
             default:

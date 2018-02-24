@@ -38,6 +38,7 @@ public class BaseCompilerTest {
     protected String alternateSettingsAbsPath;
     protected WorkspaceCompilationInfo info;
     protected AFCompiler compiler;
+    protected KieCompilationResponse res;
 
     public BaseCompilerTest(String prjName) {
         try {
@@ -81,7 +82,7 @@ public class BaseCompilerTest {
                                                                    info,
                                                                    new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                    Boolean.FALSE);
-            KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
+            res = (KieCompilationResponse) compiler.compile(req);
             if (!res.isSuccessful()) {
                 TestUtil.writeMavenOutputIntoTargetFolder(tmpRoot, res.getMavenOutput(),
                                                           "KieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");

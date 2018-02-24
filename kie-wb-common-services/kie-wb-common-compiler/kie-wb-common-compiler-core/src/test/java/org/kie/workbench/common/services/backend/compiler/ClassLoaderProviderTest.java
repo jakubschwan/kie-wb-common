@@ -252,7 +252,7 @@ public class ClassLoaderProviderTest {
         TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"),
                           tmp);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
@@ -284,7 +284,7 @@ public class ClassLoaderProviderTest {
         assertThat(kieModuleOptional.isPresent()).isTrue();
         KieModule kModule = kieModuleOptional.get();
 
-        assertThat(res.getDependenciesAsURI()).hasSize(5);
+        assertThat(res.getDependenciesAsURI()).hasSize(4);
 
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
                                                                         res.getDependenciesAsURI());
