@@ -423,7 +423,7 @@ public class ProjectBuildDataImpl implements ProjectBuildData {
         if ((dependenciesClassLoader == null || dependencies == null || dependencies.isEmpty() ||
                 (res.getDependencies().isPresent() && res.getDependencies().get().size() == dependencies.size() && res.getDependencies().get().containsAll(dependencies)))) {
             classLoader = null;
-            dependencies = new HashSet<>(res.getDependencies());
+            dependencies = new HashSet<>(res.getDependencies().get());
             dependenciesClassLoader = new URLClassLoader(res.getDependenciesAsURL().toArray(new URL[res.getDependenciesAsURL().size()]));
         }
         return dependenciesClassLoader;
