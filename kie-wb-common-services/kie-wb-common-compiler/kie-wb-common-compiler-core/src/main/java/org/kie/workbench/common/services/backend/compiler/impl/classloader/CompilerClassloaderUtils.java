@@ -15,11 +15,9 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.classloader;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -81,6 +79,12 @@ public class CompilerClassloaderUtils {
 
     private CompilerClassloaderUtils() { }
 
+    /***
+     * It run a maven build-classpath in memory and return a classloader with only this deps
+     * @param prjPath
+     * @param localRepo
+     * @return
+     */
     public static Optional<ClassLoader> getClassloaderFromAllDependencies(String prjPath,
                                                                           String localRepo) {
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
@@ -95,8 +99,8 @@ public class CompilerClassloaderUtils {
              it override each time and at the end only the last writted is present in  the file,
              for this reason we use a relative path and then we read each file present in each module to build a unique classpath file
              * */
-            if(res.getDependencies().isPresent()) {
-                Optional<ClassLoader> urlClassLoader =CompilerClassloaderUtils.createClassloaderFromStringDeps(res.getDependencies().get());
+            if(!res.getDependencies().isEmpty()) {
+                Optional<ClassLoader> urlClassLoader =CompilerClassloaderUtils.createClassloaderFromStringDeps(res.getDependencies());
                 if (urlClassLoader != null) {
                     return urlClassLoader;
                 }
@@ -105,9 +109,6 @@ public class CompilerClassloaderUtils {
         return Optional.empty();
     }
 
-    /**
-     * Used by the indexer
-     **/
     public static Map<String, byte[]> getMapClasses(String path, Map<String, byte[]> store) {
 
         final List<String> keys = IoUtils.recursiveListFile(new File(path), "", filterClasses());
@@ -127,23 +128,9 @@ public class CompilerClassloaderUtils {
     }
 
     public static Predicate<File> filterClasses() {
-        return f -> f.toString().contains(MAVEN_TARGET) && !f.toString().contains(META_INF) && !FilenameUtils.getName(f.toString()).startsWith(DOT_FILE);
-    }
-
-    private static void searchCPFiles(final Path file,
-                                      final List<String> classPathFiles,
-                                      final String... extensions) {
-        try (DirectoryStream<Path> ds = Files.newDirectoryStream(file.toAbsolutePath())) {
-            for (Path p : ds) {
-                if (Files.isDirectory(p)) {
-                    searchCPFiles(p,
-                                  classPathFiles,
-                                  extensions);
-                } else if (Stream.of(extensions).anyMatch(p.toString()::endsWith)) {
-                    classPathFiles.add(p.toAbsolutePath().toString());
-                }
-            }
-        }
+        return f -> f.toString().contains(MAVEN_TARGET) &&
+                    !f.toString().contains(META_INF) &&
+                    !FilenameUtils.getName(f.toString()).startsWith(DOT_FILE);
     }
 
     private static void searchTargetFiles(Path file,
@@ -243,7 +230,6 @@ public class CompilerClassloaderUtils {
     }
 
     public static Optional<ClassLoader> createClassloaderFromStringDeps(List<String> depsProject) {
-        //@TODO
         List<URL> deps = readAllDepsAsUrls(depsProject);
         if (deps.isEmpty()) {
             return Optional.empty();
@@ -285,73 +271,6 @@ public class CompilerClassloaderUtils {
         }
     }
 
-
-    private static List<URI> readFileAsURI(String filePath) {
-
-        BufferedReader br = null;
-        List<URI> urls = new ArrayList<>();
-        try {
-
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), UTF_8));
-            String sCurrentLine;
-            while ((sCurrentLine = br.readLine()) != null) {
-                StringTokenizer token = new StringTokenizer(sCurrentLine, ":");
-                while (token.hasMoreTokens()) {
-                    StringBuilder sb = new StringBuilder(FILE_URI).append(token.nextToken());
-                    urls.add(new URI(sb.toString()));
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        } finally {
-            close(filePath,
-                  br);
-        }
-        return urls;
-    }
-
-    private static void close(String filePath,
-                              BufferedReader br) {
-        try {
-            if (br != null) {
-                br.close();
-            }
-            if (filePath.startsWith(FILE_URI)) {
-                Files.delete(Paths.get(filePath));
-            } else {
-                Files.delete(Paths.get(URI.create(FILE_URI + filePath)));
-            }
-        } catch (IOException ex) {
-            logger.error(ex.getMessage());
-        }
-    }
-
-    private static List<URL> readFileAsURL(String filePath) {
-
-        BufferedReader br = null;
-        List<URL> urls = new ArrayList<>();
-        try {
-
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), UTF_8));
-            String sCurrentLine;
-
-            while ((sCurrentLine = br.readLine()) != null) {
-                StringTokenizer token = new StringTokenizer(sCurrentLine, ":");
-                while (token.hasMoreTokens()) {
-                    StringBuilder sb = new StringBuilder(FILE_URI).append(token.nextToken());
-                    urls.add(new URL(sb.toString()));
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        } finally {
-            close(filePath,
-                  br);
-        }
-        return urls;
-    }
-
-
     public static List<String> readItemsFromClasspathString(Set<String> depsModules) {
 
         Set<String> items = new HashSet<>();
@@ -364,31 +283,6 @@ public class CompilerClassloaderUtils {
             }
         }
         return new ArrayList<>(items);
-    }
-
-    private static List<String> readFileAsString(String filePath) {
-
-        BufferedReader br = null;
-        List<String> items = new ArrayList<>();
-        try {
-
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), UTF_8));
-
-            String sCurrentLine;
-            while ((sCurrentLine = br.readLine()) != null) {
-                StringTokenizer token = new StringTokenizer(sCurrentLine, ":");
-                while (token.hasMoreTokens()) {
-                    StringBuilder sb = new StringBuilder(FILE_URI).append(token.nextToken());
-                    items.add(sb.toString());
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        } finally {
-            close(filePath,
-                  br);
-        }
-        return items;
     }
 
     public static List<String> getStringFromTargets(Path prjPath) {
@@ -404,53 +298,19 @@ public class CompilerClassloaderUtils {
         return classPathFiles;
     }
 
-    public static List<String> getStringsFromAllDependencies(Path prjPath) {
-        final List<String> classPathFiles = new ArrayList<>();
-        searchCPFiles(prjPath,
-                      classPathFiles,
-                      MavenConfig.CLASSPATH_EXT,
-                      JAVA_ARCHIVE_RESOURCE_EXT,
-                      JAVA_CLASS_EXT,
-                      DROOLS_EXT,
-                      GDROOLS_EXT,
-                      RDROOLS_EXT,
-                      SCENARIO_EXT);
-        return processScannedFilesAsString(classPathFiles);
-    }
-
     public static List<URI> processScannedFilesAsURIs(List<String> classPathFiles) {
         List<URI> deps = new ArrayList<>();
         for (String file : classPathFiles) {
             if (FilenameUtils.getName(file).startsWith(".")) {
                 continue;
             }
-            if (file.endsWith(MavenConfig.CLASSPATH_EXT)) {
-                //the .cpath will be processed to extract the deps of each module
-                deps.addAll(readFileAsURI(file));
-            } else if (file.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
+                if (file.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
                 //the jar is added as is with file:// prefix
                 if (file.startsWith(FILE_URI)) {
                     deps.add(URI.create(file));
                 } else {
                     deps.add(URI.create(FILE_URI + file));
                 }
-            }
-        }
-        return deps;
-    }
-
-    private static List<String> processScannedFilesAsString(List<String> classPathFiles) {
-        final List<String> deps = new ArrayList<>();
-        for (String file : classPathFiles) {
-            if (FilenameUtils.getName(file).startsWith(".")) {
-                continue;
-            }
-            if (file.endsWith(MavenConfig.CLASSPATH_EXT)) {
-                //the .cpath will be processed to extract the deps of each module
-                deps.addAll(readFileAsString(file));
-            } else if (file.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
-                //the jar is added as is with file:// prefix
-                deps.add(file);
             }
         }
         return deps;
@@ -463,10 +323,7 @@ public class CompilerClassloaderUtils {
                 if (FilenameUtils.getName(file).startsWith(".")) {
                     continue;
                 }
-                if (file.endsWith(MavenConfig.CLASSPATH_EXT)) {
-                    //the .cpath will be processed to extract the deps of each module
-                    deps.addAll(readFileAsURL(file));
-                } else if (file.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
+                if (file.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
                     //the jar/class is added as is with file:// prefix
                     if (file.startsWith(FILE_URI)) {
                         deps.add(new URL(file));

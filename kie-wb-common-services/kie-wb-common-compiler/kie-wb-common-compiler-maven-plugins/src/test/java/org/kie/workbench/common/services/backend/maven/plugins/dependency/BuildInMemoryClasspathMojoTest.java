@@ -80,8 +80,8 @@ public class BuildInMemoryClasspathMojoTest {
 
         CompilationResponse res = compiler.compile(req);
         assertThat(res.isSuccessful()).isTrue();
-        assertThat(res.getDependencies().isPresent()).isTrue();
-        assertThat(res.getDependencies().get().size()).isEqualTo(4);
+        assertThat(res.getDependencies().isEmpty()).isFalse();
+        assertThat(res.getDependencies().size()).isEqualTo(4);
     }
 
     @Test
@@ -97,8 +97,8 @@ public class BuildInMemoryClasspathMojoTest {
 
         CompilationResponse res = compiler.compile(req);
         assertThat(res.isSuccessful()).isTrue();
-        assertThat(res.getDependencies().isPresent()).isTrue();
-        assertThat(res.getDependencies().get().size()).isEqualTo(7);
+        assertThat(res.getDependencies().isEmpty()).isFalse();
+        assertThat(res.getDependencies().size()).isEqualTo(7);
     }
 
     @AfterClass

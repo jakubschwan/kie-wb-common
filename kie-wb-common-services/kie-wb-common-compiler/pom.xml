@@ -20,10 +20,10 @@
   </properties>
 
    <modules>
+     <module>kie-wb-common-compiler-maven-plugins</module>
      <module>kie-wb-common-compiler-core</module>
      <module>kie-wb-common-compiler-service</module>
      <module>kie-wb-common-compiler-distribution</module>
-     <module>kie-wb-common-compiler-maven-plugins</module>
   </modules>
 
 </project>

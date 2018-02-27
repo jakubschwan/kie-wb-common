@@ -24,11 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
-import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
-import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
 
 public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
@@ -43,11 +39,6 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         assertThat(resources).hasSize(3);
     }
 
-    @Test
-    public void getStringsFromAllDependencies() {
-        List<String> resources = CompilerClassloaderUtils.getStringsFromAllDependencies(tmpRoot);
-        assertThat(resources).hasSize(1);
-    }
 
     @Test
     public void filterClassesByPackage() {
@@ -112,15 +103,9 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
 
     @Test
     public void createClassloaderFromCpFiles() {
-       /* CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                               info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
-                                                               Boolean.FALSE);
-        CompilationResponse res = compiler.compile(req);*/
-        //Optional<ClassLoader> classLoader = CompilerClassloaderUtils.createClassloaderFromCpFiles(tmpRoot.toString() + "/dummy/");
-        assertThat(res.getDependencies().isPresent()).isTrue();
-        assertThat(res.getDependencies().get().size()).isEqualTo(4);
-        Optional<ClassLoader> classLoader = CompilerClassloaderUtils.createClassloaderFromStringDeps(res.getDependencies().get());
+        assertThat(!res.getDependencies().isEmpty()).isTrue();
+        assertThat(res.getDependencies().size()).isEqualTo(4);
+        Optional<ClassLoader> classLoader = CompilerClassloaderUtils.createClassloaderFromStringDeps(res.getDependencies());
         assertThat(classLoader.isPresent()).isTrue();
         assertThat(classLoader.get()).isNotNull();
 
@@ -128,15 +113,8 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
 
     @Test
     public void readFileAsURI() {
-        /*CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                               info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
-                                                               Boolean.FALSE);
-        compiler.compile(req);
-        List<String> classpathFiles = new ArrayList<>();
-        classpathFiles.add(tmpRoot + "/dummy/module.cpath");*/
-        assertThat(res.getDependencies().isPresent()).isTrue();
-        List<String> projectDeps = res.getDependencies().get();
+        assertThat(!res.getDependencies().isEmpty()).isTrue();
+        List<String> projectDeps = res.getDependencies();
         List<URI> uris = CompilerClassloaderUtils.readAllDepsAsUris(projectDeps);
         assertThat(uris).hasSize(4);
     }

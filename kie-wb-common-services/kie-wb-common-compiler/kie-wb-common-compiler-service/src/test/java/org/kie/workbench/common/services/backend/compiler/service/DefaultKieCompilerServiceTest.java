@@ -15,7 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.service;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -28,8 +27,6 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.service.executors.DefaultLocalExecutor;
-import org.kie.workbench.common.services.backend.compiler.service.executors.DefaultRemoteExecutor;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
@@ -58,8 +55,8 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
                                                                              Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
-        assertThat(res.getDependencies().isPresent()).isTrue();
-        assertThat(res.getDependencies().get().size()).isEqualTo(0);
+        assertThat(res.getDependencies().isEmpty()).isTrue();
+        assertThat(res.getDependencies().size()).isEqualTo(0);
     }
 
     @Test
@@ -78,8 +75,8 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
                                                                                        Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
-        assertThat(res.getDependencies().isPresent()).isTrue();
-        assertThat(res.getDependencies().get().size()).isEqualTo(0);
+        assertThat(res.getDependencies().isEmpty()).isTrue();
+        assertThat(res.getDependencies().size()).isEqualTo(0);
     }
 
     @Test
@@ -98,8 +95,8 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
                                                                                        mavenRepo.toString());
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
-        assertThat(res.getDependencies().isPresent()).isTrue();
-        assertThat(res.getDependencies().get().size()).isGreaterThan(0);
+        assertThat(res.getDependencies().isEmpty()).isFalse();
+        assertThat(res.getDependencies().size()).isGreaterThan(0);
     }
 
 
@@ -111,8 +108,8 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
                                                                                        Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
-        assertThat(res.getDependencies().isPresent()).isTrue();
-        assertThat(res.getDependencies().get().size()).isEqualTo(0);
+        assertThat(res.getDependencies().isEmpty()).isTrue();
+        assertThat(res.getDependencies().size()).isEqualTo(0);
     }
 
     @Test
@@ -201,7 +198,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
                                                                              Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
-        assertThat(res.getDependencies()).isNotEmpty();
+        assertThat(res.getDependencies()).isEmpty();
     }
 
     @Test
@@ -220,8 +217,8 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
                                                                                        Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
-        assertThat(res.getDependencies().isPresent()).isTrue();
-        assertThat(res.getDependencies().get().size()).isEqualTo(0);
+        assertThat(res.getDependencies().isEmpty()).isTrue();
+        assertThat(res.getDependencies().size()).isEqualTo(0);
     }
 
     @Test
@@ -242,8 +239,8 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
                                                                                        mavenRepo.toString());
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
-        assertThat(res.getDependencies().isPresent()).isTrue();
-        assertThat(res.getDependencies().get().size()).isGreaterThan(0);
+        assertThat(res.getDependencies().isEmpty()).isFalse();
+        assertThat(res.getDependencies().size()).isGreaterThan(0);
     }
 
     @Test
@@ -254,8 +251,8 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
                                                                                        Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
-        assertThat(res.getDependencies().isPresent()).isTrue();
-        assertThat(res.getDependencies().get().size()).isEqualTo(0);
+        assertThat(res.getDependencies().isEmpty()).isTrue();
+        assertThat(res.getDependencies().size()).isEqualTo(0);
     }
 
     @Test

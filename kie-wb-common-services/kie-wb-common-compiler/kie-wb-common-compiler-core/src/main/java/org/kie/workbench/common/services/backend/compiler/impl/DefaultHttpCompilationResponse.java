@@ -38,13 +38,15 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
     private List<String> mavenOutput;
     private String workingDir;
 
-    private List<String> projectDependencies;
-    private List<URI> projectDependenciesAsURI;
-    private List<URL> projectDependenciesAsURL;
+    private List EMPTY_LIST = Collections.EMPTY_LIST;
 
-    private List<String> targetContent;
-    private List<URI> targetContentAsURI;
-    private List<URL> targetContentAsURL;
+    private List<String> projectDependencies = EMPTY_LIST;
+    private List<URI> projectDependenciesAsURI = EMPTY_LIST;
+    private List<URL> projectDependenciesAsURL= EMPTY_LIST;
+
+    private List<String> targetContent = EMPTY_LIST;
+    private List<URI> targetContentAsURI = EMPTY_LIST;
+    private List<URL> targetContentAsURL = EMPTY_LIST;
 
     public DefaultHttpCompilationResponse(KieCompilationResponse res) {
         this.successful = res.isSuccessful();
@@ -53,39 +55,11 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
             this.workingDir = res.getWorkingDir().get().toAbsolutePath().toString();
         }
         this.targetContent = res.getTargetContent();
-        if(res.getDependencies().isPresent()){
-            this.projectDependencies = res.getDependencies().get();
-        }
+        this.projectDependencies = res.getDependencies();
     }
 
     public DefaultHttpCompilationResponse(Boolean successful) {
         this.successful = successful;
-    }
-
-    public DefaultHttpCompilationResponse(final Boolean successful,
-                                      final List<String> mavenOutput) {
-        this.successful = successful;
-        this.mavenOutput = mavenOutput;
-    }
-
-    public DefaultHttpCompilationResponse(final Boolean successful,
-                                      final List<String> mavenOutput,
-                                      final String workingDir) {
-        this.successful = successful;
-        this.mavenOutput = mavenOutput;
-        this.workingDir = workingDir;
-    }
-
-    public DefaultHttpCompilationResponse(final Boolean successful,
-                                      final List<String> mavenOutput,
-                                      final String workingDir,
-                                      final List<String> targetContent,
-                                      final List<String> projectDependencies) {
-        this.successful = successful;
-        this.mavenOutput = mavenOutput;
-        this.workingDir = workingDir;
-        this.targetContent = targetContent;
-        this.projectDependencies = projectDependencies;
     }
 
     public Boolean isSuccessful() {
@@ -146,7 +120,6 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
         return projectDependenciesAsURL;
     }
 
-    //@TODO remove and create in a diffferent way
     private List<URL> getRawAsURLs(final List<String> content) {
         if (content != null && !content.isEmpty()) {
             return CompilerClassloaderUtils.processScannedFilesAsURLs(content);

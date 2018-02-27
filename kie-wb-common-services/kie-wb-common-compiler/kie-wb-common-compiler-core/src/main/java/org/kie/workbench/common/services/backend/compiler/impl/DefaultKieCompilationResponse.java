@@ -124,7 +124,7 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
     }
 
     @Override
-    public Optional<List<String>> getDependencies() {
+    public List<String> getDependencies() {
         return defaultResponse.getDependencies();
     }
 

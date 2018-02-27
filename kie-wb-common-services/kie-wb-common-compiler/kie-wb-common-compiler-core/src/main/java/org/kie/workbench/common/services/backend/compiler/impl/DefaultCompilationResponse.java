@@ -15,7 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl;
 
-
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
@@ -38,13 +37,15 @@ public class DefaultCompilationResponse implements CompilationResponse, Serializ
     private List<String> mavenOutput;
     private Path workingDir;
 
-    private List<String> projectDependencies;
-    private List<URI> projectDependenciesAsURI;
-    private List<URL> projectDependenciesAsURL;
+    private List EMPTY_LIST = Collections.EMPTY_LIST;
 
-    private List<String> targetContent;
-    private List<URI> targetContentAsURI;
-    private List<URL> targetContentAsURL;
+    private List<String> projectDependencies = EMPTY_LIST;
+    private List<URI> projectDependenciesAsURI = EMPTY_LIST;
+    private List<URL> projectDependenciesAsURL = EMPTY_LIST;
+
+    private List<String> targetContent = EMPTY_LIST;
+    private List<URI> targetContentAsURI = EMPTY_LIST;
+    private List<URL> targetContentAsURL = EMPTY_LIST;
 
     public DefaultCompilationResponse(final Boolean successful,
                                       final List<String> mavenOutput,
@@ -103,45 +104,60 @@ public class DefaultCompilationResponse implements CompilationResponse, Serializ
 
     @Override
     public List<URL> getTargetContentAsURL() {
-        if (targetContentAsURL == null) {
+        if (targetContentAsURL.equals(EMPTY_LIST)) {
             targetContentAsURL = getRawAsURLs(targetContent);
         }
         return targetContentAsURL;
     }
 
     @Override
-    public Optional<List<String>> getDependencies() {
-        return Optional.ofNullable(projectDependencies);
+    public List<String> getDependencies() {
+        return projectDependencies;
     }
 
     @Override
     public List<URI> getDependenciesAsURI() {
-        if (projectDependenciesAsURI == null) {
-            projectDependenciesAsURI = getRawAsURIs(projectDependencies);
+        if (projectDependenciesAsURI.equals(EMPTY_LIST)) {
+            projectDependenciesAsURI = getProjectDependenciesAsURIs();
         }
         return projectDependenciesAsURI;
     }
 
+    private List<URI> getProjectDependenciesAsURIs() {
+        if (!projectDependencies.equals(EMPTY_LIST) && !projectDependencies.isEmpty()) {
+            return CompilerClassloaderUtils.readAllDepsAsUris(projectDependencies);
+        }
+        return EMPTY_LIST;
+    }
+
     @Override
     public List<URL> getDependenciesAsURL() {
-        if (projectDependenciesAsURL == null) {
-            projectDependenciesAsURL = getRawAsURLs(projectDependencies);
+        if (projectDependenciesAsURL.equals(EMPTY_LIST)) {
+            projectDependenciesAsURL = getProjectDependenciesAsURLs();
         }
         return projectDependenciesAsURL;
     }
 
-    //@TODO remove and create in a different way
-    private List<URL> getRawAsURLs(final List<String> content) {
-        if (content != null && !content.isEmpty()) {
-            return CompilerClassloaderUtils.processScannedFilesAsURLs(content);
+    private List<URL> getProjectDependenciesAsURLs() {
+        if(projectDependencies != null && !projectDependencies.isEmpty()){
+            return CompilerClassloaderUtils.readAllDepsAsUrls(projectDependencies);
         }
-        return Collections.emptyList();
+        return EMPTY_LIST;
     }
 
-    private List<URI> getRawAsURIs(final List<String> content) {
-        if (content != null && !content.isEmpty()) {
-            return CompilerClassloaderUtils.processScannedFilesAsURIs(content);
+    private List<URL> getRawAsURLs(final List<String> targetContent) {
+        if(targetContent != null && !targetContent.isEmpty()){
+            return CompilerClassloaderUtils.processScannedFilesAsURLs(targetContent);
         }
-        return Collections.emptyList();
+        return EMPTY_LIST;
+    }
+
+
+
+    private List<URI> getRawAsURIs(final List<String> targetContent) {
+        if (targetContent != null && !targetContent.isEmpty()) {
+            return CompilerClassloaderUtils.processScannedFilesAsURIs(targetContent);
+        }
+        return EMPTY_LIST;
     }
 }
