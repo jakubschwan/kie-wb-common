@@ -306,62 +306,6 @@
       </plugin>
     </plugins>
   </build>
-<!--
-  <build>
-    <finalName>${project.artifactId}</finalName>
-    <outputDirectory>src/main/webapp/WEB-INF/classes</outputDirectory>
-    <plugins>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <packagingExcludes>**/*.symbolMap</packagingExcludes>
-          <archive>
-            <addMavenDescriptor>false</addMavenDescriptor>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>${basedir}</directory>
-              <includes>
-                <include>src/main/webapp/WEB-INF/classes/</include>
-                <include>src/main/webapp/WEB-INF/lib/</include>
-                <include>.niogit/**</include>
-              </includes>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.wildfly</groupId>
-                  <artifactId>wildfly-dist</artifactId>
-                  <version>10.1.0.Final</version>
-                  <type>zip</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>-->
 
   <profiles>
     <profile>
@@ -391,7 +335,7 @@
                     <artifactItem>
                       <groupId>org.wildfly</groupId>
                       <artifactId>wildfly-dist</artifactId>
-                      <version>10.1.0.Final</version>
+                      <version>11.0.0.Final</version>
                       <type>zip</type>
                       <overWrite>false</overWrite>
                       <outputDirectory>${project.build.directory}</outputDirectory>
