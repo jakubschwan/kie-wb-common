@@ -23,6 +23,7 @@ import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
@@ -68,14 +69,14 @@ public class BuildInMemoryClasspathMojoTest {
 
 
     @Test
-    public void getClassloaderFromAllDependenciesTestSimple() throws Exception{
+    public void getClassloaderFromAllDependenciesTestSimple(){
 
         Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_simple");
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{ "-X"},
+                                                               new String[]{ "-X", MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
 
         CompilationResponse res = compiler.compile(req);
@@ -85,14 +86,14 @@ public class BuildInMemoryClasspathMojoTest {
     }
 
     @Test
-    public void getClassloaderFromAllDependenciesTestComplex() throws Exception {
+    public void getClassloaderFromAllDependenciesTestComplex() {
 
         Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_complex");
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{"-X"},
+                                                               new String[]{"-X", MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
 
         CompilationResponse res = compiler.compile(req);
