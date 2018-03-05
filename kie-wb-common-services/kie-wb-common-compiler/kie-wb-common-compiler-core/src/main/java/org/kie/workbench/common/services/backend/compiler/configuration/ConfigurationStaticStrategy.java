@@ -36,6 +36,7 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy,
     private Boolean valid = Boolean.FALSE;
 
     public ConfigurationStaticStrategy() {
+
         conf = new HashMap<>();
 
         conf.put(ConfigurationKey.COMPILER, "jdt");
@@ -47,7 +48,7 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy,
         conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT,
                  "maven-compiler-plugin");
         conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION,
-                 "3.6.1");
+                 "3.7.0");
         conf.put(ConfigurationKey.FAIL_ON_ERROR,
                  "false");
         conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP,
@@ -65,7 +66,7 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy,
                  "kie-takari-plugin");
 
         conf.put(ConfigurationKey.KIE_VERSION,
-                 "7.7.0-SNAPSHOT");
+                 "7.7.0");
 
         valid = Boolean.TRUE;
     }

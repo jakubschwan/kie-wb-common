@@ -65,7 +65,7 @@ public class ConfigurationTest {
         conf.put(ConfigurationKey.TARGET_VERSION.name(), "1.8");
         conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP.name(), "org.apache.maven.plugins");
         conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT.name(), "maven-compiler-plugin");
-        conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION.name(), "3.6.1");
+        conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION.name(), "3.7.0");
         conf.put(ConfigurationKey.FAIL_ON_ERROR.name(), "false");
         conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP.name(), "kie.io.takari.maven.plugins");
         conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT.name(), "kie-takari-lifecycle-plugin");
@@ -73,7 +73,7 @@ public class ConfigurationTest {
         conf.put(ConfigurationKey.KIE_MAVEN_PLUGINS.name(), "org.kie");
         conf.put(ConfigurationKey.KIE_MAVEN_PLUGIN.name(), "kie-maven-plugin");
         conf.put(ConfigurationKey.KIE_TAKARI_PLUGIN.name(), "kie-takari-plugin");
-        conf.put(ConfigurationKey.KIE_VERSION.name(), "7.6.0-SNAPSHOT");
+        conf.put(ConfigurationKey.KIE_VERSION.name(), "7.7.0");
         return conf;
     }
 }
