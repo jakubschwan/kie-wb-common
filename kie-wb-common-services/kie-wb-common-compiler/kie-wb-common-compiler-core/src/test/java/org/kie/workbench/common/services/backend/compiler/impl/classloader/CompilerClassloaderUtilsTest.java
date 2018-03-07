@@ -75,6 +75,20 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
     }
 
     @Test
+    public void filterFilesFromPackage() {
+        List<String> targets = new ArrayList<>(5);
+        targets.add("/target/classes/org/kie/test/A.class");
+        targets.add("/target/classes/org/kie/test/J.java");
+        targets.add("/target/classes/org/kie/test/T.txt");
+        targets.add("/target/classes/org/kie/test/P.properties");
+        targets.add("/target/classes/org/kie/test/X.xml");
+
+        List<String> orgKie = CompilerClassloaderUtils.filterClassesByPackage(targets, "org.kie");
+        assertThat(orgKie).hasSize(1)
+                .containsExactlyInAnyOrder("org.kie.test.A");
+    }
+
+    @Test
     public void filterPathClasses() {
         List<String> targets = new ArrayList<>(3);
         targets.add("/target/classes/org/kie/test/A.class");
