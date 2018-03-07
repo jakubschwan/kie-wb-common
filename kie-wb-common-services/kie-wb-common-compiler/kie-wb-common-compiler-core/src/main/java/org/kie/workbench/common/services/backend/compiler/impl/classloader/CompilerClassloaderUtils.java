@@ -64,7 +64,7 @@ public class CompilerClassloaderUtils {
 
     protected static final Logger logger = LoggerFactory.getLogger(CompilerClassloaderUtils.class);
     protected static final DirectoryStream.Filter<Path> dotFileFilter = new DotFileFilter();
-    protected static String DOT_FILE = ".";
+    protected static String DOT = ".";
     protected static String JAVA_ARCHIVE_RESOURCE_EXT = ".jar";
     protected static String JAVA_CLASS_EXT = ".class";
     protected static String XML_EXT = ".xml";
@@ -76,6 +76,7 @@ public class CompilerClassloaderUtils {
     protected static String MAVEN_TARGET = "target/classes/";
     protected static String META_INF = "META-INF";
     protected static String UTF_8 = "UTF-8";
+    protected static String SEPARATOR = "/";
 
     private CompilerClassloaderUtils() { }
 
@@ -115,7 +116,7 @@ public class CompilerClassloaderUtils {
         final Map<String, byte[]> classes = new HashMap<>(keys.size() + store.size());
 
         for (String item : keys) {
-            byte[] bytez = getBytes(path + "/" + item);
+            byte[] bytez = getBytes(path + SEPARATOR + item);
             String fqn = item.substring(item.lastIndexOf(MAVEN_TARGET) + 15); // 15 chars are for "target/classes"
             classes.put(fqn, bytez);
         }
@@ -130,7 +131,7 @@ public class CompilerClassloaderUtils {
     public static Predicate<File> filterClasses() {
         return f -> f.toString().contains(MAVEN_TARGET) &&
                     !f.toString().contains(META_INF) &&
-                    !FilenameUtils.getName(f.toString()).startsWith(DOT_FILE);
+                    !FilenameUtils.getName(f.toString()).startsWith(DOT);
     }
 
     private static void searchTargetFiles(Path file,
@@ -143,7 +144,7 @@ public class CompilerClassloaderUtils {
                                       classPathFiles,
                                       extensions);
                 } else if (Stream.of(extensions).anyMatch(p.toString()::endsWith) && p.toString().contains(MAVEN_TARGET)) {
-                    if (FilenameUtils.getName(p.getFileName().toString()).startsWith(DOT_FILE)) {
+                    if (FilenameUtils.getName(p.getFileName().toString()).startsWith(DOT)) {
                         continue;
                     }
                     classPathFiles.add(p.toAbsolutePath().toString());
@@ -178,9 +179,9 @@ public class CompilerClassloaderUtils {
         List<URL> urls = new ArrayList<>(artifacts.size());
         for (Artifact artifact : artifacts) {
             StringBuilder sb = new StringBuilder(FILE_URI);
-            sb.append(localRepo).append("/").append(artifact.getGroupId()).
-                    append("/").append(artifact.getVersion()).append("/").append(artifact.getArtifactId()).
-                    append("-").append(artifact.getVersion()).append(".").append(artifact.getType());
+            sb.append(localRepo).append(SEPARATOR).append(artifact.getGroupId()).
+                    append(SEPARATOR).append(artifact.getVersion()).append(SEPARATOR).append(artifact.getArtifactId()).
+                    append("-").append(artifact.getVersion()).append(DOT).append(artifact.getType());
             URL url = new URL(sb.toString());
             urls.add(url);
         }
@@ -208,7 +209,7 @@ public class CompilerClassloaderUtils {
                     Path path = Paths.get(URI.create(FILE_URI + pomPath));
                     StringBuilder sb = new StringBuilder(FILE_URI)
                             .append(path.getParent().toAbsolutePath().toString())
-                            .append("/").append(MAVEN_TARGET);
+                            .append(SEPARATOR).append(MAVEN_TARGET);
                     targetModulesUrls.add(new URL(sb.toString()));
                 }
             } catch (MalformedURLException ex) {
@@ -320,7 +321,7 @@ public class CompilerClassloaderUtils {
         List<URL> deps = new ArrayList<>();
         try {
             for (String file : classPathFiles) {
-                if (FilenameUtils.getName(file).startsWith(".")) {
+                if (FilenameUtils.getName(file).startsWith(DOT)) {
                     continue;
                 }
                 if (file.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
@@ -353,13 +354,13 @@ public class CompilerClassloaderUtils {
         for (String item : paths) {
             if (item.endsWith(JAVA_CLASS_EXT)) {
                 String one = item.substring(item.lastIndexOf(MAVEN_TARGET) + 15); // 15 chars are for "target/classes/"
-                if (one.contains("/")) {  //there is a package
-                    one = one.substring(0, one.lastIndexOf("/")).replace("/", ".");
+                if (one.contains(SEPARATOR)) {  //there is a package
+                    one = one.substring(0, one.lastIndexOf(SEPARATOR)).replace(SEPARATOR, DOT);
                     filtered.add(one);
                 }
             } else if (item.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
                 String one = item.substring(item.lastIndexOf(mavenRpo) + mavenRepoLength,
-                                            item.lastIndexOf("/")).replace("/", ".");
+                                            item.lastIndexOf(SEPARATOR)).replace(SEPARATOR, DOT);
                 filtered.add(one);
             }
         }
@@ -367,14 +368,14 @@ public class CompilerClassloaderUtils {
     }
 
     public static List<String> filterClassesByPackage(Collection<String> items, String packageName) {
-        String packageNameWithSlash = packageName.replace(".", "/");//fix for the wildcard
+        String packageNameWithSlash = packageName.replace(DOT, SEPARATOR) + SEPARATOR;//fix for the wildcard
         List<String> filtered = new ArrayList<>(items.size());
         for (String item : items) {
-            if (!item.contains(META_INF)) {
-                String one = item.substring(item.lastIndexOf(MAVEN_TARGET) + 15, item.lastIndexOf(".")); // 15 chars are for "target/classes/"
+            if (!item.contains(META_INF) && item.endsWith(JAVA_CLASS_EXT)) {
+                String one = item.substring(item.lastIndexOf(MAVEN_TARGET) + 15, item.lastIndexOf(DOT)); // 15 chars are for "target/classes/"
                 if (one.contains(packageNameWithSlash)) {
-                    if (one.contains("/")) { //there is a package
-                        one = one.replace("/", ".");
+                    if (one.contains(SEPARATOR)) { //there is a package
+                        one = one.replace(SEPARATOR, DOT);
                     }
                     filtered.add(one);
                 }
