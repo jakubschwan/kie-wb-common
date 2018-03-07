@@ -25,20 +25,18 @@ import java.util.Properties;
 
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
-import org.guvnor.common.services.project.backend.server.utils.configuration.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**
  * Strategy implementation to create the Configuration from properties file
  */
-public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
-                                                        Order {
+public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationPropertiesStrategy.class);
 
     protected Map<ConfigurationKey, String> conf;
 
-    private String propertiesFile = "IncrementalCompiler.properties";
+    private static final String PROPERTIES_FILE = "IncrementalCompiler.properties";
 
     private Boolean valid = Boolean.FALSE;
 
@@ -47,47 +45,26 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
         if (isValid()) {
             conf = new HashMap<>();
 
-            conf.put(ConfigurationKey.COMPILER,
-                     props.getProperty(ConfigurationKey.COMPILER.name()));
-            conf.put(ConfigurationKey.SOURCE_VERSION,
-                     props.getProperty(ConfigurationKey.SOURCE_VERSION.name()));
-            conf.put(ConfigurationKey.TARGET_VERSION,
-                     props.getProperty(ConfigurationKey.TARGET_VERSION.name()));
-            conf.put(ConfigurationKey.FAIL_ON_ERROR,
-                     props.getProperty(ConfigurationKey.FAIL_ON_ERROR.name()));
-
-            conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP,
-                     props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP.name()));
-            conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT,
-                     props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT.name()));
-            conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION,
-                     props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION.name()));
-
-            conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP,
-                     props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP.name()));
-            conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT,
-                     props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT.name()));
-            conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION,
-                     props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION.name()));
-
-            conf.put(ConfigurationKey.KIE_MAVEN_PLUGINS,
-                     props.getProperty(ConfigurationKey.KIE_MAVEN_PLUGINS.name()));
-            conf.put(ConfigurationKey.KIE_MAVEN_PLUGIN,
-                     props.getProperty(ConfigurationKey.KIE_MAVEN_PLUGIN.name()));
-            conf.put(ConfigurationKey.KIE_TAKARI_PLUGIN,
-                     props.getProperty(ConfigurationKey.KIE_TAKARI_PLUGIN.name()));
-
-            conf.put(ConfigurationKey.KIE_VERSION,
-                     props.getProperty(ConfigurationKey.KIE_VERSION.name()));
+            for (ConfigurationKey key : ConfigurationKey.values()) {
+                String value = props.getProperty(key.name());
+                if (value == null) {
+                    logger.info("Key {} is not available with the classloader properties, skip to the next ConfigurationStrategy. \n",
+                            key.name());
+                    valid = Boolean.FALSE;
+                    break;
+                } else {
+                    conf.put(key, value);
+                }
+            }
         }
     }
 
     private Properties loadProperties() {
         Properties prop = new Properties();
-        InputStream in = getClass().getClassLoader().getResourceAsStream(propertiesFile);
+        InputStream in = getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE);
         if (in == null) {
             logger.info("{} not available with the classloader, skip to the next ConfigurationStrategy. \n",
-                        propertiesFile);
+                        PROPERTIES_FILE);
             valid = Boolean.FALSE;
         } else {
             try {
