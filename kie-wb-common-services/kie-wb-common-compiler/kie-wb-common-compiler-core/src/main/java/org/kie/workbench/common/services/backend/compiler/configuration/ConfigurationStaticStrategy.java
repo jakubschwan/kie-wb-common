@@ -22,14 +22,12 @@ import java.util.Map;
 
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
-import org.guvnor.common.services.project.backend.server.utils.configuration.Order;
 
 /**
  * Strategy implementation to create the Configuration from hard coded values, this must be the fallback impl
  * if the other strategies fails
  */
-public class ConfigurationStaticStrategy implements ConfigurationStrategy,
-                                                    Order {
+public class ConfigurationStaticStrategy implements ConfigurationStrategy {
 
     protected Map<ConfigurationKey, String> conf;
 

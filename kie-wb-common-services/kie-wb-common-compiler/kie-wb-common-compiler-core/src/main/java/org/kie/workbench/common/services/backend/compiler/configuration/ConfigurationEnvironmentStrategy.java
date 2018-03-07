@@ -22,14 +22,12 @@ import java.util.Map;
 
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
-import org.guvnor.common.services.project.backend.server.utils.configuration.Order;
 import org.slf4j.LoggerFactory;
 
 /**
  * Strategy implementation to create the Configuration from environment vars
  */
-public class ConfigurationEnvironmentStrategy implements ConfigurationStrategy,
-                                                         Order {
+public class ConfigurationEnvironmentStrategy implements ConfigurationStrategy {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ConfigurationEnvironmentStrategy.class);
 
