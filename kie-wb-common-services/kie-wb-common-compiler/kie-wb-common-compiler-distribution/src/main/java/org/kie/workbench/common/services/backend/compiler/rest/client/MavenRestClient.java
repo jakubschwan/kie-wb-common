@@ -30,14 +30,8 @@ import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilatio
  */
 public class MavenRestClient {
 
-    public CompletableFuture<KieCompilationResponse> call(String projectPath, String mavenRepo, String url){
-        CompletableFuture<KieCompilationResponse> res = callMyMaybe(projectPath, mavenRepo, url);
 
-        return res;
-    }
-
-
-    public CompletableFuture<KieCompilationResponse> callMyMaybe(String projectPath, String mavenRepo, String url) {
+    public CompletableFuture<KieCompilationResponse> call(String projectPath, String mavenRepo, String url) {
 
         final CompletableFuture<KieCompilationResponse> cfInternal = new CompletableFuture<>();
 

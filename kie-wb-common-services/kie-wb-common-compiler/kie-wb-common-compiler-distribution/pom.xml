@@ -19,14 +19,14 @@
     <java.module.name>org.kie.wb.common.services.backend.compiler.distribution</java.module.name>
     <!-- Cargo properties-->
     <cargo.container.id/>
-    <deployable.groupId/>
-    <deployable.artifactId/>
+    <deployable.groupId>org.kie.workbench.services</deployable.groupId>
+    <deployable.artifactId>kie-wb-common-compiler-distribution</deployable.artifactId>
     <deployable.version>${version.org.kie}</deployable.version>
     <deployable.classifier/>
-    <deployable.context>kie-wb</deployable.context>
+    <deployable.context>kie-maven-compiler</deployable.context>
     <deployment.timeout>90000</deployment.timeout>
     <container.host>localhost</container.host>
-    <container.port>8080</container.port>
+    <container.port>8090</container.port>
     <kie.compiler.url>http://${container.host}:${container.port}/${deployable.context}</kie.compiler.url>
     <deployable.classifier.wildfly11>wildfly11</deployable.classifier.wildfly11>
     <deployable.classifier.eap7>eap7</deployable.classifier.eap7>
@@ -51,6 +51,14 @@
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-core-uberjar</artifactId>
         <version>${version.org.codehaus.cargo}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.kie.workbench.services</groupId>
+        <artifactId>kie-wb-common-compiler-distribution</artifactId>
+        <type>war</type>
+        <version>${version.org.kie}</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -127,12 +135,19 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-nio2-fs</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-servlet-security</artifactId>
-      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-server</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-commons</artifactId>
     </dependency>
 
     <dependency>
@@ -220,7 +235,13 @@
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-bus</artifactId>
-      <scope>test</scope>
+      <!--<scope>test</scope>-->
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-security-server</artifactId>
+      <!--<scope>test</scope>-->
     </dependency>
 
     <!-- resteasy-->
@@ -238,6 +259,13 @@
           <artifactId>commons-logging</artifactId>
         </exclusion>
       </exclusions>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.services</groupId>
+      <artifactId>kie-wb-common-compiler-distribution</artifactId>
+      <type>war</type>
       <scope>test</scope>
     </dependency>
 
@@ -266,13 +294,14 @@
 
     <pluginManagement>
       <plugins>
+
         <plugin>
           <groupId>org.codehaus.cargo</groupId>
           <artifactId>cargo-maven2-plugin</artifactId>
           <version>1.6.7</version>
           <configuration>
             <container>
-              <containerId>${cargo.container.id}</containerId>
+              <containerId>wildfly11x</containerId>
               <systemProperties>
                 <kie.maven.settings.custom>${project.build.testOutputDirectory}/settings.xml</kie.maven.settings.custom>
                 <!-- Fixes issue when Tomcat hangs during deployment due to insufficient amount of entropy.
@@ -283,11 +312,11 @@
             </container>
             <deployables>
               <deployable>
-                <groupId>${deployable.groupId}</groupId>
-                <artifactId>${deployable.artifactId}</artifactId>
+                <groupId>org.kie.workbench.services</groupId>
+                <artifactId>kie-wb-common-compiler-distribution</artifactId>
                 <!-- default, may be overridden in container specific profiles -->
-                <classifier>${deployable.classifier}</classifier>
-                <version>${version.org.kie}</version>
+                <!--<classifier>${deployable.classifier}</classifier>-->
+                <!-- <version>${version.org.kie}</version>-->
                 <type>war</type>
                 <properties>
                   <context>${deployable.context}</context>
@@ -322,6 +351,7 @@
             </execution>
           </executions>
         </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
@@ -438,30 +468,30 @@
     </profile>
 
     <!-- deployments profiles for testing -->
-   <!-- <profile>
-      <id>kie-wb-common-compiler-distribution</id>
-      <properties>
-        <deployable.groupId>org.kie.workbench.services</deployable.groupId>
-        <deployable.artifactId>kie-wb-common-compiler-distribution</deployable.artifactId>
-        <deployable.version>${version.org.kie}</deployable.version>
-        <deployable.context>kie-compiler</deployable.context>
-      </properties>
-    </profile>-->
+    <!-- <profile>
+       <id>kie-wb-common-compiler-distribution</id>
+       <properties>
+         <deployable.groupId>org.kie.workbench.services</deployable.groupId>
+         <deployable.artifactId>kie-wb-common-compiler-distribution</deployable.artifactId>
+         <deployable.version>${version.org.kie}</deployable.version>
+         <deployable.context>kie-compiler</deployable.context>
+       </properties>
+     </profile>-->
     <!-- end of deployments profiles-->
 
     <!-- Containers -->
     <profile>
       <id>wildfly11</id>
-      <!--<activation>
-+      <activeByDefault>true</activeByDefault>
-+    </activation>-->
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <dependencies>
-       <!-- <dependency>
-          <groupId>org.kie.workbench.services</groupId>
-          <artifactId>kie-wb-common-compiler-distribution</artifactId>
-          <classifier>${deployable.classifier.wildfly11}</classifier>
-          <type>war</type>
-        </dependency>-->
+        <!-- <dependency>
+           <groupId>org.kie.workbench.services</groupId>
+           <artifactId>kie-wb-common-compiler-distribution</artifactId>
+           <classifier>${deployable.classifier.wildfly11}</classifier>
+           <type>war</type>
+         </dependency>-->
       </dependencies>
       <properties>
         <cargo.container.id>wildfly11x</cargo.container.id>
@@ -491,8 +521,8 @@
                   <deployable>
                     <groupId>${deployable.groupId}</groupId>
                     <artifactId>${deployable.artifactId}</artifactId>
-                    <classifier>${deployable.classifier.wildfly11}</classifier>
-                    <version>${version.org.kie}</version>
+                    <!--<classifier>${deployable.classifier.wildfly11}</classifier>-->
+                    <!--<version>${version.org.kie}</version>-->
                     <type>war</type>
                   </deployable>
                 </deployables>
