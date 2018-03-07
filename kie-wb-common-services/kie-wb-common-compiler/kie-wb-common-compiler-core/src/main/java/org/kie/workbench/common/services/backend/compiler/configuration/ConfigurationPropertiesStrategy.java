@@ -42,19 +42,23 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
 
     public ConfigurationPropertiesStrategy() {
         Properties props = loadProperties();
-        if (isValid()) {
-            conf = new HashMap<>();
+        /*if (isValid()) {
+            setUpValues(props);
+        }*/
+    }
 
-            for (ConfigurationKey key : ConfigurationKey.values()) {
-                String value = props.getProperty(key.name());
-                if (value == null) {
-                    logger.info("Key {} is not available with the classloader properties, skip to the next ConfigurationStrategy. \n",
-                            key.name());
-                    valid = Boolean.FALSE;
-                    break;
-                } else {
-                    conf.put(key, value);
-                }
+    private void setUpValues(Properties props) {
+        conf = new HashMap<>();
+
+        for (ConfigurationKey key : ConfigurationKey.values()) {
+            String value = props.getProperty(key.name());
+            if (value == null) {
+                logger.info("Key {} is not available with the classloader properties, skip to the next ConfigurationStrategy. \n",
+                        key.name());
+                valid = Boolean.FALSE;
+                break;
+            } else {
+                conf.put(key, value);
             }
         }
     }
@@ -71,6 +75,7 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
                 prop.load(in);
                 in.close();
                 valid = Boolean.TRUE;
+                setUpValues(prop);
             } catch (IOException e) {
                 logger.error(e.getMessage());
                 valid = Boolean.FALSE;
@@ -86,7 +91,7 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
 
     @Override
     public Boolean isValid() {
-        return valid;
+        return valid && (conf.size() == ConfigurationKey.values().length);
     }
 
     @Override

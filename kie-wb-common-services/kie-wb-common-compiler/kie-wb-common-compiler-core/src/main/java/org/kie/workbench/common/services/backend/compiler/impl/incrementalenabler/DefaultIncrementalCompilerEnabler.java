@@ -38,21 +38,26 @@ public class DefaultIncrementalCompilerEnabler implements IncrementalCompilerEna
 
     private final String POM_NAME = "pom.xml";
     protected String FILE_URI = "file://";
-
+    private boolean isValidConfiguration;
     private DefaultPomEditor editor;
 
     public DefaultIncrementalCompilerEnabler() {
-        editor = new DefaultPomEditor(new HashSet<PomPlaceHolder>(),
-                                      new ConfigurationContextProvider());
+        ConfigurationContextProvider confProvider = new ConfigurationContextProvider();
+        isValidConfiguration = confProvider.isValid();
+        if(isValidConfiguration){
+            editor = new DefaultPomEditor(new HashSet<>(), confProvider);
+        }
     }
 
     @Override
     public ProcessedPoms process(final CompilationRequest req) {
+        if(!isValidConfiguration){
+            return new ProcessedPoms(Boolean.FALSE, Collections.emptyList());
+        }
         Path mainPom = Paths.get(URI.create(FILE_URI + req.getKieCliRequest().getWorkingDirectory() + "/" + POM_NAME));
 
         if (!Files.isReadable(mainPom)) {
-            return new ProcessedPoms(Boolean.FALSE,
-                                     Collections.emptyList());
+            return new ProcessedPoms(Boolean.FALSE, Collections.emptyList());
         }
 
         PomPlaceHolder placeHolder = editor.readSingle(mainPom);

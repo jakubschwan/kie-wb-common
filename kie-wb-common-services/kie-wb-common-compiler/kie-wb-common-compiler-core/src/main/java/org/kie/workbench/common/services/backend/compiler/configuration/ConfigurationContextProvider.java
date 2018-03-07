@@ -18,11 +18,15 @@ package org.kie.workbench.common.services.backend.compiler.configuration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
+import org.guvnor.common.services.project.backend.server.utils.configuration.Order;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This implementation first try to load configuration keys from environment variables then load properties with a files
@@ -30,7 +34,7 @@ import org.guvnor.common.services.project.backend.server.utils.configuration.Con
  * <p>
  * MAVEN_PLUGINS =org.apache.maven.plugins
  * MAVEN_COMPILER_PLUGIN =maven-compiler-plugin
- * MAVEN_COMPILER_PLUGIN_VERSION=3.6.1
+ * MAVEN_COMPILER_PLUGIN_VERSION=3.7.0
  * <p>
  * ALTERNATIVE_COMPILER_PLUGINS =io.takari.maven.plugins
  * ALTERNATIVE_COMPILER_PLUGIN =takari-lifecycle-plugin
@@ -44,6 +48,8 @@ import org.guvnor.common.services.project.backend.server.utils.configuration.Con
  */
 public class ConfigurationContextProvider implements ConfigurationProvider {
 
+    private Logger logger = LoggerFactory.getLogger(ConfigurationContextProvider.class);
+
     private Map<ConfigurationKey, String> conf;
 
     public ConfigurationContextProvider() {
@@ -54,8 +60,7 @@ public class ConfigurationContextProvider implements ConfigurationProvider {
         List<ConfigurationStrategy> confs = new ArrayList<ConfigurationStrategy>(Arrays.asList(new ConfigurationEnvironmentStrategy(),
                                                                                                new ConfigurationPropertiesStrategy(),
                                                                                                new ConfigurationStaticStrategy()));
-        Collections.sort(confs,
-                         (ConfigurationStrategy one, ConfigurationStrategy two) -> one.getOrder().compareTo(two.getOrder()));
+        Collections.sort(confs, Comparator.comparing(Order::getOrder));
         for (ConfigurationStrategy item : confs) {
             if (item.isValid()) {
                 conf = item.loadConfiguration();
@@ -67,5 +72,14 @@ public class ConfigurationContextProvider implements ConfigurationProvider {
     @Override
     public Map<ConfigurationKey, String> loadConfiguration() {
         return conf;
+    }
+
+    @Override
+    public boolean isValid() {
+        boolean result = conf.size() == ConfigurationKey.values().length;
+        if(!result){
+            logger.error("Invalid Compiler configuration");
+        }
+        return result;
     }
 }

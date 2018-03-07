@@ -40,6 +40,7 @@ public class ConfigurationTest {
     @Test
     public void loadConfig() {
         ConfigurationContextProvider provider = new ConfigurationContextProvider();
+        assertThat(provider.isValid()).isTrue();
         Map<ConfigurationKey, String> conf = provider.loadConfiguration();
         assertThat(conf.keySet()).hasSize(14);
     }
@@ -94,7 +95,7 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void loadNotValidEnvironmentConfigu() {
+    public void loadNotValidEnvironmentConfiguration() {
         ConfigurationStrategy strategy = new ConfigurationEnvironmentStrategy();
         Map<ConfigurationKey, String> conf = strategy.loadConfiguration();
         assertThat(conf).isEmpty();
@@ -161,4 +162,5 @@ public class ConfigurationTest {
 
         return new FileOutputStream(fileObject);
     }
+
 }

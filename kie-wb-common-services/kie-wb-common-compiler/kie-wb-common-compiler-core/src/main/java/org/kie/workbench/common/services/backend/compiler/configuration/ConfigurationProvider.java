@@ -30,4 +30,10 @@ public interface ConfigurationProvider {
      * @return
      */
     Map<ConfigurationKey, String> loadConfiguration();
+
+    /***
+     * Signals the validity of this provider
+     * @return
+     */
+    boolean isValid();
 }

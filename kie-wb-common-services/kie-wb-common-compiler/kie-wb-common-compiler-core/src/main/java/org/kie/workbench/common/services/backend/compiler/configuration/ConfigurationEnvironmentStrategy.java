@@ -69,9 +69,7 @@ public class ConfigurationEnvironmentStrategy implements ConfigurationStrategy {
     }
 
     @Override
-    public Boolean isValid() {
-        return valid;
-    }
+    public Boolean isValid() { return valid && ( conf.size() == ConfigurationKey.values().length ); }
 
     @Override
     public Map<ConfigurationKey, String> loadConfiguration() {
