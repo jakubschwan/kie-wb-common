@@ -61,17 +61,57 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
     }
 
     @Test
+    public void filterSubClassesByPackage(){
+        List<String> targets = new ArrayList<>(4);
+        targets.add("/target/classes/org/kie/test/A.class");
+        targets.add("/target/classes/org/kie/test/child/B.class");
+        targets.add("/target/classes/org/kie/test/child/son/C.class");
+        targets.add("/target/classes/org/kie-test/T.class");
+
+        List<String> orgKie =  CompilerClassloaderUtils.filterClassesByPackage(targets, "org.kie");
+        assertThat(orgKie).hasSize(3)
+                .containsExactlyInAnyOrder("org.kie.test.A","org.kie.test.child.B","org.kie.test.child.son.C")
+                .doesNotContain("org.kie-test/T");
+    }
+
+    @Test
+    public void filterFilesFromPackage() {
+        List<String> targets = new ArrayList<>(5);
+        targets.add("/target/classes/org/kie/test/A.class");
+        targets.add("/target/classes/org/kie/test/J.java");
+        targets.add("/target/classes/org/kie/test/T.txt");
+        targets.add("/target/classes/org/kie/test/P.properties");
+        targets.add("/target/classes/org/kie/test/X.xml");
+
+        List<String> orgKie = CompilerClassloaderUtils.filterClassesByPackage(targets, "org.kie");
+        assertThat(orgKie).hasSize(1)
+                .containsExactlyInAnyOrder("org.kie.test.A");
+    }
+
+    @Test
     public void filterPathClasses() {
-        List<String> targets = new ArrayList<>(3);
+        List<String> targets = new ArrayList<>(6);
         targets.add("/target/classes/org/kie/test/A.class");
         targets.add("/target/classes/io/akka/test/C.class");
         targets.add("/target/classes/com/acme/test/D.class");
-        targets.add("/target/classes/com/acme/test/D.class");
+        targets.add("/target/classes/com/acme/test/E.class");
         targets.add(mavenRepo.toAbsolutePath().toString() + "/junit/junit/4.12/junit.jar");
         targets.add(mavenRepo.toAbsolutePath().toString() + "/junit/junit/4.12/junit-4.12.jar");
 
         Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets, mavenRepo.toString());
-        assertThat(orgKie.size() == 4).isTrue();
+        assertThat(orgKie).hasSize(4);
+    }
+
+    @Test
+    public void filterPathSubClasses() {
+        List<String> targets = new ArrayList<>(4);
+        targets.add("/target/classes/org/kie/test/A.class");
+        targets.add("/target/classes/org/kie/test/child/B.class");
+        targets.add("/target/classes/org/kie/test/child/son/C.class");
+        targets.add("/target/classes/org/kie-test/T.class");
+
+        Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets, mavenRepo.toString());
+        assertThat(orgKie).hasSize(4).contains("org.kie.test","org.kie.test.child","org.kie.test.child.son", "org.kie-test");
     }
 
     @Test
@@ -103,8 +143,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
 
     @Test
     public void createClassloaderFromCpFiles() {
-        assertThat(!res.getDependencies().isEmpty()).isTrue();
-        assertThat(res.getDependencies().size()).isEqualTo(4);
+        assertThat(res.getDependencies()).hasSize(4);
         Optional<ClassLoader> classLoader = CompilerClassloaderUtils.createClassloaderFromStringDeps(res.getDependencies());
         assertThat(classLoader.isPresent()).isTrue();
         assertThat(classLoader.get()).isNotNull();

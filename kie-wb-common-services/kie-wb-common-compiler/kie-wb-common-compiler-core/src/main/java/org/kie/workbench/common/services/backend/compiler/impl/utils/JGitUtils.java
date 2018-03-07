@@ -34,7 +34,7 @@ public class JGitUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(JGITCompilerBeforeDecorator.class);
     private static String REMOTE = "origin";
-    private static String TEMP = System.getProperty("java.io.tmpdir") + File.separatorChar + "maven/";
+    private static String TEMP = System.getProperty("java.io.tmpdir") + File.separatorChar + "maven" + File.separatorChar;
 
     public static Boolean pullAndRebase(final Git git) {
         Boolean result = Boolean.FALSE;
