@@ -18,6 +18,7 @@ package org.kie.workbench.common.services.backend.compiler;
 import java.util.ArrayList;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.After;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,31 +37,25 @@ import org.uberfire.java.nio.file.Paths;
 public class DefaultMavenIncrementalCompilerTest {
 
     private Path mavenRepo;
+    private Path tmpRoot;
     private Logger logger = LoggerFactory.getLogger(DefaultMavenIncrementalCompilerTest.class);
 
     @Before
     public void setUp() throws Exception {
+        mavenRepo = TestUtil.createMavenRepo();
+        tmpRoot = Files.createTempDirectory("repo");
+    }
 
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            logger.info("Creating a m2_repo into " + mavenRepo);
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
+    @After
+    public void cleanUp() {
+        if (tmpRoot != null) {
+            TestUtil.rm(tmpRoot.toFile());
         }
     }
 
     @Test
     public void testIsValidMavenHome() throws Exception {
-        Path tmpRoot = Files.createTempDirectory("repo");
-        //NIO creation and copy content
-        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy"),
-                          temp);
-        //end NIO
+        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy",ResourcesConstants.DUMMY_DIR);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
@@ -75,19 +70,11 @@ public class DefaultMavenIncrementalCompilerTest {
                                                       "DefaultMavenIncrementalCompilerTest.testIsValidMavenHome");
         }
         assertThat(res.isSuccessful()).isTrue();
-
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
     public void testIncrementalWithPluginEnabled() throws Exception {
-        Path tmpRoot = Files.createTempDirectory("repo");
-        //NIO creation and copy content
-        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy"),
-                          temp);
-        //end NIO
+        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
@@ -107,18 +94,11 @@ public class DefaultMavenIncrementalCompilerTest {
                                                   "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_compile");
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
     public void testIncrementalWithPluginEnabledThreeTime() throws Exception {
-        Path tmpRoot = Files.createTempDirectory("repo");
-        //NIO creation and copy content
-        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy"),
-                          temp);
-        //end NIO
+        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy",ResourcesConstants.DUMMY_DIR);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
 
@@ -144,18 +124,11 @@ public class DefaultMavenIncrementalCompilerTest {
                                                   "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_compile");
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
     public void testCheckIncrementalWithChanges() throws Exception {
-        Path tmpRoot = Files.createTempDirectory("repo");
-        //NIO creation and copy content
-        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy_incremental"),
-                          temp);
-        //end NIO
+        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy",ResourcesConstants.DUMMY_INCREMENTAL_DIR);
 
         //compiler
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
@@ -224,17 +197,11 @@ public class DefaultMavenIncrementalCompilerTest {
         assertThat(isPresent(output,
                                     "Compiled 1 out of 1 sources ")).isTrue();
 
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
     public void testError() throws Exception {
-        Path tmpRoot = Files.createTempDirectory("repo");
-        //NIO creation and copy content
-        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_untouched_with_error"),
-                          temp);
-        //end NIO
+        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy",ResourcesConstants.DUMMY_KIE_MULTIMODULE_UNTOUCHED_WITH_ERROR_DIR);
 
         //compiler
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
@@ -287,8 +254,6 @@ public class DefaultMavenIncrementalCompilerTest {
 
         assertThat(isPresent(output,
                                     "Compiled 1 out of 1 sources ")).isTrue();
-
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     private boolean isPresent(List<String> output,

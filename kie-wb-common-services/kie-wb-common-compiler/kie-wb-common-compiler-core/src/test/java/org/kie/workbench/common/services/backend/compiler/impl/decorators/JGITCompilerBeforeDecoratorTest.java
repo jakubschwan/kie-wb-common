@@ -52,20 +52,15 @@ public class JGITCompilerBeforeDecoratorTest  {
     private IOService ioService;
     private Path mavenRepo;
 
+    private Path tmpRootCloned;
+    private Path tmpCloned;
+
     @Before
     public void setUp() throws Exception {
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
 
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            logger.info("Creating a m2_repo into " + mavenRepo);
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
-        }
+        mavenRepo = TestUtil.createMavenRepo();
     }
 
     @After
@@ -74,44 +69,9 @@ public class JGITCompilerBeforeDecoratorTest  {
         TestUtil.rm(new File("src/../.security/"));
     }
 
-
-
     @Test
     public void compileTestTwo() throws Exception{
-        final String repoName = "myrepodecorator";
-        final JGitFileSystem fs = (JGitFileSystem) ioService.newFileSystem(URI.create("git://" + repoName),
-                                                                           new HashMap<String, Object>() {{
-                                                                               put("init",
-                                                                                   Boolean.TRUE);
-                                                                               put("internal",
-                                                                                   Boolean.TRUE);
-                                                                           }});
-
-        ioService.startBatch(fs);
-
-        ioService.write(fs.getPath("/dummy/pom.xml"),
-                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/pom.xml").toPath())));
-        ioService.write(fs.getPath("/dummy/dummyA/src/main/java/dummy/DummyA.java"),
-                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyA/src/main/java/dummy/DummyA.java").toPath())));
-        ioService.write(fs.getPath("/dummy/dummyB/src/main/java/dummy/DummyB.java"),
-                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyB/src/main/java/dummy/DummyB.java").toPath())));
-        ioService.write(fs.getPath("/dummy/dummyA/pom.xml"),
-                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyA/pom.xml").toPath())));
-        ioService.write(fs.getPath("/dummy/dummyB/pom.xml"),
-                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyB/pom.xml").toPath())));
-        ioService.endBatch();
-
-        Path tmpRootCloned = Files.createTempDirectory("cloned");
-
-        Path tmpCloned = Files.createDirectories(Paths.get(tmpRootCloned.toString(),
-                                                           "dummy"));
-
-        final File gitClonedFolder = new File(tmpCloned.toFile(),
-                                              ".clone.git");
-
-        final Git cloned = Git.cloneRepository().setURI(fs.getGit().getRepository().getDirectory().toURI().toString()).setBare(false).setDirectory(gitClonedFolder).call();
-
-        assertThat(cloned).isNotNull();
+        final File gitClonedFolder = createJGitRepo("myrepodecorator");
 
         //Compile the repo
 
@@ -134,47 +94,14 @@ public class JGITCompilerBeforeDecoratorTest  {
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile");
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
-
-        TestUtil.rm(tmpRootCloned.toFile());
+        if (tmpRootCloned != null) {
+            TestUtil.rm(tmpRootCloned.toFile());
+        }
     }
 
     @Test
     public void compileWithOverrideTest() throws Exception {
-
-        final String repoName = "myrepo";
-        final JGitFileSystem fs = (JGitFileSystem) ioService.newFileSystem(URI.create("git://" + repoName),
-                                                                           new HashMap<String, Object>() {{
-                                                                               put("init",
-                                                                                   Boolean.TRUE);
-                                                                               put("internal",
-                                                                                   Boolean.TRUE);
-                                                                           }});
-
-        ioService.startBatch(fs);
-
-        ioService.write(fs.getPath("/dummy/pom.xml"),
-                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/pom.xml").toPath())));
-        ioService.write(fs.getPath("/dummy/dummyA/src/main/java/dummy/DummyA.java"),
-                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyA/src/main/java/dummy/DummyA.java").toPath())));
-        ioService.write(fs.getPath("/dummy/dummyB/src/main/java/dummy/DummyB.java"),
-                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyB/src/main/java/dummy/DummyB.java").toPath())));
-        ioService.write(fs.getPath("/dummy/dummyA/pom.xml"),
-                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyA/pom.xml").toPath())));
-        ioService.write(fs.getPath("/dummy/dummyB/pom.xml"),
-                        new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyB/pom.xml").toPath())));
-        ioService.endBatch();
-
-        Path tmpRootCloned = Files.createTempDirectory("cloned");
-
-        Path tmpCloned = Files.createDirectories(Paths.get(tmpRootCloned.toString(),
-                                                           "dummy"));
-
-        final File gitClonedFolder = new File(tmpCloned.toFile(),
-                                              ".clone.git");
-
-        final Git cloned = Git.cloneRepository().setURI(fs.getGit().getRepository().getDirectory().toURI().toString()).setBare(false).setDirectory(gitClonedFolder).call();
-
-        assertThat(cloned).isNotNull();
+        final File gitClonedFolder = createJGitRepo("myrepo");
 
         //Compile the repo
 
@@ -205,7 +132,45 @@ public class JGITCompilerBeforeDecoratorTest  {
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
 
-        TestUtil.rm(tmpRootCloned.toFile());
+        if (tmpRootCloned != null) {
+            TestUtil.rm(tmpRootCloned.toFile());
+        }
     }
 
+    private File createJGitRepo(String repoName) throws Exception {
+        HashMap<String, Object> env = new HashMap<>();
+        env.put("init", Boolean.TRUE);
+        env.put("internal", Boolean.TRUE);
+
+        final JGitFileSystem fs = (JGitFileSystem) ioService.newFileSystem(URI.create("git://" + repoName),
+                env);
+
+        ioService.startBatch(fs);
+
+        ioService.write(fs.getPath("/dummy/pom.xml"),
+                new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/pom.xml").toPath())));
+        ioService.write(fs.getPath("/dummy/dummyA/src/main/java/dummy/DummyA.java"),
+                new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyA/src/main/java/dummy/DummyA.java").toPath())));
+        ioService.write(fs.getPath("/dummy/dummyB/src/main/java/dummy/DummyB.java"),
+                new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyB/src/main/java/dummy/DummyB.java").toPath())));
+        ioService.write(fs.getPath("/dummy/dummyA/pom.xml"),
+                new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyA/pom.xml").toPath())));
+        ioService.write(fs.getPath("/dummy/dummyB/pom.xml"),
+                new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyB/pom.xml").toPath())));
+        ioService.endBatch();
+
+        tmpRootCloned = Files.createTempDirectory("cloned");
+
+        tmpCloned = Files.createDirectories(Paths.get(tmpRootCloned.toString(),
+                "dummy"));
+
+        final File gitClonedFolder = new File(tmpCloned.toFile(),
+                ".clone.git");
+
+        final Git cloned = Git.cloneRepository().setURI(fs.getGit().getRepository().getDirectory().toURI().toString()).setBare(false).setDirectory(gitClonedFolder).call();
+
+        assertThat(cloned).isNotNull();
+
+        return gitClonedFolder;
+    }
 }

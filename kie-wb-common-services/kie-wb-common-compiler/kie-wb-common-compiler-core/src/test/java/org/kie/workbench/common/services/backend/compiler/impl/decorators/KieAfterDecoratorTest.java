@@ -25,16 +25,18 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.uberfire.java.nio.file.Path;
+import org.uberfire.java.nio.file.Paths;
 
 public class KieAfterDecoratorTest extends BaseCompilerTest {
 
     public KieAfterDecoratorTest() {
-        super("target/test-classes/kjar-2-single-resources");
+        super(ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
     }
 
     @Test
@@ -59,7 +61,7 @@ public class KieAfterDecoratorTest extends BaseCompilerTest {
     public void compileWithOverrideTest() throws Exception {
 
         Map<Path, InputStream> override = new HashMap<>();
-        org.uberfire.java.nio.file.Path path = org.uberfire.java.nio.file.Paths.get(tmpRoot + "/dummy/src/main/java/org/kie/maven/plugin/test/Person.java");
+        Path path = Paths.get(tmpRoot + "/dummy/src/main/java/org/kie/maven/plugin/test/Person.java");
         InputStream input = new FileInputStream(new File("target/test-classes/kjar-2-single-resources_override/src/main/java/org/kie/maven/plugin/test/Person.java"));
         override.put(path, input);
 

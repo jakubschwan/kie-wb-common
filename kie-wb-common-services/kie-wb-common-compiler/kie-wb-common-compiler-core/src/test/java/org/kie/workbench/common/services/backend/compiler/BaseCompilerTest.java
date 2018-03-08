@@ -42,19 +42,10 @@ public class BaseCompilerTest {
 
     public BaseCompilerTest(String prjName) {
         try {
-            mavenRepo = Paths.get(System.getProperty("user.home"),
-                                  "/.m2/repository");
-
-            if (!Files.exists(mavenRepo)) {
-                logger.info("Creating a m2_repo into " + mavenRepo);
-                if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                    throw new Exception("Folder not writable in the project");
-                }
-            }
+            mavenRepo = TestUtil.createMavenRepo();
             tmpRoot = Files.createTempDirectory("repo");
             alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
-            Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
-            TestUtil.copyTree(Paths.get(prjName), tmp);
+            Path tmp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", prjName);
             info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -62,21 +53,8 @@ public class BaseCompilerTest {
     }
 
     public BaseCompilerTest(String prjName, KieDecorator decorator) {
+        this(prjName);
         try {
-            mavenRepo = Paths.get(System.getProperty("user.home"),
-                                  "/.m2/repository");
-
-            if (!Files.exists(mavenRepo)) {
-                logger.info("Creating a m2_repo into " + mavenRepo);
-                if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                    throw new Exception("Folder not writable in the project");
-                }
-            }
-            tmpRoot = Files.createTempDirectory("repo");
-            alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
-            Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
-            TestUtil.copyTree(Paths.get(prjName), tmp);
-            info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
             compiler = KieMavenCompilerFactory.getCompiler(decorator);
             CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                    info,

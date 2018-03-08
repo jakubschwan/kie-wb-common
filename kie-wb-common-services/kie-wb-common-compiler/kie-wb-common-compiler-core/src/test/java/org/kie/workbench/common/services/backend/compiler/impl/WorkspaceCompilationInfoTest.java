@@ -16,8 +16,9 @@
 package org.kie.workbench.common.services.backend.compiler.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,20 +32,12 @@ public class WorkspaceCompilationInfoTest {
     private static Logger logger = LoggerFactory.getLogger(WorkspaceCompilationInfoTest.class);
     private static Path tmpRoot;
 
-    @BeforeClass
-    public static void setUp() throws Exception {
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            logger.info("Creating a m2_repo into " + mavenRepo);
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
-        }
+    @Before
+    public void setUp() throws Exception {
+        mavenRepo = TestUtil.createMavenRepo();
         tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
-        TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"), tmp);
+        TestUtil.copyTree(Paths.get(ResourcesConstants.KJAR_2_SINGLE_RESOURCES), tmp);
     }
 
     @Test

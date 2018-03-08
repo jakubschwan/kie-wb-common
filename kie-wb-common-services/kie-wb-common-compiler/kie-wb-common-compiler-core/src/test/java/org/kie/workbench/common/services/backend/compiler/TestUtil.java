@@ -26,7 +26,9 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
+import org.uberfire.java.nio.file.Paths;
 
 public class TestUtil {
 
@@ -70,5 +72,25 @@ public class TestUtil {
             }
             bw.close();
         }
+    }
+
+    public static Path createMavenRepo() throws Exception {
+        Path mavenRepository = Paths.get(System.getProperty("user.home"),
+                "/.m2/repository");
+        if (!Files.exists(mavenRepository)) {
+            logger.info("Creating a m2_repo into " + mavenRepository);
+            if (!Files.exists(Files.createDirectories(mavenRepository))) {
+                throw new Exception("Folder not writable in the project");
+            }
+        }
+        return mavenRepository;
+    }
+
+    public static Path createAndCopyToDircetory(Path root, String dirName, String copyTree) throws IOException {
+        //NIO creation and copy content
+        Path dir = Files.createDirectories(Paths.get(root.toString(), dirName));
+        TestUtil.copyTree(Paths.get(copyTree), dir);
+        return dir;
+        //end NIO
     }
 }

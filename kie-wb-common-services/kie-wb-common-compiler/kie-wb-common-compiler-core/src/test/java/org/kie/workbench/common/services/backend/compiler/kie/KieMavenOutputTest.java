@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -37,23 +38,13 @@ public class KieMavenOutputTest {
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
-        }
+        mavenRepo = TestUtil.createMavenRepo();
     }
 
     @Test
     public void testOutputWithTakari() throws Exception {
         Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmpNio = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                        "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy"),
-                          tmpNio);
+        Path tmpNio = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
         Path tmp = Paths.get(tmpNio.toAbsolutePath().toString());
 
