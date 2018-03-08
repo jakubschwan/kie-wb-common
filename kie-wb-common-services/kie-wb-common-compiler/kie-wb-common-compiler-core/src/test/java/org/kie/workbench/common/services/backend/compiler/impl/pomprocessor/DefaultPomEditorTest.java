@@ -18,10 +18,12 @@ package org.kie.workbench.common.services.backend.compiler.impl.pomprocessor;
 import java.util.HashSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.Before;
 
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
 import org.kie.workbench.common.services.backend.compiler.configuration.ConfigurationContextProvider;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -30,13 +32,19 @@ import org.uberfire.java.nio.file.Paths;
 public class DefaultPomEditorTest extends BaseCompilerTest {
 
     public DefaultPomEditorTest() {
-        super("target/test-classes/kjar-2-single-resources");
+        super(ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
+    }
+
+    private DefaultPomEditor editor;
+
+    @Before
+    public void setUp() {
+        ConfigurationContextProvider provider = new ConfigurationContextProvider();
+        editor = new DefaultPomEditor(new HashSet<>(), provider);
     }
 
     @Test
     public void readSingleTest() {
-        ConfigurationContextProvider provider = new ConfigurationContextProvider();
-        DefaultPomEditor editor = new DefaultPomEditor(new HashSet<PomPlaceHolder>(), provider);
         assertThat(editor.getHistory()).isEmpty();
         PomPlaceHolder placeholder = editor.readSingle(Paths.get(tmpRoot.toAbsolutePath() + "/dummy/pom.xml"));
         SoftAssertions.assertSoftly(softly -> {
@@ -50,15 +58,27 @@ public class DefaultPomEditorTest extends BaseCompilerTest {
 
     @Test
     public void writeTest() {
-        ConfigurationContextProvider provider = new ConfigurationContextProvider();
-        DefaultPomEditor editor = new DefaultPomEditor(new HashSet<PomPlaceHolder>(), provider);
         assertThat(editor.getHistory()).isEmpty();
-
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                               info,
-                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
-                                                               Boolean.FALSE);
+                info,
+                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                Boolean.FALSE);
 
         assertThat(editor.write(Paths.get(tmpRoot.toAbsolutePath() + "/dummy/pom.xml"), req)).isTrue();
+    }
+
+    @Test
+    public void cleanHistoryTest() {
+        assertThat(editor.getHistory()).isEmpty();
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                info,
+                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                Boolean.FALSE);
+
+        editor.write(Paths.get(tmpRoot.toAbsolutePath() + "/dummy/pom.xml"), req);
+        assertThat(editor.getHistory()).isNotEmpty();
+
+        editor.cleanHistory();
+        assertThat(editor.getHistory()).isEmpty();
     }
 }
