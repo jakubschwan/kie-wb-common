@@ -21,13 +21,13 @@ import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilat
 /**
  * Used to store in a cache related objects
  */
-class CompileInfo {
+class CompilerAggregateEntryCache {
 
     private AFCompiler compiler;
     private WorkspaceCompilationInfo info;
 
-    public CompileInfo(AFCompiler compiler,
-                       WorkspaceCompilationInfo info) {
+    public CompilerAggregateEntryCache(AFCompiler compiler,
+                                       WorkspaceCompilationInfo info) {
         this.compiler = compiler;
         this.info = info;
     }

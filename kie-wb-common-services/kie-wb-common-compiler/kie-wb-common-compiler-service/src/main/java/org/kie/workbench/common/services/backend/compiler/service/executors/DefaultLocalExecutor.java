@@ -37,16 +37,16 @@ import org.uberfire.java.nio.file.Path;
 public class DefaultLocalExecutor implements CompilerExecutor {
 
     private ExecutorService executor;
-    private LRUCache<Path, CompileInfo> compilerCacheForLocalInvocation;
+    private LRUCache<Path, CompilerAggregateEntryCache> compilerCacheForLocalInvocation;
 
     public DefaultLocalExecutor(ExecutorService executorService) {
         executor = executorService;
-        compilerCacheForLocalInvocation = new LRUCache<Path, CompileInfo>() {
+        compilerCacheForLocalInvocation = new LRUCache<Path, CompilerAggregateEntryCache>() {
         };
     }
 
     private AFCompiler getCompiler(Path projectPath) {
-        CompileInfo info = compilerCacheForLocalInvocation.getEntry(projectPath);
+        CompilerAggregateEntryCache info = compilerCacheForLocalInvocation.getEntry(projectPath);
         if (info != null && info.getCompiler() != null) {
             return info.getCompiler();
         } else {
@@ -55,15 +55,15 @@ public class DefaultLocalExecutor implements CompilerExecutor {
     }
 
     private AFCompiler getNewCachedAFCompiler(Path projectPath) {
-        CompileInfo info = setupCompileInfo(projectPath);
+        CompilerAggregateEntryCache info = setupCompileInfo(projectPath);
         compilerCacheForLocalInvocation.setEntry(projectPath, info);
         return info.getCompiler();
     }
 
-    private CompileInfo setupCompileInfo(Path workingDir) {
+    private CompilerAggregateEntryCache setupCompileInfo(Path workingDir) {
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_KIE_AND_LOG_AND_CLASSPATH_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(workingDir);
-        return new CompileInfo(compiler, info);
+        return new CompilerAggregateEntryCache(compiler, info);
     }
 
     private CompletableFuture<KieCompilationResponse> internalBuild(Path projectPath, String mavenRepo,

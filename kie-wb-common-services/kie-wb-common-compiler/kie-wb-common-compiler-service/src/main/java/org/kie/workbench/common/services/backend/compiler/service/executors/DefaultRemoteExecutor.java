@@ -24,15 +24,11 @@ import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.ClasspathDepsAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.KieAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.OutputLogAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 /**
  * Implementation for a local build requested by a remote execution
@@ -40,15 +36,15 @@ import org.uberfire.java.nio.file.Paths;
 public class DefaultRemoteExecutor implements RemoteExecutor {
 
     private ExecutorService executor ;
-    private LRUCache<String, CompileInfo> compilerCacheForRemoteInvocation;
+    private LRUCache<String, CompilerAggregateEntryCache> compilerCacheForRemoteInvocation;
 
     public DefaultRemoteExecutor(ExecutorService executorService){
         executor = executorService;
-        compilerCacheForRemoteInvocation = new LRUCache<String, CompileInfo>(){};
+        compilerCacheForRemoteInvocation = new LRUCache<String, CompilerAggregateEntryCache>(){};
     }
 
     private AFCompiler getCompiler(String projectPath){
-        CompileInfo info = compilerCacheForRemoteInvocation.getEntry(projectPath);
+        CompilerAggregateEntryCache info = compilerCacheForRemoteInvocation.getEntry(projectPath);
         if (info != null && info.getCompiler() != null) {
             return info.getCompiler();
         } else {
@@ -57,15 +53,15 @@ public class DefaultRemoteExecutor implements RemoteExecutor {
     }
 
     private AFCompiler getNewCachedAFCompiler(String projectPath) {
-        CompileInfo info = setupCompileInfo(projectPath);
+        CompilerAggregateEntryCache info = setupCompileInfo(projectPath);
         compilerCacheForRemoteInvocation.setEntry(projectPath, info);
         return info.getCompiler();
     }
 
-    private CompileInfo setupCompileInfo(String workingDir) {
+    private CompilerAggregateEntryCache setupCompileInfo(String workingDir) {
         AFCompiler compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new ClasspathDepsAfterDecorator(new BaseMavenCompiler())));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(workingDir));
-        return new CompileInfo(compiler, info);
+        return new CompilerAggregateEntryCache(compiler, info);
     }
 
 
