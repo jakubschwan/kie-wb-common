@@ -39,7 +39,7 @@ public class BuildInMemoryClasspathMojoTest {
 
     private static Path tmpRoot;
     private Path mavenRepo;
-    private Logger logger = LoggerFactory.getLogger(BuildInMemoryClasspathMojoTest.class);
+    private static Logger logger = LoggerFactory.getLogger(BuildInMemoryClasspathMojoTest.class);
     private String alternateSettingsAbsPath;
 
     @Before
@@ -105,7 +105,18 @@ public class BuildInMemoryClasspathMojoTest {
     @AfterClass
     public static void tearDown() {
         if(tmpRoot!= null) {
-            TestUtil.rm(tmpRoot.toFile());
+            rm(tmpRoot.toFile());
+        }
+    }
+
+    public static void rm(File f) {
+        if (f.isDirectory()) {
+            for (File c : f.listFiles()) {
+                rm(c);
+            }
+        }
+        if (!f.delete()) {
+            logger.error("Couldn't delete file {}", f);
         }
     }
 

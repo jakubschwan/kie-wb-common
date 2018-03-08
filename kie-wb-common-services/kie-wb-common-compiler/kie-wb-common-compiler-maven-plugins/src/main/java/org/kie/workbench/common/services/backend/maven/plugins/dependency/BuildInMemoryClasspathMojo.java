@@ -51,9 +51,6 @@ import org.codehaus.plexus.util.StringUtils;
 public class BuildInMemoryClasspathMojo
         extends BuildClasspathMojo {
 
-
-    //@TODO avoid the execution of the default maven plugin dependency:build-classpath after this plugin
-
     /**
      * Key used to share the string classpath in the kieMap
      */
