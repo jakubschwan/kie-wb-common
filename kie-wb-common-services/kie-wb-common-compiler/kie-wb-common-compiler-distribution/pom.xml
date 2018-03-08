@@ -248,7 +248,7 @@
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxrs</artifactId>
-      <scope>test</scope>
+      <!--<scope>test</scope>-->
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
@@ -259,14 +259,14 @@
           <artifactId>commons-logging</artifactId>
         </exclusion>
       </exclusions>
-      <scope>test</scope>
+      <!--<scope>test</scope>-->
     </dependency>
 
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-compiler-distribution</artifactId>
       <type>war</type>
-      <scope>test</scope>
+      <!--<scope>test</scope>-->
     </dependency>
 
   </dependencies>
@@ -482,9 +482,9 @@
     <!-- Containers -->
     <profile>
       <id>wildfly11</id>
-      <activation>
+      <!--<activation>
         <activeByDefault>true</activeByDefault>
-      </activation>
+      </activation>-->
       <dependencies>
         <!-- <dependency>
            <groupId>org.kie.workbench.services</groupId>
