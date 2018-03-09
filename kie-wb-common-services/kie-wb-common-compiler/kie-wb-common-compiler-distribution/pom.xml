@@ -295,7 +295,7 @@
     <pluginManagement>
       <plugins>
 
-        <plugin>
+        <!--<plugin>
           <groupId>org.codehaus.cargo</groupId>
           <artifactId>cargo-maven2-plugin</artifactId>
           <version>1.6.7</version>
@@ -304,9 +304,6 @@
               <containerId>wildfly11x</containerId>
               <systemProperties>
                 <kie.maven.settings.custom>${project.build.testOutputDirectory}/settings.xml</kie.maven.settings.custom>
-                <!-- Fixes issue when Tomcat hangs during deployment due to insufficient amount of entropy.
-+                    The property specifies less secure source of entropy, which is fine for testing.
-+                    See https://wiki.apache.org/tomcat/HowTo/FasterStartUp#Entropy_Source for more info -->
                 <java.security.egd>file:/dev/./urandom</java.security.egd>
               </systemProperties>
             </container>
@@ -314,9 +311,6 @@
               <deployable>
                 <groupId>org.kie.workbench.services</groupId>
                 <artifactId>kie-wb-common-compiler-distribution</artifactId>
-                <!-- default, may be overridden in container specific profiles -->
-                <!--<classifier>${deployable.classifier}</classifier>-->
-                <!-- <version>${version.org.kie}</version>-->
                 <type>war</type>
                 <properties>
                   <context>${deployable.context}</context>
@@ -350,7 +344,7 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
+        </plugin>-->
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
