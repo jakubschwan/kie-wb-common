@@ -153,12 +153,10 @@
     <dependency>
       <groupId>org.jboss.weld.se</groupId>
       <artifactId>weld-se-core</artifactId>
-      <!--<scope>test</scope>-->
     </dependency>
     <dependency>
       <groupId>javax.ws.rs</groupId>
       <artifactId>javax.ws.rs-api</artifactId>
-      <!--<scope>test</scope>-->
     </dependency>
 
     <!-- Arquillian -->
@@ -214,9 +212,6 @@
       <scope>test</scope>
       <!--There is a problem with Aether https://issues.jboss.org/browse/SHRINKRES-174 -->
     </dependency>
-
-    <!-- Wildlfy arquillian -->
-
     <dependency>
       <groupId>org.wildfly.arquillian</groupId>
       <artifactId>wildfly-arquillian-container-managed</artifactId>
@@ -235,20 +230,17 @@
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-bus</artifactId>
-      <!--<scope>test</scope>-->
     </dependency>
 
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-security-server</artifactId>
-      <!--<scope>test</scope>-->
     </dependency>
 
     <!-- resteasy-->
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxrs</artifactId>
-      <!--<scope>test</scope>-->
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
@@ -259,14 +251,12 @@
           <artifactId>commons-logging</artifactId>
         </exclusion>
       </exclusions>
-      <!--<scope>test</scope>-->
     </dependency>
 
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-compiler-distribution</artifactId>
       <type>war</type>
-      <!--<scope>test</scope>-->
     </dependency>
 
   </dependencies>
@@ -295,7 +285,7 @@
     <pluginManagement>
       <plugins>
 
-        <!--<plugin>
+       <!-- <plugin>
           <groupId>org.codehaus.cargo</groupId>
           <artifactId>cargo-maven2-plugin</artifactId>
           <version>1.6.7</version>
@@ -321,6 +311,7 @@
             </deployables>
             <configuration>
               <properties>
+                <cargo.logging>high</cargo.logging>
                 <cargo.servlet.port>${container.port}</cargo.servlet.port>
                 <cargo.servlet.users>
                   admin:admin1234;:admin|restAll:restAll1234;:admin,rest-all|restProject:restProject1234;:admin,rest-project|noRest:noRest1234;:admin
@@ -515,8 +506,6 @@
                   <deployable>
                     <groupId>${deployable.groupId}</groupId>
                     <artifactId>${deployable.artifactId}</artifactId>
-                    <!--<classifier>${deployable.classifier.wildfly11}</classifier>-->
-                    <!--<version>${version.org.kie}</version>-->
                     <type>war</type>
                   </deployable>
                 </deployables>
