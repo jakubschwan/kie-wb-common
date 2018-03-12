@@ -22,9 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
-import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
-import org.guvnor.common.services.project.backend.server.utils.configuration.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +54,7 @@ public class ConfigurationContextProvider implements ConfigurationProvider {
     }
 
     private void initializeWorkingConfig() {
-        List<ConfigurationStrategy> confs = new ArrayList<ConfigurationStrategy>(Arrays.asList(new ConfigurationEnvironmentStrategy(),
+        List<ConfigurationStrategy> confs = new ArrayList(Arrays.asList(new ConfigurationEnvironmentStrategy(),
                                                                                                new ConfigurationPropertiesStrategy(),
                                                                                                new ConfigurationStaticStrategy()));
         Collections.sort(confs, Comparator.comparing(Order::getOrder));

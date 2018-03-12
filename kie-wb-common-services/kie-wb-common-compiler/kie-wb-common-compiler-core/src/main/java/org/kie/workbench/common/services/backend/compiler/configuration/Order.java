@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kie.workbench.common.services.backend.compiler.configuration;
 
-import java.util.Map;
-
 /***
- * Define the behaviour of a Configuration provider
+ * Used to order execution of implementations of the same interface in
  */
-public interface ConfigurationProvider {
+public interface Order {
 
-    /***
-     * Return a Map with Configurations keys for a specific implementation
+    /**
+     * Used by the implementor to assign and order of execution when multiple implementations are present
      * @return
      */
-    Map<ConfigurationKey, String> loadConfiguration();
-
-    /***
-     * Signals the validity of this provider
-     * @return
-     */
-    boolean isValid();
+    Integer getOrder();
 }
+

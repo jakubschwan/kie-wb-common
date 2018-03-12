@@ -20,8 +20,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
-import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
 import org.slf4j.LoggerFactory;
 
 /**

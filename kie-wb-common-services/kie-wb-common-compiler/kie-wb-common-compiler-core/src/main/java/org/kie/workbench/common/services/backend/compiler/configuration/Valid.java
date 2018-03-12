@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kie.workbench.common.services.backend.compiler.configuration;
 
-import java.util.Map;
-
 /***
- * Define the behaviour of a Configuration provider
+ * Used to validate a state of an object in different implementations
  */
-public interface ConfigurationProvider {
+public interface Valid {
 
     /***
-     * Return a Map with Configurations keys for a specific implementation
+     * Signals if is in a valid state using an internal algo to check a particular implementations
      * @return
      */
-    Map<ConfigurationKey, String> loadConfiguration();
-
-    /***
-     * Signals the validity of this provider
-     * @return
-     */
-    boolean isValid();
+    Boolean isValid();
 }

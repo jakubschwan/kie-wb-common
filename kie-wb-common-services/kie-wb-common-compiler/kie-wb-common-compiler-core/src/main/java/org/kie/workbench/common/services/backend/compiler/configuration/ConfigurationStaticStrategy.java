@@ -20,9 +20,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
-import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
-
 /**
  * Strategy implementation to create the Configuration from hard coded values, this must be the fallback impl
  * if the other strategies fails

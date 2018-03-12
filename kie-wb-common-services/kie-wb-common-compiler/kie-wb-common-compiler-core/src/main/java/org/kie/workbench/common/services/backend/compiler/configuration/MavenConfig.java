@@ -43,4 +43,14 @@ public class MavenConfig {
     public static String MAVEN_PHASE_NONE = "none";
 
     public static String COMPILATION_ID = "compilation.ID";
+
+    public static String ARCHETYPE_GENERATE  = "archetype:generate";
+
+    public static String ARCHETYPE_GENERATE_BLANK = "-B";
+
+    public static String GROUP_ID = "-DgroupId=";
+
+    public static String ARTIFACT_ID = "-DartifactId=";
+
+    public static String ARCHETYPE_ARTIFACT_ID = "-DarchetypeArtifactId=";
 }
