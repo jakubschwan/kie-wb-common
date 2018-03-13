@@ -16,9 +16,15 @@
 
 package org.kie.workbench.common.services.backend.compiler.configuration;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Strategy implementation to create the Configuration from hard coded values, this must be the fallback impl
@@ -26,13 +32,21 @@ import java.util.Map;
  */
 public class ConfigurationStaticStrategy implements ConfigurationStrategy {
 
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationStaticStrategy.class);
+
+    public final String KIE_VERSION_FILE = "kie-version.properties";
+    public final String KIE_VERSION_KEY = "kie_version";
+
     protected Map<ConfigurationKey, String> conf;
 
     private Boolean valid ;
 
     public ConfigurationStaticStrategy() {
-
         conf = new HashMap<>();
+        Properties props = loadKieVersionProperties();
+        if(!props.isEmpty()) {
+            conf.put(ConfigurationKey.KIE_VERSION, props.getProperty(KIE_VERSION_KEY));
+        }
         conf.put(ConfigurationKey.COMPILER, "jdt");
         conf.put(ConfigurationKey.SOURCE_VERSION, "1.8");
         conf.put(ConfigurationKey.TARGET_VERSION, "1.8");
@@ -46,8 +60,6 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy {
         conf.put(ConfigurationKey.KIE_MAVEN_PLUGINS, "org.kie");
         conf.put(ConfigurationKey.KIE_MAVEN_PLUGIN, "kie-maven-plugin");
         conf.put(ConfigurationKey.KIE_TAKARI_PLUGIN, "kie-takari-plugin");
-        conf.put(ConfigurationKey.KIE_VERSION, "7.7.0");
-
         valid = Boolean.TRUE;
     }
 
@@ -64,5 +76,24 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy {
     @Override
     public Integer getOrder() {
         return Integer.valueOf(1000);
+    }
+
+
+    public Properties loadKieVersionProperties() {
+        Properties prop = new Properties();
+        InputStream in = getClass().getClassLoader().getResourceAsStream(KIE_VERSION_FILE);
+        if (in == null) {
+            logger.info("{} not available with the classloader, unable to initialize the StaticConfigurationStrategy. \n",
+                        KIE_VERSION_FILE);
+            valid = Boolean.FALSE;
+        } else {
+            try {
+                prop.load(in);
+                in.close();
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        }
+        return prop;
     }
 }

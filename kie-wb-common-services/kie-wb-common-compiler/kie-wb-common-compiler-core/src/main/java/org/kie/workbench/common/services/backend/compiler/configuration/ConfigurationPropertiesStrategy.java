@@ -39,11 +39,24 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
     private Boolean valid = Boolean.FALSE;
 
     public ConfigurationPropertiesStrategy() {
-        Properties props = loadProperties();
-        /*if (isValid()) {
-            setUpValues(props);
-        }*/
+       loadProperties();
     }
+
+    @Override
+    public Map<ConfigurationKey, String> loadConfiguration() {
+        return Collections.unmodifiableMap(conf);
+    }
+
+    @Override
+    public Boolean isValid() {
+        return valid && (conf.size() == ConfigurationKey.values().length);
+    }
+
+    @Override
+    public Integer getOrder() {
+        return Integer.valueOf(100);
+    }
+
 
     private void setUpValues(Properties props) {
         conf = new HashMap<>();
@@ -52,7 +65,7 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
             String value = props.getProperty(key.name());
             if (value == null) {
                 logger.info("Key {} is not available with the classloader properties, skip to the next ConfigurationStrategy. \n",
-                        key.name());
+                            key.name());
                 valid = Boolean.FALSE;
                 break;
             } else {
@@ -80,20 +93,5 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
             }
         }
         return prop;
-    }
-
-    @Override
-    public Map<ConfigurationKey, String> loadConfiguration() {
-        return Collections.unmodifiableMap(conf);
-    }
-
-    @Override
-    public Boolean isValid() {
-        return valid && (conf.size() == ConfigurationKey.values().length);
-    }
-
-    @Override
-    public Integer getOrder() {
-        return Integer.valueOf(100);
     }
 }

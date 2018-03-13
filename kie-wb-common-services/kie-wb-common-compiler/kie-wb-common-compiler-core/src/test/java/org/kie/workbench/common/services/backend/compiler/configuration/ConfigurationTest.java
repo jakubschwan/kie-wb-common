@@ -49,6 +49,8 @@ public class ConfigurationTest {
         Map<ConfigurationKey, String> conf = strategy.loadConfiguration();
         assertThat(strategy.isValid()).isTrue();
         assertThat(conf.keySet()).hasSize(14);
+        Map<String,String> map = getMapForEnv();
+        assertThat(conf.get(ConfigurationKey.KIE_VERSION)).isEqualToIgnoringCase(map.get(ConfigurationKey.KIE_VERSION.name()));
     }
 
     @Test
@@ -108,6 +110,8 @@ public class ConfigurationTest {
     }
 
     private Map<String, String> getMapForEnv() {
+        ConfigurationStaticStrategy strategy = new ConfigurationStaticStrategy();
+        Properties prop = strategy.loadKieVersionProperties();
         Map conf = new HashMap<>();
         conf.put(ConfigurationKey.COMPILER.name(), "jdt");
         conf.put(ConfigurationKey.SOURCE_VERSION.name(), "1.8");
@@ -122,7 +126,7 @@ public class ConfigurationTest {
         conf.put(ConfigurationKey.KIE_MAVEN_PLUGINS.name(), "org.kie");
         conf.put(ConfigurationKey.KIE_MAVEN_PLUGIN.name(), "kie-maven-plugin");
         conf.put(ConfigurationKey.KIE_TAKARI_PLUGIN.name(), "kie-takari-plugin");
-        conf.put(ConfigurationKey.KIE_VERSION.name(), "7.7.0");
+        conf.put(ConfigurationKey.KIE_VERSION.name(), prop.getProperty(strategy.KIE_VERSION_KEY));
         return conf;
     }
 
@@ -150,7 +154,6 @@ public class ConfigurationTest {
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
             properties.load(in);
         }
-
         return properties;
     }
 
