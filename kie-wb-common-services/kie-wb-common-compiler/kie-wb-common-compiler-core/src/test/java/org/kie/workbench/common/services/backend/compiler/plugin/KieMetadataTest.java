@@ -34,6 +34,7 @@ import org.kie.scanner.KieModuleMetaData;
 import org.kie.scanner.KieModuleMetaDataImpl;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -50,25 +51,24 @@ import org.uberfire.java.nio.file.Paths;
 public class KieMetadataTest {
 
     private Path mavenRepo;
+    private String alternateSettingsAbsPath;
+    private Path tmpRoot;
 
     private Logger logger = LoggerFactory.getLogger(KieMetadataTest.class);
 
     @After
     public void tearDown() {
+        if(tmpRoot!=null) {
+            TestUtil.rm(tmpRoot.toFile());
+        }
         mavenRepo = null;
     }
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              ".m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            logger.info("Creating a m2_repo into:" + mavenRepo.toString());
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
-        }
+        mavenRepo = TestUtil.createMavenRepo();
+        alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
+        tmpRoot = Files.createTempDirectory("repo");
     }
 
     @Test
@@ -76,15 +76,7 @@ public class KieMetadataTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
-        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
-        //compile and install
-        Path tmpRoot = Files.createTempDirectory("repo");
-        //NIO creation and copy content
-        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-all-resources"),
-                          temp);
-        //end NIO
+        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_ALL_RESOURCES);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_LOG_AND_CLASSPATH_DEPS_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
@@ -128,7 +120,6 @@ public class KieMetadataTest {
                                                                         res.getDependenciesAsURI());
         assertThat(kieModuleMetaData).isNotNull();
         //comment if you want read the log file after the test run
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
@@ -136,12 +127,8 @@ public class KieMetadataTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
-        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         try {
-            Path tmpRoot = Files.createTempDirectory("repo");
-            Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                         "dummy"));
-            TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"), tmp);
+            Path tmp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
             AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_LOG_AND_CLASSPATH_DEPS_AFTER);
             WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
@@ -179,7 +166,6 @@ public class KieMetadataTest {
             assertThat(res.getDependenciesAsURI()).hasSize(4);
 
             //comment if you want read the log file after the test run
-            TestUtil.rm(tmpRoot.toFile());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -190,12 +176,7 @@ public class KieMetadataTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
-        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
-        Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                     "dummy"));
-        TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"),
-                          tmp);
+        Path tmp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
@@ -238,7 +219,6 @@ public class KieMetadataTest {
         assertThat(kieModuleMetaData).isNotNull();
 
         //comment if you want read the log file after the test run
-        TestUtil.rm(tmpRoot.toFile());
     }
 }
 

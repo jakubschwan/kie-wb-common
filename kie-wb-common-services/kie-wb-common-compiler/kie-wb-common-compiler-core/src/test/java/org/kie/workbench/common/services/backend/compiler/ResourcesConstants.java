@@ -17,6 +17,24 @@ package org.kie.workbench.common.services.backend.compiler;
 
 public class ResourcesConstants {
 
+    public static final String KJAR_2_ALL_RESOURCES = "target/test-classes/kjar-2-all-resources";
     public static final String KJAR_2_SINGLE_RESOURCES = "target/test-classes/kjar-2-single-resources";
+    public static final String KJAR_2_SINGLE_RESOURCES_WITH_ERROR = "target/test-classes/kjar-2-single-resources_with_error";
 
+    public static final String DUMMY = "target/test-classes/dummy";
+    public static final String DUMMYUNTOUCHED = "target/test-classes/dummyuntouched";
+
+    public static final String DUMMY_DEPS_SIMPLE = "target/test-classes/dummy_deps_simple";
+
+    public static final String DUMMY_KIE_INCREMENTAL = "target/test-classes/dummy_kie_incremental";
+
+    public static final String DUMMY_DIR = "src/test/projects/dummy";
+    public static final String DUMMY_INCREMENTAL_DIR = "src/test/projects/dummy_incremental";
+
+    public static final String DUMMY_DEPS_COMPLEX_DIR = "src/test/projects/dummy_deps_complex";
+    public static final String DUMMY_DEPS_SIMPLE_DIR = "src/test/projects/dummy_deps_simple";
+
+    public static final String DUMMY_KIE_MULTIMODULE_CLASSLOADER_DIR = "src/test/projects/dummy_kie_multimodule_classloader";
+    public static final String DUMMY_KIE_MULTIMODULE_UNTOUCHED_DIR = "src/test/projects/dummy_kie_multimodule_untouched/";
+    public static final String DUMMY_KIE_MULTIMODULE_UNTOUCHED_WITH_ERROR_DIR = "src/test/projects/dummy_kie_multimodule_untouched_with_error";
 }

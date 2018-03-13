@@ -16,15 +16,18 @@
 package org.kie.workbench.common.services.backend.compiler.kie;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.After;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -41,65 +44,48 @@ import org.uberfire.java.nio.file.Paths;
 public class KieDefaultMavenIncrementalCompilerTest {
 
     private Path mavenRepo;
+    private Path tmpRoot;
+    private Path temp;
     private Logger logger = LoggerFactory.getLogger(KieDefaultMavenIncrementalCompilerTest.class);
 
     @Before
     public void setUp() throws Exception {
+        mavenRepo = TestUtil.createMavenRepo();
+    }
 
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            logger.info("Creating a m2_repo into " + mavenRepo);
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
+    @After
+    public void cleanUp() {
+        if (tmpRoot != null) {
+            TestUtil.rm(tmpRoot.toFile());
         }
     }
 
-    @Test
-    public void testIsValidMavenHome() throws Exception {
-        Path tmpRoot = Files.createTempDirectory("repo");
-        //NIO creation and copy content
-        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy"),
-                          temp);
-        //end NIO
+    private CompilationResponse compileProjectInRepo(String... mavenPhases) throws IOException {
+        tmpRoot = Files.createTempDirectory("repo");
+        temp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.VERSION},
+                                                               mavenPhases,
                                                                Boolean.FALSE);
-        CompilationResponse res = compiler.compile(req);
+        return compiler.compile(req);
+    }
+
+    @Test
+    public void testIsValidMavenHome() throws Exception {
+        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.VERSION);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "KieDefaultMavenIncrementalCompilerTest.testIsValidMavenHome");
         }
         assertThat(res.isSuccessful()).isTrue();
-
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
     public void testIncrementalWithPluginEnabled() throws Exception {
-        Path tmpRoot = Files.createTempDirectory("repo");
-        //NIO creation and copy content
-        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy"),
-                          temp);
-        //end NIO
-
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                               info,
-                                                               new String[]{MavenCLIArgs.COMPILE},
-                                                               Boolean.FALSE);
-        CompilationResponse res = compiler.compile(req);
+        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.COMPILE);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "KieDefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabled");
@@ -109,18 +95,13 @@ public class KieDefaultMavenIncrementalCompilerTest {
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
                                                   "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_compile");
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
-
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
     public void testIncrementalWithPluginEnabledThreeTime() throws Exception {
-        Path tmpRoot = Files.createTempDirectory("repo");
+        tmpRoot = Files.createTempDirectory("repo");
         //NIO creation and copy content
-        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy"),
-                          temp);
+        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy",ResourcesConstants.DUMMY_DIR);
         //end NIO
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
@@ -146,19 +127,14 @@ public class KieDefaultMavenIncrementalCompilerTest {
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
                                                   "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_compile");
         assertThat(incrementalConfiguration.toFile()).exists();
-
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
     public void testCheckIncrementalWithChanges() throws Exception {
         String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
-        Path tmpRoot = Files.createTempDirectory("repo");
+        tmpRoot = Files.createTempDirectory("repo");
         //NIO creation and copy content
-        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("target/test-classes/dummy_kie_incremental"),
-                          temp);
+        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.DUMMY_KIE_INCREMENTAL);
         //end NIO
 
         //compiler
@@ -231,8 +207,6 @@ public class KieDefaultMavenIncrementalCompilerTest {
                 "Performing incremental build")).isTrue();
         assertThat(isPresent(output,
                 "Compiled 1 out of 1 sources ")).isTrue();
-
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     private boolean isPresent(List<String> output,

@@ -59,15 +59,7 @@ public class DefaultMavenCompilerTest {
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
 
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            logger.info("Creating a m2_repo into " + mavenRepo);
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
-        }
+        mavenRepo = TestUtil.createMavenRepo();
     }
 
     @After
@@ -380,7 +372,7 @@ public class DefaultMavenCompilerTest {
         //NIO creation and copy content
         Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                       "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_untouched_with_error"),
+        TestUtil.copyTree(Paths.get(ResourcesConstants.DUMMY_KIE_MULTIMODULE_UNTOUCHED_WITH_ERROR_DIR),
                           temp);
         //end NIO
         Path tmp = Paths.get(tmpRoot.toAbsolutePath().toString(),

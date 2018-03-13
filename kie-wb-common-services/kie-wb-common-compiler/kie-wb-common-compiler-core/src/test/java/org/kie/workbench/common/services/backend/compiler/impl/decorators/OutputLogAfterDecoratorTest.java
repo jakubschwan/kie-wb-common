@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -35,7 +36,7 @@ import org.uberfire.java.nio.file.Path;
 public class OutputLogAfterDecoratorTest extends BaseCompilerTest {
 
     public OutputLogAfterDecoratorTest() {
-        super("target/test-classes/dummy");
+        super(ResourcesConstants.DUMMY);
     }
 
     @AfterClass

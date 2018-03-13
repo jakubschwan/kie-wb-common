@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -28,14 +29,13 @@ import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilatio
 public class ClasspathDepsAfterDecoratorTest extends BaseCompilerTest {
 
     public ClasspathDepsAfterDecoratorTest() {
-        super("target/test-classes/dummy_deps_simple");
+        super(ResourcesConstants.DUMMY_DEPS_SIMPLE);
     }
 
     @AfterClass
     public static void tearDown() {
         BaseCompilerTest.tearDown();
     }
-
 
     @Test
     public void compileTest() {

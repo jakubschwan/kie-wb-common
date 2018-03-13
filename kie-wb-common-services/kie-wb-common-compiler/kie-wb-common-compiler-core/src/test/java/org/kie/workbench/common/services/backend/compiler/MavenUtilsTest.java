@@ -28,7 +28,7 @@ public class MavenUtilsTest {
 
     @Test
     public void presenceOfDepInThePrj() throws Exception {
-        List<String> pomList = MavenUtils.searchPoms(Paths.get("src/test/projects/dummy_kie_multimodule_untouched/"));
+        List<String> pomList = MavenUtils.searchPoms(Paths.get(ResourcesConstants.DUMMY_KIE_MULTIMODULE_UNTOUCHED_DIR));
         assertThat(pomList).hasSize(3);
         List<Artifact> deps = MavenUtils.resolveDependenciesFromMultimodulePrj(pomList);
         assertThat(deps).hasSize(1);

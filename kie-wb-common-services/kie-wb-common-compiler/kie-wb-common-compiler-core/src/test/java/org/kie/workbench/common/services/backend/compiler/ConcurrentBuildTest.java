@@ -56,14 +56,7 @@ public class ConcurrentBuildTest {
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = Paths.get(System.getProperty("user.home"), "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            logger.info("Creating a m2_repo into " + mavenRepo);
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
-        }
+        mavenRepo = TestUtil.createMavenRepo();
     }
 
     @Test
@@ -167,7 +160,7 @@ public class ConcurrentBuildTest {
         Path tmpRoot = Files.createTempDirectory("repo_" + UUID.randomUUID().toString());
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
         try {
-            TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"), tmp);
+            TestUtil.copyTree(Paths.get(ResourcesConstants.KJAR_2_SINGLE_RESOURCES), tmp);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
@@ -202,7 +195,7 @@ public class ConcurrentBuildTest {
         Path tmpRoot = Files.createTempDirectory("repo_" + UUID.randomUUID().toString());
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
         try {
-            TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-all-resources"), tmp);
+            TestUtil.copyTree(Paths.get(ResourcesConstants.KJAR_2_ALL_RESOURCES), tmp);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

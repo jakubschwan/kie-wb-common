@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.pomprocessor.ProcessedPoms;
@@ -30,9 +31,8 @@ import org.uberfire.java.nio.file.Paths;
 public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
 
     public DefaultIncrementalCompilerEnablerTest() {
-        super("target/test-classes/dummyuntouched");
+        super(ResourcesConstants.DUMMYUNTOUCHED);
     }
-
 
     @Test
     public void processTest() {

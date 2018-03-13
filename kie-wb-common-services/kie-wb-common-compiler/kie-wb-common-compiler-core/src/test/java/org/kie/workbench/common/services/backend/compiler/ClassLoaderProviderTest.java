@@ -17,7 +17,7 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import java.io.File;
-import java.lang.reflect.Method;
+import java.io.IOException;
 import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Map;
@@ -46,44 +46,39 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.fail;
-
 public class ClassLoaderProviderTest {
 
     private Path mavenRepo;
+    Path tmpRoot;
+    Path tmp;
+    Path uberfireTmp;
+
     private Logger logger = LoggerFactory.getLogger(ClassLoaderProviderTest.class);
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            logger.info("Creating a m2_repo into " + mavenRepo);
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
-        }
+        mavenRepo = TestUtil.createMavenRepo();
     }
 
-    @Test
-    public void loadProjectClassloaderTest() throws Exception {
+    private CompilationResponse compileProjectInRepo(String... mavenPhases) throws IOException {
         //we use NIO for this part of the test because Uberfire lack the implementation to copy a tree
-        Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                     "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_classloader"),
-                          tmp);
+        tmpRoot = Files.createTempDirectory("repo");
+        tmp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.DUMMY_KIE_MULTIMODULE_CLASSLOADER_DIR);
 
-        Path uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
+        uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
+                                                               mavenPhases,
                                                                Boolean.FALSE);
-        CompilationResponse res = compiler.compile(req);
+        return compiler.compile(req);
+    }
+
+    @Test
+    public void loadProjectClassloaderTest() throws Exception {
+        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
 
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
@@ -91,50 +86,22 @@ public class ClassLoaderProviderTest {
         }
         assertThat(res.isSuccessful()).isTrue();
 
-        List<String> pomList = MavenUtils.searchPoms(Paths.get("src/test/projects/dummy_kie_multimodule_classloader/"));
+        List<String> pomList = MavenUtils.searchPoms(Paths.get(ResourcesConstants.DUMMY_KIE_MULTIMODULE_CLASSLOADER_DIR));
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(pomList,
                                                                                                             mavenRepo.toAbsolutePath().toString());
         assertThat(clazzLoader).isNotNull();
         assertThat(clazzLoader).isPresent();
-        ClassLoader prjClassloader = clazzLoader.get();
 
-        //we try to load the only dep in the prj with a simple call method to see if is loaded or not
-        Class clazz;
-        try {
-            clazz = prjClassloader.loadClass("org.slf4j.LoggerFactory");
-            assertThat(clazz.isInterface()).isFalse();
+        LoadProjectDependencyUtil.loadLoggerFactory(clazzLoader.get());
 
-            Method m = clazz.getMethod("getLogger",
-                                       String.class);
-            Logger logger = (Logger) m.invoke(clazz,
-                                              "Dummy");
-            assertThat(logger.getName()).isEqualTo("Dummy");
-            logger.info("dependency loaded from the prj classpath");
-        } catch (ClassNotFoundException e) {
-            fail("Test fail due ClassNotFoundException.", e);
+        if (tmpRoot != null) {
+            TestUtil.rm(tmpRoot.toFile());
         }
-
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
     public void loadProjectClassloaderFromStringTest() throws Exception {
-        //we use NIO for this part of the test because Uberfire lack the implementation to copy a tree
-        Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                     "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_classloader"),
-                          tmp);
-
-        Path uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
-
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                               info,
-                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
-                                                               Boolean.FALSE);
-        CompilationResponse res = compiler.compile(req);
+        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
@@ -145,45 +112,17 @@ public class ClassLoaderProviderTest {
                                                                                                             mavenRepo.toAbsolutePath().toString());
         assertThat(clazzLoader).isNotNull();
         assertThat(clazzLoader.isPresent()).isTrue();
-        ClassLoader prjClassloader = clazzLoader.get();
 
-        //we try to load the only dep in the prj with a simple call method to see if is loaded or not
-        Class clazz;
-        try {
-            clazz = prjClassloader.loadClass("org.slf4j.LoggerFactory");
-            assertThat(clazz.isInterface()).isFalse();
+        LoadProjectDependencyUtil.loadLoggerFactory(clazzLoader.get());
 
-            Method m = clazz.getMethod("getLogger",
-                                       String.class);
-            Logger logger = (Logger) m.invoke(clazz,
-                                              "Dummy");
-            assertThat(logger.getName()).isEqualTo("Dummy");
-            logger.info("dependency loaded from the prj classpath");
-        } catch (ClassNotFoundException e) {
-            fail("Test fail due ClassNotFoundException.", e);
+        if (tmpRoot != null) {
+            TestUtil.rm(tmpRoot.toFile());
         }
-
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
     public void loadTargetFolderClassloaderTest() throws Exception {
-        //we use NIO for this part of the test because Uberfire lack the implementation to copy a tree
-        Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                     "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_classloader"),
-                          tmp);
-
-        Path uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
-
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                               info,
-                                                               new String[]{MavenCLIArgs.COMPILE},
-                                                               Boolean.FALSE);
-        CompilationResponse res = compiler.compile(req);
+        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadTargetFolderClassloaderTest");
@@ -194,33 +133,17 @@ public class ClassLoaderProviderTest {
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.getClassloaderFromProjectTargets(pomList);
         assertThat(clazzLoader).isNotNull();
         assertThat(clazzLoader.isPresent()).isTrue();
-        ClassLoader prjClassloader = clazzLoader.get();
 
-        //we try to load the only dep in the prj with a simple call method to see if is loaded or not
-        Class clazz;
-        try {
-            clazz = prjClassloader.loadClass("dummy.DummyB");
-            assertThat(clazz.isInterface()).isFalse();
-            Object obj = clazz.newInstance();
+        LoadProjectDependencyUtil.loadDummyB(clazzLoader.get());
 
-            assertThat(obj.toString()).startsWith("dummy.DummyB");
-
-            Method m = clazz.getMethod("greetings",
-                                       new Class[]{});
-            Object greeting = m.invoke(obj,
-                                       new Object[]{});
-            assertThat(greeting.toString()).isEqualTo("Hello World !");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            fail("Test fail due ClassNotFoundException.", e);
+        if (tmpRoot != null) {
+            TestUtil.rm(tmpRoot.toFile());
         }
-
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
     public void getClassloaderFromAllDependenciesTestSimple() {
-        Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_simple");
+        Path path = Paths.get(".").resolve(ResourcesConstants.DUMMY_DEPS_SIMPLE_DIR);
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
                                                                                                                mavenRepo.toAbsolutePath().toString());
         assertThat(classloaderOptional.isPresent()).isTrue();
@@ -231,7 +154,7 @@ public class ClassLoaderProviderTest {
 
     @Test
     public void getClassloaderFromAllDependenciesTestComplex() {
-        Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_complex");
+        Path path = Paths.get(".").resolve(ResourcesConstants.DUMMY_DEPS_COMPLEX_DIR);
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
                                                                                                                mavenRepo.toAbsolutePath().toString());
         assertThat(classloaderOptional.isPresent()).isTrue();
@@ -247,10 +170,7 @@ public class ClassLoaderProviderTest {
          * */
         String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                     "dummy"));
-        TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"),
-                          tmp);
+        Path tmp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
@@ -302,10 +222,7 @@ public class ClassLoaderProviderTest {
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
         Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                     "dummy"));
-        TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources_with_error"),
-                          tmp);
+        Path tmp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES_WITH_ERROR);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));

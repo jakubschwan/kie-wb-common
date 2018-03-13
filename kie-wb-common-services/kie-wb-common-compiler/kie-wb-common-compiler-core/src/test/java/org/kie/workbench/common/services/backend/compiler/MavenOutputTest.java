@@ -16,7 +16,6 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
@@ -34,14 +33,7 @@ public class MavenOutputTest {
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
-        }
+        mavenRepo = TestUtil.createMavenRepo();
     }
 
     @Test
@@ -49,7 +41,7 @@ public class MavenOutputTest {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmpNio = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                         "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy"),
+        TestUtil.copyTree(Paths.get(ResourcesConstants.DUMMY_DIR),
                           tmpNio);
 
         Path tmp = Paths.get(tmpNio.toAbsolutePath().toString());
