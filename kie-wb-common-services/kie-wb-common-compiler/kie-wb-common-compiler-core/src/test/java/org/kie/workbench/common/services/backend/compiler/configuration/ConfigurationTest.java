@@ -68,6 +68,15 @@ public class ConfigurationTest {
         Map<ConfigurationKey, String> conf = strategy.loadConfiguration();
         assertThat(strategy.isValid()).isTrue();
         assertThat(conf.keySet()).hasSize(14);
+        assertThat(conf.get(ConfigurationKey.TARGET_VERSION)).isEqualToIgnoringCase("1.9");
+        assertThat(conf.get(ConfigurationKey.SOURCE_VERSION)).isEqualToIgnoringCase("1.9");
+    }
+
+    @Test
+    public void loadAlternativeBrokenPropertiesConfig() {
+        ConfigurationStrategy strategy = new ConfigurationPropertiesStrategy(Paths.get("src/test/resources/alternativeBrokenConfiguration.properties"));
+        Map<ConfigurationKey, String> conf = strategy.loadConfiguration();
+        assertThat(strategy.isValid()).isFalse();
     }
 
     @Test
