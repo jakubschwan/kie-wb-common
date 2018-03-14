@@ -29,6 +29,7 @@ import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+import org.uberfire.java.nio.file.Paths;
 
 public class ConfigurationTest {
 
@@ -56,6 +57,14 @@ public class ConfigurationTest {
     @Test
     public void loadPropertiesConfig() {
         ConfigurationStrategy strategy = new ConfigurationPropertiesStrategy();
+        Map<ConfigurationKey, String> conf = strategy.loadConfiguration();
+        assertThat(strategy.isValid()).isTrue();
+        assertThat(conf.keySet()).hasSize(14);
+    }
+
+    @Test
+    public void loadAlternativePropertiesConfig() {
+        ConfigurationStrategy strategy = new ConfigurationPropertiesStrategy(Paths.get("src/test/resources/alternativeConfiguration.properties"));
         Map<ConfigurationKey, String> conf = strategy.loadConfiguration();
         assertThat(strategy.isValid()).isTrue();
         assertThat(conf.keySet()).hasSize(14);
@@ -160,7 +169,6 @@ public class ConfigurationTest {
     private FileOutputStream createOutputStream() throws URISyntaxException, FileNotFoundException {
         URL url = getClass().getClassLoader().getResource(PROPERTIES_FILE);
         File fileObject = new File(url.toURI());
-
         return new FileOutputStream(fileObject);
     }
 
