@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

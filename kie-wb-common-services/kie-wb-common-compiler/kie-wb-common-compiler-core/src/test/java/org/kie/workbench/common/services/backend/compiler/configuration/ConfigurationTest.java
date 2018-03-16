@@ -28,6 +28,8 @@ import java.util.Properties;
 import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
 import org.junit.Test;
 import org.uberfire.java.nio.file.Paths;
 

@@ -22,6 +22,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
+import org.guvnor.common.services.project.backend.server.utils.configuration.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * KIE_MAVEN_PLUGIN=kie-maven-plugin
  * KIE_TAKARI_PLUGIN=kie-takari-plugin
  * <p>
- * KIE_VERSION=7.7.0-SNAPSHOT
+ * KIE_VERSION=${version.org.kie}
  */
 public class ConfigurationContextProvider implements ConfigurationProvider {
 
@@ -55,8 +58,8 @@ public class ConfigurationContextProvider implements ConfigurationProvider {
 
     private void initializeWorkingConfig() {
         List<ConfigurationStrategy> confs = new ArrayList(Arrays.asList(new ConfigurationEnvironmentStrategy(),
-                                                                                               new ConfigurationPropertiesStrategy(),
-                                                                                               new ConfigurationStaticStrategy()));
+                                                                        new ConfigurationPropertiesStrategy(),
+                                                                        new ConfigurationStaticStrategy()));
         Collections.sort(confs, Comparator.comparing(Order::getOrder));
         for (ConfigurationStrategy item : confs) {
             if (item.isValid()) {
