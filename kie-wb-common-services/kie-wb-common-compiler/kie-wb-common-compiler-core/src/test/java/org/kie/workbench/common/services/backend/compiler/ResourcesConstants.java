@@ -34,6 +34,8 @@ public class ResourcesConstants {
     public static final String DUMMY_DEPS_COMPLEX_DIR = "src/test/projects/dummy_deps_complex";
     public static final String DUMMY_DEPS_SIMPLE_DIR = "src/test/projects/dummy_deps_simple";
 
+    public static final String DUMMY_KIE_UNTOUCHED_DIR = "src/test/projects/dummy_kie_untouched";
+    public static final String DUMMY_KIE_UNVALID_UNTOUCHED_DIR = "src/test/projects/dummy_kie_unvalid_untouched";
     public static final String DUMMY_KIE_MULTIMODULE_CLASSLOADER_DIR = "src/test/projects/dummy_kie_multimodule_classloader";
     public static final String DUMMY_KIE_MULTIMODULE_UNTOUCHED_DIR = "src/test/projects/dummy_kie_multimodule_untouched/";
     public static final String DUMMY_KIE_MULTIMODULE_UNTOUCHED_WITH_ERROR_DIR = "src/test/projects/dummy_kie_multimodule_untouched_with_error";
