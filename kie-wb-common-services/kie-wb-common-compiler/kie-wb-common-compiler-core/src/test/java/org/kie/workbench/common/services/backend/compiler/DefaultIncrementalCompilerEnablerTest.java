@@ -66,7 +66,7 @@ public class DefaultIncrementalCompilerEnablerTest {
                                                       "pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).doesNotContain("<artifactId>takari-lifecycle-plugin</artifactId>");
+        assertThat(pomAsAstring).doesNotContain(ResourcesConstants.TAKARI_LIFECYCLE_ARTIFACT);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
@@ -78,7 +78,7 @@ public class DefaultIncrementalCompilerEnablerTest {
         encoded = Files.readAllBytes(Paths.get(mainPom.toString()));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>");
+        assertThat(pomAsAstring).contains(ResourcesConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
 
         assertThat(pomAsAstring.contains("kie-takari-plugin")).isFalse();
         TestUtil.rm(tmpRoot.toFile());
@@ -152,7 +152,7 @@ public class DefaultIncrementalCompilerEnablerTest {
                                                       "pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).doesNotContain("<artifactId>takari-lifecycle-plugin</artifactId>");
+        assertThat(pomAsAstring).doesNotContain(ResourcesConstants.TAKARI_LIFECYCLE_ARTIFACT);
         assertThat(pomAsAstring).doesNotContain("<packaging>kjar</packaging>");
 
         byte[] encodedDummyB = Files.readAllBytes(Paths.get(tmp.toAbsolutePath().toString(),

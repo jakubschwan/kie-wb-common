@@ -38,6 +38,7 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -121,7 +122,7 @@ public class KieDefaultMavenCompilerTest {
         byte[] encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).doesNotContain("<artifactId>takari-lifecycle-plugin</artifactId>");
+        assertThat(pomAsAstring).doesNotContain(ResourcesConstants.TAKARI_LIFECYCLE_ARTIFACT);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
@@ -137,13 +138,13 @@ public class KieDefaultMavenCompilerTest {
                                                       "KieDefaultMavenCompilerTest.buildWithCloneTest");
         }
         assertThat(res.isSuccessful()).isTrue();
-        Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile");
+        Path incrementalConfiguration = Paths.get(prjFolder + ResourcesConstants.TARGET_TAKARI_PLUGIN);
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>");
+        assertThat(pomAsAstring).contains(ResourcesConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
 
         TestUtil.rm(tmpRootCloned.toFile());
     }
@@ -197,7 +198,7 @@ public class KieDefaultMavenCompilerTest {
         byte[] encoded = Files.readAllBytes(Paths.get(tmpCloned + "/dummy/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).doesNotContain("<artifactId>takari-lifecycle-plugin</artifactId>");
+        assertThat(pomAsAstring).doesNotContain(ResourcesConstants.TAKARI_LIFECYCLE_ARTIFACT);
 
         Path prjFolder = Paths.get(tmpCloned + "/dummy/");
 
@@ -216,13 +217,13 @@ public class KieDefaultMavenCompilerTest {
 
         assertThat(res.isSuccessful()).isTrue();
 
-        Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile");
+        Path incrementalConfiguration = Paths.get(prjFolder + ResourcesConstants.TARGET_TAKARI_PLUGIN);
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>");
+        assertThat(pomAsAstring).contains(ResourcesConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
 
         TestUtil.rm(tmpRootCloned.toFile());
     }
@@ -414,11 +415,11 @@ public class KieDefaultMavenCompilerTest {
         Map<org.uberfire.java.nio.file.Path, InputStream> override = new HashMap<>();
 
         org.uberfire.java.nio.file.Path path = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath() + "/src/main/java/dummy/DummyOverride.java");
-        InputStream input = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/DummyOverride.java"));
+        InputStream input = new FileInputStream(new File(ResourcesConstants.DUMMY_OVERRIDE+"/src/main/java/dummy/DummyOverride.java"));
         override.put(path, input);
 
         org.uberfire.java.nio.file.Path pathTwo = org.uberfire.java.nio.file.Paths.get(req.getInfo().getPrjPath() + "/src/main/java/dummy/Dummy.java");
-        InputStream inputTwo = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/Dummy.java"));
+        InputStream inputTwo = new FileInputStream(new File(ResourcesConstants.DUMMY_OVERRIDE+"/src/main/java/dummy/Dummy.java"));
         override.put(pathTwo, inputTwo);
 
         //recompile
@@ -456,7 +457,7 @@ public class KieDefaultMavenCompilerTest {
         ioService.startBatch(origin);
 
         ioService.write(origin.getPath("master", "/dummy/pom.xml"), //git://buildCompileWithOverrideOnGitVFS/dummy/pom.xml
-                        new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/dummy_override/pom.xml").toPath())));
+                        new String(java.nio.file.Files.readAllBytes(new File(ResourcesConstants.DUMMY_OVERRIDE+"/pom.xml").toPath())));
         ioService.write(origin.getPath("master", "/dummy/src/main/java/dummy/Dummy.java"), //git://buildCompileWithOverrideOnGitVFS/dummy/src/main/java/dummy/Dummy.java
                         new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/dummy/src/main/java/dummy/Dummy.java").toPath())));
 
@@ -493,11 +494,11 @@ public class KieDefaultMavenCompilerTest {
         Map<org.uberfire.java.nio.file.Path, InputStream> override = new HashMap<>();
 
         org.uberfire.java.nio.file.Path path = origin.getPath("master", "/dummy/src/main/java/dummy/DummyOverride.java");
-        InputStream input = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/DummyOverride.java"));
+        InputStream input = new FileInputStream(new File(ResourcesConstants.DUMMY_OVERRIDE+"/src/main/java/dummy/DummyOverride.java"));
         override.put(path, input);
 
         org.uberfire.java.nio.file.Path pathTwo = origin.getPath("master", "/dummy//src/main/java/dummy/Dummy.java");
-        InputStream inputTwo = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/Dummy.java"));
+        InputStream inputTwo = new FileInputStream(new File(ResourcesConstants.DUMMY_OVERRIDE+"/src/main/java/dummy/Dummy.java"));
         override.put(pathTwo, inputTwo);
 
         //recompile

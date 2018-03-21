@@ -16,6 +16,7 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.AfterClass;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
@@ -68,6 +69,11 @@ public class BaseCompilerTest {
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
+    }
+
+    protected WorkspaceCompilationInfo createdNewPrjInRepo(String dirName, String prjName) throws IOException {
+        Path tmp = TestUtil.createAndCopyToDircetory(tmpRoot, dirName, prjName);
+        return new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
     }
 
     @AfterClass

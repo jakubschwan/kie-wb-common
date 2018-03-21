@@ -61,8 +61,8 @@ public class TestUtil {
             target.mkdir();
         }
         if (mavenOutput.size() > 0) {
-            StringBuilder sb = new StringBuilder(target.toString()).append(testName).append(".test.log");
-            File fileOut = new File(sb.toString());
+            String sb = target.toString() + testName + ".test.log";
+            File fileOut = new File(sb);
             logger.info("Writing error output on {}", fileOut.toString());
             FileOutputStream fos = new FileOutputStream(fileOut);
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));

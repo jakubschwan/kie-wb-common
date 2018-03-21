@@ -17,14 +17,19 @@ package org.kie.workbench.common.services.backend.compiler;
 
 public class ResourcesConstants {
 
+    public static final String TARGET_TAKARI_PLUGIN = "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile";
+
     public static final String KJAR_2_ALL_RESOURCES = "target/test-classes/kjar-2-all-resources";
     public static final String KJAR_2_SINGLE_RESOURCES = "target/test-classes/kjar-2-single-resources";
     public static final String KJAR_2_SINGLE_RESOURCES_WITH_ERROR = "target/test-classes/kjar-2-single-resources_with_error";
+    public static final String KJAR_2_SINGLE_RESOURCES_OVERRIDE = "target/test-classes/kjar-2-single-resources_override";
 
     public static final String DUMMY = "target/test-classes/dummy";
     public static final String DUMMYUNTOUCHED = "target/test-classes/dummyuntouched";
+    public static final String DUMMY_OVERRIDE = "target/test-classes/dummy_override";
 
     public static final String DUMMY_DEPS_SIMPLE = "target/test-classes/dummy_deps_simple";
+    public static final String DUMMY_FAIL_DEPS_SIMPLE = "target/test-classes/dummy_fail_deps_simple";
 
     public static final String DUMMY_KIE_INCREMENTAL = "target/test-classes/dummy_kie_incremental";
 
@@ -39,4 +44,7 @@ public class ResourcesConstants {
     public static final String DUMMY_KIE_MULTIMODULE_CLASSLOADER_DIR = "src/test/projects/dummy_kie_multimodule_classloader";
     public static final String DUMMY_KIE_MULTIMODULE_UNTOUCHED_DIR = "src/test/projects/dummy_kie_multimodule_untouched/";
     public static final String DUMMY_KIE_MULTIMODULE_UNTOUCHED_WITH_ERROR_DIR = "src/test/projects/dummy_kie_multimodule_untouched_with_error";
+
+    public static final String TAKARI_LIFECYCLE_ARTIFACT = "<artifactId>takari-lifecycle-plugin</artifactId>";
+    public static final String KIE_TAKARI_LIFECYCLE_ARTIFACT = "<artifactId>kie-takari-lifecycle-plugin</artifactId>";
 }
