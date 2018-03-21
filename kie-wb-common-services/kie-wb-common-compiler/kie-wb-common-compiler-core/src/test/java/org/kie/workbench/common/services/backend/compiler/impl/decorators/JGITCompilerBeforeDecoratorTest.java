@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
@@ -91,7 +92,7 @@ public class JGITCompilerBeforeDecoratorTest  {
         }
         assertThat(res.isSuccessful()).isTrue();
 
-        Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile");
+        Path incrementalConfiguration = Paths.get(prjFolder + ResourcesConstants.TARGET_TAKARI_PLUGIN);
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
         if (tmpRootCloned != null) {
@@ -116,7 +117,7 @@ public class JGITCompilerBeforeDecoratorTest  {
 
         Map<Path, InputStream> override = new HashMap<>();
         org.uberfire.java.nio.file.Path path = org.uberfire.java.nio.file.Paths.get(prjFolder + "/dummyA/src/main/java/dummy/Person.java");
-        InputStream input = new FileInputStream(new File("target/test-classes/kjar-2-single-resources_override/src/main/java/dummy/PersonOverride.java"));
+        InputStream input = new FileInputStream(new File(ResourcesConstants.KJAR_2_SINGLE_RESOURCES_OVERRIDE+"/src/main/java/dummy/PersonOverride.java"));
         override.put(path, input);
 
         JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler());
@@ -128,7 +129,42 @@ public class JGITCompilerBeforeDecoratorTest  {
         }
         assertThat(res.isSuccessful()).isTrue();
 
-        Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile");
+        Path incrementalConfiguration = Paths.get(prjFolder + ResourcesConstants.TARGET_TAKARI_PLUGIN);
+        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
+
+
+        if (tmpRootCloned != null) {
+            TestUtil.rm(tmpRootCloned.toFile());
+        }
+    }
+
+    @Test
+    public void compileWithEmptyOverrideTest() throws Exception {
+        final File gitClonedFolder = createJGitRepo("myrepoempty");
+
+        //Compile the repo
+
+        Path prjFolder = Paths.get(gitClonedFolder + "/dummy/");
+
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.COMPILE},
+                                                               Boolean.TRUE);
+
+
+        Map<Path, InputStream> override = new HashMap<>();
+
+        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler());
+        CompilationResponse res = compiler.compile(req, override);
+
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
+                                                      "JGITCompilerBeforeDecoratorTest.compileWithEmpryOverrideTest");
+        }
+        assertThat(res.isSuccessful()).isTrue();
+
+        Path incrementalConfiguration = Paths.get(prjFolder + ResourcesConstants.TARGET_TAKARI_PLUGIN);
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
 

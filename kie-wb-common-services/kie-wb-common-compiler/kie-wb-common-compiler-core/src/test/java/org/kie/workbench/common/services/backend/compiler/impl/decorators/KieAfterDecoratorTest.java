@@ -62,7 +62,7 @@ public class KieAfterDecoratorTest extends BaseCompilerTest {
 
         Map<Path, InputStream> override = new HashMap<>();
         Path path = Paths.get(tmpRoot + "/dummy/src/main/java/org/kie/maven/plugin/test/Person.java");
-        InputStream input = new FileInputStream(new File("target/test-classes/kjar-2-single-resources_override/src/main/java/org/kie/maven/plugin/test/Person.java"));
+        InputStream input = new FileInputStream(new File(ResourcesConstants.KJAR_2_SINGLE_RESOURCES_OVERRIDE+"/src/main/java/org/kie/maven/plugin/test/Person.java"));
         override.put(path, input);
 
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
@@ -77,6 +77,40 @@ public class KieAfterDecoratorTest extends BaseCompilerTest {
             softly.assertThat(kieRes.getMavenOutput()).isEmpty();
             softly.assertThat(kieRes.getKieModule()).isNotNull();
             softly.assertThat(kieRes.getKieModuleMetaInfo()).isNotNull();
+        });
+    }
+
+    @Test
+    public void compileWithouKieMavenPlugin() throws Exception {
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               createdNewPrjInRepo("normal-dummy", ResourcesConstants.DUMMY),
+                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               Boolean.FALSE);
+
+        KieAfterDecorator decorator = new KieAfterDecorator(new BaseMavenCompiler());
+        KieCompilationResponse kieRes = (KieCompilationResponse) decorator.compile(req);
+         SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(kieRes.isSuccessful()).isTrue();
+            softly.assertThat(kieRes.getMavenOutput()).isEmpty();
+            softly.assertThat(kieRes.getKieModule()).isNotNull();
+            softly.assertThat(kieRes.getKieModuleMetaInfo()).isNotNull();
+        });
+    }
+
+    @Test
+    public void compileWithFailedResponse() throws Exception{
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               createdNewPrjInRepo("kjar-2-fail", ResourcesConstants.KJAR_2_SINGLE_FAIL_RESOURCES),
+                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               Boolean.FALSE);
+
+        KieAfterDecorator decorator = new KieAfterDecorator(new BaseMavenCompiler());
+        KieCompilationResponse kieRes = (KieCompilationResponse) decorator.compile(req);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(kieRes.isSuccessful()).isFalse();
+            softly.assertThat(kieRes.getMavenOutput()).isNotEmpty();
+            softly.assertThat(kieRes.getKieModule()).isEmpty();
+            softly.assertThat(kieRes.getKieModuleMetaInfo()).isEmpty();
         });
     }
 }

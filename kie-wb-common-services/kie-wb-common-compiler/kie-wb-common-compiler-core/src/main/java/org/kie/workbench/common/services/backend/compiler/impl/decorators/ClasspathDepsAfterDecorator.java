@@ -70,8 +70,8 @@ public class ClasspathDepsAfterDecorator<T extends CompilationResponse, C extend
     private T handleClasspath(CompilationRequest req, T res) {
         T t;
         Map<String,Object> kieMap = req.getMap();
-        StringBuilder classpathKey = new StringBuilder(req.getRequestUUID()).append(".").append(STRING_CLASSPATH_KEY);
-        Object o = kieMap.get(classpathKey.toString());
+        String classpathKey = req.getRequestUUID() + "." + STRING_CLASSPATH_KEY;
+        Object o = kieMap.get(classpathKey);
         if(o != null){
             Set<String> depsModules = (Set<String>) o;
             List<String> deps =CompilerClassloaderUtils.readItemsFromClasspathString(depsModules);

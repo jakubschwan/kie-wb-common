@@ -21,6 +21,7 @@ public class ResourcesConstants {
 
     public static final String KJAR_2_ALL_RESOURCES = "target/test-classes/kjar-2-all-resources";
     public static final String KJAR_2_SINGLE_RESOURCES = "target/test-classes/kjar-2-single-resources";
+    public static final String KJAR_2_SINGLE_FAIL_RESOURCES = "target/test-classes/kjar-2-single-fail-resources";
     public static final String KJAR_2_SINGLE_RESOURCES_WITH_ERROR = "target/test-classes/kjar-2-single-resources_with_error";
     public static final String KJAR_2_SINGLE_RESOURCES_OVERRIDE = "target/test-classes/kjar-2-single-resources_override";
 

@@ -65,7 +65,7 @@ public class OutputLogAfterDecoratorTest extends BaseCompilerTest {
 
         Map<Path, InputStream> override = new HashMap<>();
         org.uberfire.java.nio.file.Path path = org.uberfire.java.nio.file.Paths.get(tmpRoot + "/dummy/src/main/java/dummy/DummyOverride.java");
-        InputStream input = new FileInputStream(new File("target/test-classes/dummy_override/src/main/java/dummy/DummyOverride.java"));
+        InputStream input = new FileInputStream(new File(ResourcesConstants.DUMMY_OVERRIDE+"/src/main/java/dummy/DummyOverride.java"));
         override.put(path, input);
 
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
@@ -77,6 +77,21 @@ public class OutputLogAfterDecoratorTest extends BaseCompilerTest {
         CompilationResponse res = decorator.compile(req, override);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isTrue();
+            softly.assertThat(res.getMavenOutput().size()).isGreaterThan(0);
+        });
+    }
+
+    @Test
+    public void compileFailedTest() throws Exception {
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               createdNewPrjInRepo("dummy-fail", ResourcesConstants.DUMMY_FAIL_DEPS_SIMPLE),
+                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               Boolean.FALSE);
+
+        OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler());
+        CompilationResponse res = decorator.compile(req);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(res.isSuccessful()).isFalse();
             softly.assertThat(res.getMavenOutput().size()).isGreaterThan(0);
         });
     }

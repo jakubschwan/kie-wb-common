@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.decorators;
 
+import java.io.IOException;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -53,6 +54,24 @@ public class ClasspathDepsAfterDecoratorTest extends BaseCompilerTest {
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isTrue();
             softly.assertThat(res.getDependencies().size()).isEqualTo(4);
+        });
+    }
+
+    @Test
+    public void failCompileTest() throws IOException {
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               createdNewPrjInRepo("dummy-fail", ResourcesConstants.DUMMY_FAIL_DEPS_SIMPLE),
+                                                               new String[]{
+                                                                        MavenCLIArgs.INSTALL,
+                                                                        MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
+                                                               },
+                                                               Boolean.FALSE);
+
+        ClasspathDepsAfterDecorator decorator = new ClasspathDepsAfterDecorator(new BaseMavenCompiler());
+        CompilationResponse res = decorator.compile(req);
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(res.isSuccessful()).isFalse();
+            softly.assertThat(res.getDependencies().size()).isEqualTo(0);
         });
     }
 
