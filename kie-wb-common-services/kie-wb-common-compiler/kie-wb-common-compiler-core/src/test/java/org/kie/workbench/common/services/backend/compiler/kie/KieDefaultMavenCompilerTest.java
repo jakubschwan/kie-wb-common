@@ -38,13 +38,14 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
-import org.kie.workbench.common.services.backend.compiler.TestUtil;
+import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
+import org.kie.workbench.common.services.backend.utils.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
+import org.kie.workbench.common.services.backend.constants.TestConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.io.IOService;
@@ -122,7 +123,7 @@ public class KieDefaultMavenCompilerTest {
         byte[] encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).doesNotContain(ResourcesConstants.TAKARI_LIFECYCLE_ARTIFACT);
+        assertThat(pomAsAstring).doesNotContain(TestConstants.TAKARI_LIFECYCLE_ARTIFACT);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
@@ -138,13 +139,13 @@ public class KieDefaultMavenCompilerTest {
                                                       "KieDefaultMavenCompilerTest.buildWithCloneTest");
         }
         assertThat(res.isSuccessful()).isTrue();
-        Path incrementalConfiguration = Paths.get(prjFolder + ResourcesConstants.TARGET_TAKARI_PLUGIN);
+        Path incrementalConfiguration = Paths.get(prjFolder + TestConstants.TARGET_TAKARI_PLUGIN);
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).contains(ResourcesConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
+        assertThat(pomAsAstring).contains(TestConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
 
         TestUtil.rm(tmpRootCloned.toFile());
     }
@@ -198,7 +199,7 @@ public class KieDefaultMavenCompilerTest {
         byte[] encoded = Files.readAllBytes(Paths.get(tmpCloned + "/dummy/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).doesNotContain(ResourcesConstants.TAKARI_LIFECYCLE_ARTIFACT);
+        assertThat(pomAsAstring).doesNotContain(TestConstants.TAKARI_LIFECYCLE_ARTIFACT);
 
         Path prjFolder = Paths.get(tmpCloned + "/dummy/");
 
@@ -217,13 +218,13 @@ public class KieDefaultMavenCompilerTest {
 
         assertThat(res.isSuccessful()).isTrue();
 
-        Path incrementalConfiguration = Paths.get(prjFolder + ResourcesConstants.TARGET_TAKARI_PLUGIN);
+        Path incrementalConfiguration = Paths.get(prjFolder + TestConstants.TARGET_TAKARI_PLUGIN);
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).contains(ResourcesConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
+        assertThat(pomAsAstring).contains(TestConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
 
         TestUtil.rm(tmpRootCloned.toFile());
     }

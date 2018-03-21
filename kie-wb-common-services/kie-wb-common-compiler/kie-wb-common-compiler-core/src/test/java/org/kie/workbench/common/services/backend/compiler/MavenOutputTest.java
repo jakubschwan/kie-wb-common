@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.services.backend.compiler;
 
+import org.kie.workbench.common.services.backend.utils.TestUtil;
+import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;

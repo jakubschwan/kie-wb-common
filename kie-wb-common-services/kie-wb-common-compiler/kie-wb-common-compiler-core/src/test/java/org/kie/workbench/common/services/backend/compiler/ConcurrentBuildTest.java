@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.services.backend.compiler;
 
+import org.kie.workbench.common.services.backend.utils.TestUtil;
+import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;

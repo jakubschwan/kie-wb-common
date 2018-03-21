@@ -30,12 +30,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
-import org.kie.workbench.common.services.backend.compiler.TestUtil;
+import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
+import org.kie.workbench.common.services.backend.utils.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
+import org.kie.workbench.common.services.backend.constants.TestConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,7 +93,7 @@ public class JGITCompilerBeforeDecoratorTest  {
         }
         assertThat(res.isSuccessful()).isTrue();
 
-        Path incrementalConfiguration = Paths.get(prjFolder + ResourcesConstants.TARGET_TAKARI_PLUGIN);
+        Path incrementalConfiguration = Paths.get(prjFolder + TestConstants.TARGET_TAKARI_PLUGIN);
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
         if (tmpRootCloned != null) {
@@ -129,7 +130,7 @@ public class JGITCompilerBeforeDecoratorTest  {
         }
         assertThat(res.isSuccessful()).isTrue();
 
-        Path incrementalConfiguration = Paths.get(prjFolder + ResourcesConstants.TARGET_TAKARI_PLUGIN);
+        Path incrementalConfiguration = Paths.get(prjFolder + TestConstants.TARGET_TAKARI_PLUGIN);
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
 
@@ -164,7 +165,7 @@ public class JGITCompilerBeforeDecoratorTest  {
         }
         assertThat(res.isSuccessful()).isTrue();
 
-        Path incrementalConfiguration = Paths.get(prjFolder + ResourcesConstants.TARGET_TAKARI_PLUGIN);
+        Path incrementalConfiguration = Paths.get(prjFolder + TestConstants.TARGET_TAKARI_PLUGIN);
         assertThat(incrementalConfiguration.toFile().exists()).isTrue();
 
 

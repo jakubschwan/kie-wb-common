@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.services.backend.compiler;
 
+import org.kie.workbench.common.services.backend.utils.LoadProjectDependencyUtil;
+import org.kie.workbench.common.services.backend.utils.TestUtil;
+import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLClassLoader;

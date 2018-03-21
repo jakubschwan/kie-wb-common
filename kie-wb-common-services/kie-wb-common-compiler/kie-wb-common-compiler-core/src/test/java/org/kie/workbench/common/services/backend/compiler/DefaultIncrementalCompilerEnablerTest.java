@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.services.backend.compiler;
 
+import org.kie.workbench.common.services.backend.utils.TestUtil;
 import java.nio.charset.StandardCharsets;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,6 +26,7 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLI
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
+import org.kie.workbench.common.services.backend.constants.TestConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -66,7 +68,7 @@ public class DefaultIncrementalCompilerEnablerTest {
                                                       "pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).doesNotContain(ResourcesConstants.TAKARI_LIFECYCLE_ARTIFACT);
+        assertThat(pomAsAstring).doesNotContain(TestConstants.TAKARI_LIFECYCLE_ARTIFACT);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
@@ -78,7 +80,7 @@ public class DefaultIncrementalCompilerEnablerTest {
         encoded = Files.readAllBytes(Paths.get(mainPom.toString()));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).contains(ResourcesConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
+        assertThat(pomAsAstring).contains(TestConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
 
         assertThat(pomAsAstring.contains("kie-takari-plugin")).isFalse();
         TestUtil.rm(tmpRoot.toFile());
@@ -152,7 +154,7 @@ public class DefaultIncrementalCompilerEnablerTest {
                                                       "pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).doesNotContain(ResourcesConstants.TAKARI_LIFECYCLE_ARTIFACT);
+        assertThat(pomAsAstring).doesNotContain(TestConstants.TAKARI_LIFECYCLE_ARTIFACT);
         assertThat(pomAsAstring).doesNotContain("<packaging>kjar</packaging>");
 
         byte[] encodedDummyB = Files.readAllBytes(Paths.get(tmp.toAbsolutePath().toString(),

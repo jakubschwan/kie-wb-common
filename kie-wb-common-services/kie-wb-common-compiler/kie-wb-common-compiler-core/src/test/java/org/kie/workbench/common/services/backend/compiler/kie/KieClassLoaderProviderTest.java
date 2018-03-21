@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.TestUtil;
+import org.kie.workbench.common.services.backend.utils.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -39,8 +39,8 @@ import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.kie.workbench.common.services.backend.compiler.LoadProjectDependencyUtil;
-import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
+import org.kie.workbench.common.services.backend.utils.LoadProjectDependencyUtil;
+import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 
 public class KieClassLoaderProviderTest {
 

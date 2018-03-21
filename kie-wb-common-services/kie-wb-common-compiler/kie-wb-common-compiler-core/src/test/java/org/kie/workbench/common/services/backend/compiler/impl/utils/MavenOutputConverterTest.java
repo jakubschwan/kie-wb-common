@@ -34,7 +34,7 @@ import org.uberfire.java.nio.file.Path;
 import org.uberfire.mocks.FileSystemTestingUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
+import org.kie.workbench.common.services.backend.constants.TestConstants;
 import static org.uberfire.backend.server.util.Paths.convert;
 
 /**
@@ -67,7 +67,7 @@ public class MavenOutputConverterTest {
     public void testErrors() throws IOException {
         final List<String> output = new ArrayList<>();
 
-        try (Stream<String> stream = Files.lines(Paths.get(ResourcesConstants.OUTPUT_TEST_LOG))) {
+        try (Stream<String> stream = Files.lines(Paths.get(TestConstants.OUTPUT_TEST_LOG))) {
             stream.forEach((line) -> {
                 output.add(line);
             });

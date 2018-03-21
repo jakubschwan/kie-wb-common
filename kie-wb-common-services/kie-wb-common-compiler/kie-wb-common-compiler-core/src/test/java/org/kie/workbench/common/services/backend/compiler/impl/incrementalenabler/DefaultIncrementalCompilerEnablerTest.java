@@ -21,10 +21,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
+import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.pomprocessor.ProcessedPoms;
+import org.kie.workbench.common.services.backend.constants.TestConstants;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Paths;
 
@@ -44,7 +45,7 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
         byte[] encoded = Files.readAllBytes(Paths.get(tmpRoot + "/dummy/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).doesNotContain(ResourcesConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
+        assertThat(pomAsAstring).doesNotContain(TestConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
 
         IncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
         ProcessedPoms poms = enabler.process(req);
@@ -56,6 +57,6 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
         encoded = Files.readAllBytes(Paths.get(tmpRoot + "/dummy/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).contains(ResourcesConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
+        assertThat(pomAsAstring).contains(TestConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
     }
 }

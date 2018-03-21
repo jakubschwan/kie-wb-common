@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.compiler;
+package org.kie.workbench.common.services.backend.utils;
 
 import java.io.BufferedWriter;
 import java.io.File;

@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler;
 
+import org.kie.workbench.common.services.backend.utils.TestUtil;
 import java.io.File;
 import java.io.IOException;
 

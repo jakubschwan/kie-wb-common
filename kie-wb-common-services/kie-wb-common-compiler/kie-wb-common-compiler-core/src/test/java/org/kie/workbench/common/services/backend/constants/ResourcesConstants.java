@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.compiler;
+package org.kie.workbench.common.services.backend.constants;
 
 public class ResourcesConstants {
-
-    public static final String OUTPUT_TEST_LOG = "target/test-classes/output-test.log";
-
-    public static final String TARGET_TAKARI_PLUGIN = "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile";
 
     public static final String KJAR_2_ALL_RESOURCES = "target/test-classes/kjar-2-all-resources";
     public static final String KJAR_2_SINGLE_RESOURCES = "target/test-classes/kjar-2-single-resources";
@@ -47,7 +43,4 @@ public class ResourcesConstants {
     public static final String DUMMY_KIE_MULTIMODULE_CLASSLOADER_DIR = "src/test/projects/dummy_kie_multimodule_classloader";
     public static final String DUMMY_KIE_MULTIMODULE_UNTOUCHED_DIR = "src/test/projects/dummy_kie_multimodule_untouched/";
     public static final String DUMMY_KIE_MULTIMODULE_UNTOUCHED_WITH_ERROR_DIR = "src/test/projects/dummy_kie_multimodule_untouched_with_error";
-
-    public static final String TAKARI_LIFECYCLE_ARTIFACT = "<artifactId>takari-lifecycle-plugin</artifactId>";
-    public static final String KIE_TAKARI_LIFECYCLE_ARTIFACT = "<artifactId>kie-takari-lifecycle-plugin</artifactId>";
 }

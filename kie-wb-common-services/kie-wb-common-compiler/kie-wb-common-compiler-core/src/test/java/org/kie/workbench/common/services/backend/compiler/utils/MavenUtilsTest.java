@@ -22,7 +22,7 @@ import org.apache.maven.artifact.Artifact;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
-import org.kie.workbench.common.services.backend.compiler.ResourcesConstants;
+import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
 import org.uberfire.java.nio.file.Paths;
 
@@ -47,7 +47,7 @@ public class MavenUtilsTest {
 
     @Test
     public void resolveDependenciesFromSinglePrjTest() {
-        List<String> pomList = MavenUtils.searchPoms(Paths.get(ResourcesConstants.DUMMY_KIE_UNTOUCHED_DIR));
+        List<String> pomList = MavenUtils.searchPoms(Paths.get(ResourcesConstants.DUMMY_DIR));
         assertThat(pomList).hasSize(1);
         List<Artifact> deps = MavenUtils.resolveDependenciesFromMultimodulePrj(pomList);
         assertThat(deps).hasSize(1);
