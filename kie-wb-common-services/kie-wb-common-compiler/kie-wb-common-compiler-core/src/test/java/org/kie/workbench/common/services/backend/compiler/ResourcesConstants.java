@@ -17,6 +17,8 @@ package org.kie.workbench.common.services.backend.compiler;
 
 public class ResourcesConstants {
 
+    public static final String OUTPUT_TEST_LOG = "target/test-classes/output-test.log";
+
     public static final String TARGET_TAKARI_PLUGIN = "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile";
 
     public static final String KJAR_2_ALL_RESOURCES = "target/test-classes/kjar-2-all-resources";

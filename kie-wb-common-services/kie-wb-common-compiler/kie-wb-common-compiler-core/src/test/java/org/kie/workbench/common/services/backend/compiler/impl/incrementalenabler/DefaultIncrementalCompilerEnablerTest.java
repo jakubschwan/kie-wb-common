@@ -44,7 +44,7 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
         byte[] encoded = Files.readAllBytes(Paths.get(tmpRoot + "/dummy/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).doesNotContain("<artifactId>kie-takari-lifecycle-plugin</artifactId>");
+        assertThat(pomAsAstring).doesNotContain(ResourcesConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
 
         IncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
         ProcessedPoms poms = enabler.process(req);
@@ -56,6 +56,6 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
         encoded = Files.readAllBytes(Paths.get(tmpRoot + "/dummy/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>");
+        assertThat(pomAsAstring).contains(ResourcesConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
     }
 }
